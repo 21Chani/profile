@@ -1,0 +1,19 @@
+{
+  "name": "profile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "packages/*",
+    "app"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "turbo dev --filter app"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "turbo": "^1.10.2"
+  }
+}
