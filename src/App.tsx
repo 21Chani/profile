@@ -1,6 +1,12 @@
+import { GithubIcon } from '@icons/GithubIcon'
+import { LinkedinIcon } from './icons/LinkedinIcon'
+import { EnvelopeIcon } from './icons/EnvelopeIcon'
+import { DiscordIcon } from './icons/DiscordIcon'
+import { SocialMediaBtn } from './components/SocialMediaBtn'
+
 function App() {
   return (
-    <div className="h-screen w-full flex flex-col px-[100px]">
+    <div className="h-screen w-full flex flex-col px-[200px]">
       <div className="flex flex-col mx-auto my-10">
         <span className="font-extrabold text-3xl mx-auto text-white">Chani</span>
         <span className="text-xl font-semibold text-gray-100">
@@ -25,6 +31,15 @@ function App() {
         programming, I devote a bit of my free time to the art of creating 3D models. Additionally,
         I maintain a rigorous gym routine, engaging in weightlifting exercises on a daily basis.
       </p>
+      <div className="w-full h-fit flex gap- items-center mt-10 gap-2">
+        <div className="w-fit px-10 h-14 relative bg-gray-400 rounded-md  shadow-lg gap-6 flex items-center justify-center border-t-4">
+          <SocialMediaBtn href="" icon={GithubIcon} />
+          <SocialMediaBtn href="" icon={LinkedinIcon} />
+          <SocialMediaBtn href="" icon={EnvelopeIcon} />
+          <SocialMediaBtn href="" icon={DiscordIcon} />
+        </div>
+        <div className="w-full h-1 bg-gray-300 shadow-xl"></div>
+      </div>
     </div>
   )
 }

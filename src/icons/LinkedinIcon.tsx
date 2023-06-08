@@ -6,7 +6,7 @@ export const LinkedinIcon = forwardRef(({ className, ...props }, ref) => {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 50 50"
       fill="currentColor"
-      className={`fill-white ${className}`}
+      className={`${className}`}
       {...props}
       ref={ref}
     >
