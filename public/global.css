@@ -5,11 +5,11 @@
 @tailwind utilities;
 
 * {
-  font-family: 'jetbrains mono';
+	font-family: 'jetbrains mono';
 }
 
 .test {
-  /* background-size: auto auto; */
-  /* background-clip: border-box; */
-  background-size: 200% auto;
+	/* background-size: auto auto; */
+	/* background-clip: border-box; */
+	background-size: 200% auto;
 }
