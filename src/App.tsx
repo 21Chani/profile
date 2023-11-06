@@ -1,58 +1,33 @@
-import { GithubIcon } from "@icons/GithubIcon";
-import { LinkedinIcon } from "./icons/LinkedinIcon";
-import { EnvelopeIcon } from "./icons/EnvelopeIcon";
-import { DiscordIcon } from "./icons/DiscordIcon";
-import { SocialMediaBtn } from "./components/SocialMediaBtn";
-import {
-  RiDiscordFill,
-  RiGithubFill,
-  RiGoogleFill,
-  RiLinkedinFill,
-  RiMailFill,
-} from "react-icons/ri";
-import { BiLogoGmail } from "react-icons/bi";
+import { RiUser2Fill } from "react-icons/ri";
 function App() {
-  return (
-    <div className="h-screen  flex flex-col w-[900px] mx-auto">
-      <div className="flex flex-col mx-auto my-10 ">
-        <span className="font-extrabold text-3xl mx-auto text-white">
-          Chani
-        </span>
-      </div>
-      <div className="w-full flex gap-2 items-center">
-        <div className="w-full h-0.5 bg-gray-300"></div>
-        <span className="whitespace-nowrap text-lg text-white font-bold">
-          About me
-        </span>
-        <div className="w-full h-0.5 bg-gray-300"></div>
-      </div>
-      <p className="p-5 bg-gray-700 rounded-md shadow-[inset_-5px_5px_20px_0px_#0004] text-gray-100 font-semibold mt-4 text-justify">
-        &nbsp;&nbsp;&nbsp;With a strong interest in understanding how things
-        work, I embarked on my programming journey at the age of 15, Through
-        self-guided study, I diligently acquired the skills necessary to
-        construct Minecraft plugins and mods. With a desire to expand my
-        knowledge further,I have since delved into diverse domains, including
-        web development, game design, server administration, mobile application
-        development, and even the intricacies of operating systems.
-        <br /> <br />
-        &nbsp;&nbsp;&nbsp;At the present age of 19, I am actively seeking
-        opportunities to gain valuable market experience and further enhance my
-        skill set. Alongside my passion for programming, I devote a bit of my
-        free time to the art of creating 3D models. Additionally, I maintain a
-        rigorous gym routine, engaging in weightlifting exercises on a daily
-        basis.
-      </p>
-      <div className="w-full h-fit flex gap- items-center mt-10 gap-2">
-        <div className="w-fit px-10 h-14 relative bg-gray-400 rounded-md  shadow-lg gap-6 flex items-center justify-center border-t-4">
-          <SocialMediaBtn href="" icon={RiGithubFill} />
-          <SocialMediaBtn href="" icon={RiLinkedinFill} />
-          <SocialMediaBtn href="" icon={BiLogoGmail} />
-          <SocialMediaBtn href="" icon={RiDiscordFill} />
-        </div>
-        <div className="w-full h-1 bg-gray-300 shadow-xl"></div>
-      </div>
-    </div>
-  );
+	return (
+		<div className="relative mx-auto flex  h-screen w-full flex-col overflow-hidden bg-[#0A0C2080]">
+			<div className="absolute -left-[48px] -top-[77px] h-80 w-80 rounded bg-[#30B4FF]" />
+			<div className="absolute right-0  h-96 w-96 rounded bg-[#00A3FF]" />
+			<div className="absolute bottom-0 left-[592px] top-2/4 h-72 w-3/4 rotate-[-25deg] rounded bg-[#3FA4ED]" />
+			<div className="absolute flex h-full w-full flex-col bg-[#0A0C20cc] backdrop-blur-[408px]">
+				<main className="mx-auto w-full max-w-5xl ">
+					<header className="mt-4 h-14 w-full rounded-xl bg-[#05060B60]"></header>
+
+					<h3 className="mt-20 text-2xl font-semibold">Hi! I am chani.</h3>
+					<h1 className="text-gradi bg-gradient-to-br from-[#9FCBFE] to-[#8728FF] bg-clip-text text-4xl font-bold text-transparent">
+						A passionate technology <br /> enthusiast.
+					</h1>
+					<p className="text-lg font-semibold text-[#9FCBFE]">
+						I’am self-taught full-stack developer from Brazil. Passionate about technology since 15. Eager to innovate and
+						learn in the ever-changing tech world.
+					</p>
+
+					<div className="my-10 flex h-fit w-full items-center gap-6">
+						<div className="h-1 flex-1 bg-[#1F3250]" />
+						<RiUser2Fill className="text-[#5478B1]" />
+						<span className="font-semibold text-[#5478B1]">Social</span>
+						<div className="h-1 flex-1 bg-[#1F3250]" />
+					</div>
+				</main>
+			</div>
+		</div>
+	);
 }
 
 export default App;
