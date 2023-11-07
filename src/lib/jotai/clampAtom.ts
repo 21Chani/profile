@@ -5,13 +5,13 @@ export function clampAtom(min: number, max: number, defaultValue = min) {
 
 	const next = atom(null, (get, set) => {
 		const value = get(_atom);
-		if (value > max) return;
+		if (value >= max) return;
 		set(_atom, value + 1);
 	});
 
 	const prev = atom(null, (get, set) => {
 		const value = get(_atom);
-		if (value < min) return;
+		if (value <= min) return;
 		set(_atom, value - 1);
 	});
 
@@ -34,4 +34,9 @@ export function useSetAtomClamp(atom: ClampAtom) {
 	const prev = useSetAtom(atom[1].prev);
 
 	return { set, next, prev };
+}
+
+export function useAtomClampValue(atom: ClampAtom) {
+	const [value] = useAtom(atom[0]);
+	return value;
 }
