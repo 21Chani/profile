@@ -4,7 +4,7 @@
 
 @layer {
 	body {
-		@apply overflow-visible text-white;
+		@apply overflow-hidden text-white;
 	}
 
 	h3 {

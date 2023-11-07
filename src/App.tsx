@@ -40,15 +40,28 @@ import {
 import { TbBrandCSharp, TbDeviceDesktopCode } from "react-icons/tb";
 import { Button } from "./components/interface/Button";
 import { StackButton } from "./components/interface/StackButton";
+import { useClamp } from "./hook/useClamp";
+
 function App() {
+	const currentCursor = useClamp(0, 1);
+
 	return (
 		<div className="relative mx-auto max-h-screen w-full overflow-hidden bg-[#0A0C2080]">
 			<div className="absolute -left-[48px] -top-[77px] h-80 w-80 rounded bg-[#30B4FF]" />
 			<div className="absolute right-0  h-96 w-96 rounded bg-[#00A3FF]" />
 			<div className="absolute bottom-0 left-[592px] top-2/4 h-72 w-3/4 rotate-[-25deg] rounded bg-[#3FA4ED]" />
 
-			<div className="z-40 h-screen w-full overflow-y-auto bg-[#0A0C20cc] backdrop-blur-[408px]">
-				<main className="m-auto flex h-screen w-full max-w-5xl flex-col ">
+			<div
+				onWheel={(e) => {
+					if (e.deltaY > 0) currentCursor.next();
+					else currentCursor.prev();
+				}}
+				className="z-40 h-screen w-full overflow-hidden bg-[#0A0C20cc] backdrop-blur-[408px]"
+			>
+				<main
+					style={{ marginTop: `-${window.innerHeight * currentCursor.value}px` }}
+					className="m-auto flex h-screen w-full max-w-5xl flex-col transition-all duration-500 ease-out "
+				>
 					<header className="sticky top-4 z-40 h-14 w-full rounded-xl bg-[#070F1C] transition"></header>
 					<h3 className="mt-auto text-3xl font-semibold">Hi! I am chani.</h3>
 					<h1 className="bg-gradient-to-br from-light-blue to-amethyst bg-clip-text pb-1 text-5xl font-bold text-transparent">
