@@ -9,11 +9,13 @@ const baseStyles = cva("w-full whitespace-nowrap font-bold gap-2 flex items-cent
 export const buttonStyles = cva(baseStyles, {
 	variants: {
 		variant: {
-			primary: "text-white shadow-up-sm bg-gradient-to-br from-light-blue to-amethyst  text-sm",
-			secondary: "text-white shadow-up-sm bg-pastel-blue-200"
+			primary: "text-white shadow-up-sm bg-gradient-to-br from-light-blue to-amethyst",
+			secondary: "text-white shadow-up-sm bg-pastel-blue-300",
+			option: "bg-pastel-blue-500 border border-pastel-blue-400"
 		},
 		size: {
-			sm: "px-4 py-2 text-sm"
+			sm: "px-4 py-2 text-sm",
+			xs: "text-xs px-3 py-1"
 		}
 	}
 });
