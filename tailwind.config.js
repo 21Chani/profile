@@ -1,41 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['src/**/*.{ts,tsx}', './index.html'],
-  theme: {
-    extend: {
-      colors: {
-        gray: {
-          100: '#61677F',
-          200: '#4F5466',
-          300: '#3C4156',
-          400: '#2D3246',
-          500: '#272B3F',
-          600: '#1F2232',
-          700: '#1A1D2B',
-        },
-        green: {
-          100: '#93FFDE',
-          200: '#5EFFCF',
-          300: '#13E7A7',
-          400: '#00D796',
-          500: '#00BD85',
-          600: '#00976A',
-          700: '#006E4D',
-        },
-        "dark": {
-          200: "#B1BCD2",
-          300: "#7B87A0",
-          400: "#6D7993",
-          500: "#4F596F",
-          600: "#434857",
-          700: "#363B48",
-          800: "#2D313C",
-          900: "#22262E",
-          950: "#1A1C23",
-          1000: "#15181F"
-        },
-      },
-    },
-  },
-  plugins: [],
-}
+	content: ["src/**/*.{ts,tsx}", "./index.html"],
+	theme: {
+		extend: {
+			colors: {
+				"light-blue": "#9FCBFE",
+				"amethyst": "#8728FF",
+				"pastel-blue": {
+					100: "#5478B1",
+					200: "#233249",
+					300: "#1F3250"
+				}
+			},
+			boxShadow: {
+				"up-sm": "0px 2px 4px 0px rgba(0, 0, 0, 0.25)"
+			}
+		}
+	},
+	plugins: []
+};
