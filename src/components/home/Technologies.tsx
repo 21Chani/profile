@@ -20,6 +20,7 @@ import {
 	SiPostgresql,
 	SiPostman,
 	SiPowershell,
+	SiPrettier,
 	SiPython,
 	SiRedis,
 	SiSolidity,
@@ -33,7 +34,7 @@ import { TbBrandCSharp, TbDeviceDesktopCode } from "react-icons/tb";
 
 export function TechnologiesView() {
 	return (
-		<div className="flex h-screen flex-col items-center justify-center">
+		<div className="flex h-screen flex-col flex-wrap items-center justify-center">
 			<h1 className="text-2xl font-bold">Synopsis & technologies</h1>
 
 			<div className="flex h-fit w-[600px] flex-col flex-wrap overflow-hidden rounded-2xl border border-pastel-blue-300 bg-dark/50 shadow-2xl ">
@@ -73,6 +74,7 @@ export function TechnologiesView() {
 						<StackButton icon={SiPostgresql}>Postgresql</StackButton>
 						<StackButton icon={SiFirebase}>Firebase</StackButton>
 						<StackButton icon={SiRedis}>Redis</StackButton>
+						<StackButton icon={SiPrettier}>Prettier</StackButton>
 					</div>
 				</div>
 			</div>
