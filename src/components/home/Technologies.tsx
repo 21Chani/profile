@@ -31,20 +31,24 @@ import {
 	SiVisualstudiocode
 } from "react-icons/si";
 import { TbBrandCSharp, TbDeviceDesktopCode } from "react-icons/tb";
+import { RevealBox } from "../interface/ScrollAppearBox";
 
 export function TechnologiesView() {
 	return (
-		<div className="flex h-screen flex-col flex-wrap items-center justify-center">
+		<div className="flex h-screen flex-col flex-wrap items-center justify-center gap-4">
 			<h1 className="text-2xl font-bold">Synopsis & technologies</h1>
 
-			<div className="flex h-fit w-[600px] flex-col flex-wrap overflow-hidden rounded-2xl border border-pastel-blue-300 bg-dark/50 shadow-2xl ">
-				<div className="shadow-inner-glass flex flex-col gap-2 p-5">
+			<RevealBox
+				// style={{ animationDelay: "1000ms" }}
+				className="animation-delay-1000 reveal-open:animate-appear-from-bottom reveal-closed:animate-disappear-to-bottom group flex h-fit w-[600px] flex-col flex-wrap overflow-hidden rounded-2xl border border-pastel-blue-300 bg-dark/50 opacity-0 shadow-2xl delay-700 "
+			>
+				<div className=" flex flex-col gap-2 p-5 shadow-inner-glass">
 					<div className="w-fit rounded-xl bg-pastel-blue-300/60  p-2 shadow-up-sm">
 						<TbDeviceDesktopCode className="h-7 w-7" />
 					</div>
 
 					<div className="flex items-center gap-2 text-white">
-						<span className="font-bold">Technologies</span>
+						<span className="delay font-bold">Technologies</span>
 					</div>
 					<p className="text-sm font-medium text-light-blue/60">
 						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc suscipit, orci sed mattis tristique, libero dolor
@@ -77,9 +81,12 @@ export function TechnologiesView() {
 						<StackButton icon={SiPrettier}>Prettier</StackButton>
 					</div>
 				</div>
-			</div>
-			<div className="mt-4 flex h-fit w-[600px] flex-col overflow-hidden rounded-2xl border border-pastel-blue-300 bg-dark/50 shadow-2xl ">
-				<div className="shadow-inner-glass flex flex-col gap-2 p-5">
+			</RevealBox>
+			<RevealBox
+				style={{ animationDelay: "200ms" }}
+				className="reveal-open:animate-appear-from-bottom reveal-closed:animate-disappear-to-bottom flex h-fit w-[600px] flex-col flex-wrap overflow-hidden rounded-2xl border border-pastel-blue-300 bg-dark/50 opacity-0 shadow-2xl "
+			>
+				<div className="flex flex-col gap-2 p-5 shadow-inner-glass">
 					<div className="w-fit rounded-xl bg-pastel-blue-300/60  p-2 shadow-up-sm">
 						<AiOutlineAppstoreAdd className="h-7 w-7" />
 					</div>
@@ -105,7 +112,7 @@ export function TechnologiesView() {
 					<StackButton icon={SiInsomnia}>Insomnia</StackButton>
 					<StackButton icon={SiPostman}>Postman</StackButton>
 				</div>
-			</div>
+			</RevealBox>
 		</div>
 	);
 }

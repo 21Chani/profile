@@ -17,4 +17,8 @@
 	h1 {
 		@apply text-3xl;
 	}
+
+	* {
+		animation-delay: 2s;
+	}
 }

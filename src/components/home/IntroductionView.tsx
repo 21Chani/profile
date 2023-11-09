@@ -20,7 +20,7 @@ export function IntroductionView() {
 		>
 			<header className="sticky top-4 z-40 h-14 w-full rounded-xl bg-[#070F1C] transition"></header>
 			<h3 className="mt-auto text-3xl font-semibold">Hi! I am chani.</h3>
-			<h1 className="bg-gradient-to-br from-light-blue to-amethyst bg-clip-text pb-1 text-5xl font-bold text-transparent">
+			<h1 className="animation-delay-1000 bg-gradient-to-br from-light-blue to-amethyst bg-clip-text pb-1 text-5xl font-bold text-transparent">
 				A passionate <br /> technology enthusiast.
 			</h1>
 			<p className="text-lg font-semibold text-light-blue">

@@ -52,8 +52,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonAttributes>((rawProps,
 
 	function removeRipple() {
 		if (!ref.current) return;
-		const ripple = ref.current.querySelector("#ripple");
-		if (ripple) ref.current.removeChild(ripple);
+		const ripples = ref.current.querySelectorAll("#ripple");
+		ripples.forEach((e) => e.remove());
 	}
 
 	return (
