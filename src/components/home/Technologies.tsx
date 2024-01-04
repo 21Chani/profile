@@ -3,34 +3,17 @@ import { AiOutlineAppstoreAdd } from "react-icons/ai";
 import {
 	SiAdobepremierepro,
 	SiAlacritty,
+	SiArchlinux,
 	SiBlender,
-	SiCplusplus,
-	SiCss3,
 	SiFigma,
-	SiFirebase,
-	SiGnubash,
-	SiGo,
-	SiHcl,
-	SiHtml5,
 	SiInsomnia,
 	SiIntellijidea,
-	SiJavascript,
-	SiMongodb,
-	SiMysql,
-	SiPostgresql,
 	SiPostman,
-	SiPowershell,
-	SiPrettier,
-	SiPython,
-	SiRedis,
-	SiSolidity,
 	SiTmux,
-	SiTypescript,
 	SiUnity,
 	SiVisualstudio,
 	SiVisualstudiocode
 } from "react-icons/si";
-import { TbBrandCSharp, TbDeviceDesktopCode } from "react-icons/tb";
 import { RevealBox } from "../interface/ScrollAppearBox";
 
 export function TechnologiesView() {
@@ -38,7 +21,7 @@ export function TechnologiesView() {
 		<div className="flex h-screen flex-col flex-wrap items-center justify-center gap-4">
 			<h1 className="text-2xl font-bold">Synopsis & technologies</h1>
 
-			<RevealBox
+			{/* <RevealBox
 				// style={{ animationDelay: "1000ms" }}
 				className="animation-delay-1000 reveal-open:animate-appear-from-bottom reveal-closed:animate-disappear-to-bottom group flex h-fit w-[600px] flex-col flex-wrap overflow-hidden rounded-2xl border border-pastel-blue-300 bg-dark/50 opacity-0 shadow-2xl delay-700 "
 			>
@@ -56,7 +39,7 @@ export function TechnologiesView() {
 					</p>
 				</div>
 				<div className="flex h-fit  w-full flex-col  gap-2 border-t border-pastel-blue-300 bg-pastel-blue-300/20 p-4 shadow-xl ">
-					{/* <span className="text-xs font-bold text-light-blue/70">Languages</span> */}
+					
 					<div className="flex w-full flex-wrap gap-2 ">
 						<StackButton icon={SiJavascript}>Javascript</StackButton>
 						<StackButton icon={SiTypescript}>Typescript</StackButton>
@@ -81,10 +64,10 @@ export function TechnologiesView() {
 						<StackButton icon={SiPrettier}>Prettier</StackButton>
 					</div>
 				</div>
-			</RevealBox>
+			</RevealBox> */}
 			<RevealBox
 				style={{ animationDelay: "200ms" }}
-				className="reveal-open:animate-appear-from-bottom reveal-closed:animate-disappear-to-bottom flex h-fit w-[600px] flex-col flex-wrap overflow-hidden rounded-2xl border border-pastel-blue-300 bg-dark/50 opacity-0 shadow-2xl "
+				className="flex h-fit w-[600px] flex-col flex-wrap overflow-hidden rounded-2xl border border-pastel-blue-300 bg-dark/50 opacity-0 shadow-2xl reveal-open:animate-appear-from-bottom reveal-closed:animate-disappear-to-bottom "
 			>
 				<div className="flex flex-col gap-2 p-5 shadow-inner-glass">
 					<div className="w-fit rounded-xl bg-pastel-blue-300/60  p-2 shadow-up-sm">
@@ -111,6 +94,11 @@ export function TechnologiesView() {
 					<StackButton icon={SiFigma}>Figma</StackButton>
 					<StackButton icon={SiInsomnia}>Insomnia</StackButton>
 					<StackButton icon={SiPostman}>Postman</StackButton>
+				</div>
+				<div className="h-[1px] w-full bg-pastel-blue-300"></div>
+				<div className="flex h-fit w-full  flex-wrap gap-2 border-t border-pastel-blue-300 bg-pastel-blue-300/20 p-4 ">
+					<StackButton icon={SiArchlinux}>Arch Linux</StackButton>
+					{/* <StackButton icon={SiPostman}>Postman</StackButton> */}
 				</div>
 			</RevealBox>
 		</div>
