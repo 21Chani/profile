@@ -5,14 +5,18 @@ import {
 	SiAlacritty,
 	SiArchlinux,
 	SiBlender,
+	SiDebian,
 	SiFigma,
 	SiInsomnia,
 	SiIntellijidea,
+	SiMacos,
 	SiPostman,
 	SiTmux,
+	SiUbuntu,
 	SiUnity,
 	SiVisualstudio,
-	SiVisualstudiocode
+	SiVisualstudiocode,
+	SiWindows
 } from "react-icons/si";
 import { RevealBox } from "../interface/ScrollAppearBox";
 
@@ -98,7 +102,10 @@ export function TechnologiesView() {
 				<div className="h-[1px] w-full bg-pastel-blue-300"></div>
 				<div className="flex h-fit w-full  flex-wrap gap-2 border-t border-pastel-blue-300 bg-pastel-blue-300/20 p-4 ">
 					<StackButton icon={SiArchlinux}>Arch Linux</StackButton>
-					{/* <StackButton icon={SiPostman}>Postman</StackButton> */}
+					<StackButton icon={SiMacos}>MacOs</StackButton>
+					<StackButton icon={SiUbuntu}>Ubuntu</StackButton>
+					<StackButton icon={SiDebian}>Debian</StackButton>
+					<StackButton icon={SiWindows}>Windows</StackButton>
 				</div>
 			</RevealBox>
 		</div>
