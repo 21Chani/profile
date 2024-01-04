@@ -5,6 +5,7 @@ import {
 	SiAlacritty,
 	SiArchlinux,
 	SiBlender,
+	SiBspwm,
 	SiDebian,
 	SiFigma,
 	SiInsomnia,
@@ -98,6 +99,7 @@ export function TechnologiesView() {
 					<StackButton icon={SiFigma}>Figma</StackButton>
 					<StackButton icon={SiInsomnia}>Insomnia</StackButton>
 					<StackButton icon={SiPostman}>Postman</StackButton>
+					<StackButton icon={SiBspwm}>Bspwm</StackButton>
 				</div>
 				<div className="h-[1px] w-full bg-pastel-blue-300"></div>
 				<div className="flex h-fit w-full  flex-wrap gap-2 border-t border-pastel-blue-300 bg-pastel-blue-300/20 p-4 ">
