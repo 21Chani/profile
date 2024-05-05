@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-background: 0 0 0;
+    --color-background-secondary: 0 0% 10%;
+  }
+}
