@@ -2,6 +2,12 @@
 const config = {
   plugins: ["prettier-plugin-tailwindcss"],
   printWidth: 120,
+  jsxSingleQuote: false,
+  semi: false,
+  useTabs: true,
+  htmlWhitespaceSensitivity: "ignore",
+  bracketSameLine: true,
+  bracketSpacing: true,
 };
 
 export default config;

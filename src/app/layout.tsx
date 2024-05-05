@@ -4,6 +4,7 @@ import "~/styles/colors.css";
 import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { jaro_font, jetbrains_font } from "~/lib/fonts";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,7 +24,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en ">
-      <body className={`font-sans ${inter.variable} bg-background-alt`}>
+      <body
+        className={`font-sans ${inter.variable} ${jetbrains_font.variable} ${jaro_font.variable} bg-background dark`}
+      >
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
