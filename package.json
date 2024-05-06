@@ -23,6 +23,7 @@
     "smooth-scrollbar": "^8.8.4",
     "superjson": "^2.2.1",
     "tailwind-bevel": "^1.3.30",
+    "tailwind-merge": "^2.3.0",
     "zod": "^3.23.6"
   },
   "devDependencies": {
