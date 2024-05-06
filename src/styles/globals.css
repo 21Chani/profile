@@ -13,7 +13,7 @@
 }
 
 .border-test::before {
-  @apply bg-gradient-to-br from-emerald-100 to-emerald-500;
+  @apply bg-gradient-to-t from-emerald-100 to-emerald-500;
   content: "''";
   width: 100%;
   height: 100%;
@@ -41,7 +41,7 @@
     var(--sum-offset-inset) calc(100% - var(--border)),
     var(--sub-offset-inset) calc(100% - var(--border)),
     calc(100% - var(--border)) var(--sub-offset-inset),
-    calc(100% - var(--border)) calc(var(--border) + var(--offset)),
+    calc(100% - var(--border)) calc(var(--border) / 2 + var(--offset)),
     var(--sub-offset-inset) var(--border),
     var(--sum-offset-inset) var(--border),
     var(--border) var(--sum-offset-inset),

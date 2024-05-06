@@ -1,13 +1,26 @@
 import Image from "next/image";
 import { RiArrowDownSLine } from "react-icons/ri";
 
+// --tw-bevel-gradient-stops
+// --tw-bevel-gradient-stops
+
+// --tw-bevel-gradient-from: #d1fae5 var(--tw-bevel-gradient-from-position);
+// --tw-bevel-gradient-to: rgb(209 250 229 / 0) var(--tw-bevel-gradient-to-position);
+// --tw-bevel-gradient-stops: var(--tw-bevel-gradient-from), var(--tw-bevel-gradient-to)
+// --tw-bevel-gradient-to: #10b981 var(--tw-bevel-gradient-to-position)
+
+//  --bevel-gradient-image
+// var(--bevel-gradient-image, none)
+
 export default async function Home() {
   return (
     <main className="">
       <section className="relative flex h-screen w-full flex-col overflow-hidden pb-32 ">
         <h6 className="font-jaro  uppercase">- &emsp; A coding guy.</h6>
-
-        <hr className="border-border-primary mb-20 mt-auto" />
+        <div className="flex flex-1 ">
+          <div className="bevel-4 bevel-gradient-to-tr bevel-from-blue-100 bevel-to-blue-500 bevel-offset-14  m-auto size-52 " />
+        </div>
+        <hr className="border-border-primary mb-20" />
 
         <div className="font-jaro flex  items-end gap-14 px-20">
           {/* DESCRIPTION */}
@@ -35,10 +48,10 @@ export default async function Home() {
           </div>
 
           <div className="">
-            <div className="border-test relative h-[300px]  w-[600px] rounded-xl">
+            <div className="border-test relative h-[300px]  w-[550px] rounded-xl">
               <div className="relative h-[calc(100%+75px)] w-full ">
                 <Image
-                  className="z-40 mx-auto -mt-[79px] ml-2 w-fit object-contain   "
+                  className="z-40 mx-auto -mt-[79px] w-fit object-contain   "
                   alt="Picture of the author"
                   src={"/assets/profile.png"}
                   fill
