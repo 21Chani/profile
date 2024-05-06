@@ -1,11 +1,19 @@
+"use client"
 import Image from "next/image"
+import { useEffect } from "react"
 import { RiArrowDownSLine } from "react-icons/ri"
+import ScrollBar from "smooth-scrollbar"
 
-export default async function Home() {
+export default function Home() {
+	useEffect(() => void ScrollBar.init(document.body, { damping: 0.1, alwaysShowTracks: false }), [])
+
 	return (
 		<main className="">
 			<section className="gradient-bg relative flex h-screen w-full flex-col overflow-hidden pb-32 ">
-				<h6 className="font-jaro  uppercase">- &emsp; A coding guy.</h6>
+				<nav>
+					<h6 className="font-jaro  uppercase">- &emsp; A coding guy.</h6>
+				</nav>
+
 				<div className="flex flex-1 "></div>
 				<hr className="mb-20 border-border-primary" />
 
