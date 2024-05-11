@@ -22,33 +22,7 @@ export function HomeSection() {
 
 			<div className="flex items-end  gap-14 px-20 font-jaro">
 				{/* DESCRIPTION */}
-
-				<div className=" flex items-start gap-2">
-					<div className="mt-2 flex flex-1 flex-col items-center gap-1">
-						<div className="bevel-2 z-10 size-4 bevel-color-foreground bevel-offset-[3px]" />
-						<div className="bevel-2 z-10 size-4 bevel-color-foreground bevel-offset-[3px]" />
-						<div className="bevel-2 z-10 size-4 bevel-color-foreground bevel-offset-[3px]" />
-					</div>
-					<div className="text-foreground ">
-						<span className="mx-auto uppercase ">
-							<h1 className="text-7xl font-bold leading-[60px]">{"Hey there, I'm Chani!"}</h1>
-							<h1 className="text-7xl font-bold leading-[60px]">
-								A{" "}
-								<span className="bg-gradient-to-br from-emerald-100 to-emerald-400 bg-clip-text text-transparent">
-									full stack <br /> software
-								</span>{" "}
-								engineer
-							</h1>
-						</span>
-						<p className="mt-4 text-justify font-jetbrains text-foreground-alt">
-							My real name is Diogo, but you can call me Chani. I am a passionate technology enthusiast from Brazil who
-							loves to learn new things and solve problems. I do know a lot of everything in this programming world,
-							from hardware to software, but I have focused the past 3 years to dedicate into the web3 ecosystem, where
-							I have been working with blockchain technologies, smart contracts, and decentralized applications.
-						</p>
-					</div>
-				</div>
-
+				<Summary />
 				<ProfileView />
 			</div>
 
@@ -57,6 +31,42 @@ export function HomeSection() {
 				<RiArrowDownSLine className="-mt-10 size-14 animate-fade-down" />
 			</div>
 		</section>
+	)
+}
+
+function Summary() {
+	return (
+		<div className=" flex items-start gap-2">
+			{/* Details */}
+			<div className="mt-2 flex flex-1 flex-col items-center gap-1">
+				<div className="bevel-2 z-10 size-4 bevel-color-foreground bevel-offset-[3px]" />
+				<div className="bevel-2 z-10 size-4 bevel-color-foreground bevel-offset-[3px]" />
+				<div className="bevel-2 z-10 size-4 bevel-color-foreground bevel-offset-[3px]" />
+			</div>
+
+			{/* Summary */}
+			<div className="text-foreground ">
+				{/* Title */}
+				<span className="mx-auto uppercase ">
+					<h1 className="text-7xl font-bold leading-[60px]">{"Hey there, I'm Chani!"}</h1>
+					<h1 className="text-7xl font-bold leading-[60px]">
+						A{" "}
+						<span className="bg-gradient-to-br from-emerald-100 to-emerald-400 bg-clip-text text-transparent">
+							full stack <br /> software
+						</span>{" "}
+						engineer
+					</h1>
+				</span>
+
+				{/* Description */}
+				<p className="mt-4 text-justify font-jetbrains text-foreground-alt">
+					My real name is Diogo, but you can call me Chani. I am a passionate technology enthusiast from Brazil who
+					loves to learn new things and solve problems. I do know a lot of everything in this programming world, from
+					hardware to software, but I have focused the past 3 years to dedicate into the web3 ecosystem, where I have
+					been working with blockchain technologies, smart contracts, and decentralized applications.
+				</p>
+			</div>
+		</div>
 	)
 }
 
