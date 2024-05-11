@@ -1,24 +1,44 @@
+"use client"
 import Image from "next/image"
 import { NavLink } from "../_components/NavLink"
 import { RiArrowDownSLine } from "react-icons/ri"
 import { ItemInfo } from "~/components/ui/ItemInfo"
+import { Canvas, useFrame } from "@react-three/fiber"
+import { PyramidPoints } from "~/components/threejs/PyramidPoints"
+import { Clock, Euler, type Group } from "three"
+
+const rotation = new Euler(0, Math.PI / 4, 0)
+const rotationDown = new Euler(0, Math.PI / 4, Math.PI)
+
+function EthView() {
+	return (
+		<group position={[0, -0.31, 2.12]} rotation={[0.22, 0, 0]}>
+			<PyramidPoints subdivisions={10} position={[0, 0.1, 0]} rotation={rotation} />
+			<PyramidPoints subdivisions={10} position={[0, -0.1, 0]} rotation={rotationDown} />
+		</group>
+	)
+}
 
 export function HomeSection() {
 	return (
 		<section className="gradient-bg relative flex h-screen w-full flex-col overflow-hidden pb-32 ">
-			<nav className="flex justify-between p-4">
-				<h6 className="font-jaro  uppercase">- &emsp; A coding guy.</h6>
+			<div className="relative flex w-full flex-1 flex-col">
+				<nav className="flex flex-1 justify-between p-4">
+					<h6 className="font-jaro  uppercase">- &emsp; A coding guy.</h6>
 
-				<div className="flex flex-col">
-					<NavLink>Home</NavLink>
-					<NavLink>About me</NavLink>
-					<NavLink>Projects</NavLink>
-					<NavLink>Social</NavLink>
+					<div className="flex flex-col">
+						<NavLink>Home</NavLink>
+						<NavLink>About me</NavLink>
+						<NavLink>Projects</NavLink>
+						<NavLink>Social</NavLink>
+					</div>
+				</nav>
+				<div className="relative mx-auto h-full max-h-[600px] w-full ">
+					<Canvas>
+						<EthView />
+					</Canvas>
 				</div>
-			</nav>
-
-			<div className="flex flex-1 "></div>
-			<hr className="mb-20 border-border-primary" />
+			</div>
 
 			<div className="flex items-end  gap-14 px-20 font-jaro">
 				{/* DESCRIPTION */}
