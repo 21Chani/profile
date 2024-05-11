@@ -2,5 +2,15 @@
 	"prettier.configPath": "prettier.config.js",
 	"editor.codeActionsOnSave": {
 		"source.fixAll": "always"
+	},
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/node_modules": true,
+		"**/.next": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true
 	}
 }

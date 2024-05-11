@@ -1,11 +1,12 @@
 "use client"
+import { Canvas } from "@react-three/fiber"
 import Image from "next/image"
-import { NavLink } from "../_components/NavLink"
 import { RiArrowDownSLine } from "react-icons/ri"
 import { ItemInfo } from "~/components/ui/ItemInfo"
-import { Canvas, useFrame } from "@react-three/fiber"
+import { NavLink } from "../_components/NavLink"
+
+import { Euler } from "three"
 import { PyramidPoints } from "~/components/threejs/PyramidPoints"
-import { Clock, Euler, type Group } from "three"
 
 const rotation = new Euler(0, Math.PI / 4, 0)
 const rotationDown = new Euler(0, Math.PI / 4, Math.PI)

@@ -3,8 +3,8 @@ import "~/styles/colors.css"
 
 import { Inter } from "next/font/google"
 
-import { TRPCReactProvider } from "~/trpc/react"
 import { jaro_font, jetbrains_font } from "~/lib/fonts"
+import { AppProviders } from "./_providers"
 
 const inter = Inter({
 	subsets: ["latin"],
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 		<html lang="en" className="max-h-screen bg-background">
 			<body
 				className={`font-sans ${inter.variable} ${jetbrains_font.variable} ${jaro_font.variable} dark h-screen w-full overflow-auto`}>
-				<TRPCReactProvider>{children}</TRPCReactProvider>
+				<AppProviders>{children}</AppProviders>
 			</body>
 		</html>
 	)
