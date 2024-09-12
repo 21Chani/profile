@@ -108,9 +108,9 @@ function ProfileView() {
 				<span className="absolute right-4 top-2 font-jetbrains text-3xl text-emerald-200">+</span>
 				<span className="absolute right-7 top-1.5 font-jetbrains text-xl text-emerald-200">+</span>
 				<div className="absolute left-2 top-8 flex flex-col gap-1 ">
-					<ItemInfo>AKA Digas</ItemInfo>
+					<ItemInfo>AKA Chani</ItemInfo>
 					<ItemInfo>20 years</ItemInfo>
-					<ItemInfo>loading</ItemInfo>
+					<ItemInfo>loading...</ItemInfo>
 				</div>
 			</div>
 
