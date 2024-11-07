@@ -8,14 +8,32 @@
   } */
 
 	.gradient-bg {
-		background-image: radial-gradient(at top right, hsl(0 0% 4%) 0%, hsl(0 0% 0%) 80%);
+		background-color: black;
+		/* background-image: radial-gradient(at top right, #75492a 0%, hsl(0 0% 0%) 100%); */
+		@apply backdrop-blur-3xl;
+	}
+
+	.gradient-bg::before {
+		@apply blur-[300px];
+		content: "";
+		position: absolute;
+		width: 50%;
+		height: 50%;
+		right: 0;
+		/* background-color: rgb(173, 138, 74, 0.5); */
+		/* background-image: radial-gradient(at top right, #75492a 0%, hsl(0 0% 0%) 100%); */
+		opacity: 0.5;
 	}
 
 	p {
 		@apply font-jetbrains text-foreground-alt;
 	}
+
+	body {
+		@apply bg-white;
+	}
 }
 
 * {
-	@apply text-foreground;
+	@apply scroll-smooth text-foreground;
 }

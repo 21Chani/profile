@@ -4,8 +4,7 @@ import { twMerge } from "tailwind-merge"
 export function ItemInfo({ children, className }: PropsWithChildren<{ className?: string }>) {
 	return (
 		<div className={twMerge("flex items-center gap-2  font-jaro uppercase leading-3 text-foreground-alt", className)}>
-			<div className="bevel-2 z-10 size-3 bevel-color-foreground-alt bevel-offset-[3px] bevel-gradient-to-b bevel-to-transparent  bevel-from-transparent" />{" "}
-			{children}
+			<div className="b-border-2 z-10 size-3 bevel-color-orange-400 bevel-offset-[3px]" /> {children}
 		</div>
 	)
 }

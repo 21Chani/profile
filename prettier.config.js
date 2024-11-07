@@ -8,6 +8,7 @@ const config = {
 	htmlWhitespaceSensitivity: "ignore",
 	bracketSameLine: true,
 	bracketSpacing: true,
+	tabWidth: 2,
 }
 
 export default config

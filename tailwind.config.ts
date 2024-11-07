@@ -1,6 +1,6 @@
+import tw_bevel from "tailwind-bevel"
 import { type Config } from "tailwindcss"
 import { fontFamily } from "tailwindcss/defaultTheme"
-import tw_bevel from "tailwind-bevel"
 export default {
 	content: ["./src/**/*.tsx"],
 	theme: {

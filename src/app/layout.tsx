@@ -1,5 +1,5 @@
-import "~/styles/globals.css"
 import "~/styles/colors.css"
+import "~/styles/globals.css"
 
 import { Inter } from "next/font/google"
 
@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	return (
 		<html lang="en" className="max-h-screen bg-background">
 			<body
-				className={`font-sans ${inter.variable} ${jetbrains_font.variable} ${jaro_font.variable} dark h-screen w-full overflow-auto`}>
+				className={`font-sans ${inter.variable} ${jetbrains_font.variable} ${jaro_font.variable}  h-screen w-full overflow-auto`}>
 				<AppProviders>{children}</AppProviders>
 			</body>
 		</html>
