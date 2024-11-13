@@ -8,8 +8,8 @@ export default function Home() {
 			<HomeSection />
 			{/* <ProjectsSection /> */}
 			<StackSection />
-			<section className="h-screen w-full" />
-			<section className="h-screen w-full" />
+			{/* <section className="h-screen w-full" />
+			<section className="h-screen w-full" /> */}
 		</main>
 	)
 }

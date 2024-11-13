@@ -8,9 +8,9 @@
   } */
 
 	.gradient-bg {
-		background-color: black;
+		/* background-color: ; */
 		/* background-image: radial-gradient(at top right, #75492a 0%, hsl(0 0% 0%) 100%); */
-		@apply backdrop-blur-3xl;
+		@apply bg-background;
 	}
 
 	.gradient-bg::before {
@@ -29,11 +29,42 @@
 		@apply font-jetbrains text-foreground-alt;
 	}
 
-	body {
-		@apply bg-white;
+	.test {
+		position: relative;
+		/* overflow: hidden; */
+		/* background: rgba(255, 255, 255, 0.112); */
+	}
+	.test::before {
+		content: "";
+		position: absolute;
 	}
 }
 
 * {
 	@apply scroll-smooth text-foreground;
+
+	writing-mode: horizontal-tb;
+}
+
+.testing {
+	position: relative;
+}
+
+.testing::before {
+	position: absolute;
+	content: "";
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	z-index: -5;
+	right: -14px;
+	top: 14px;
+	border: 1px solid hsl(var(--color-border-primary));
+	background: red;
+}
+
+.bg-dotted {
+	background-image: radial-gradient(hsl(var(--color-border-primary)) 1px, transparent 0);
+	background-size: 20px 20px;
+	/* background-position: -19px -19px; */
 }

@@ -13,5 +13,9 @@
 		"**/.DS_Store": true,
 		"**/Thumbs.db": true
 	},
-	"editor.tabSize": 2
+	"editor.tabSize": 2,
+	"tailwindCSS.experimental.classRegex": [
+		["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+		["cx\\(([^)]*)\\)", "'([^']*)'"]
+	]
 }

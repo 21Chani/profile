@@ -3,10 +3,11 @@ const config = {
 	plugins: ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"],
 	printWidth: 120,
 	jsxSingleQuote: false,
+	endOfLine: "lf",
 	semi: false,
 	useTabs: true,
 	htmlWhitespaceSensitivity: "ignore",
-	bracketSameLine: true,
+	bracketSameLine: false,
 	bracketSpacing: true,
 	tabWidth: 2,
 }
