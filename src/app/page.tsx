@@ -1,6 +1,12 @@
+import { type Metadata } from "next"
 import Image from "next/image"
 import { HomeSection } from "./_sections/HomeSection"
 import { StackSection } from "./_sections/StacksSection"
+
+export const metadata: Metadata = {
+	title: "chani.sh | Profile",
+	description: "Chani's personal website",
+}
 
 export default function Home() {
 	return (
