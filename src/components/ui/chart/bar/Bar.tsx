@@ -31,7 +31,8 @@ export function Bar({ x, height, width = 40, className, children, ...props }: SV
 				x={`calc((${width} + ${gap}) * ${elementIndex})`}
 				style={{ width, height }}
 				y={`calc(100% - ${_height}${typeof _height === "number" ? "px" : ""})`}
-				className="relative py-3 transition-all duration-500 ease-out">
+				className="relative py-3 transition-all duration-500 ease-out"
+			>
 				{children}
 			</foreignObject>
 		</Fragment>

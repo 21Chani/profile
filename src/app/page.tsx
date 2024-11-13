@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
 	return (
-		<main className="mx-auto max-w-screen-2xl">
+		<main className="max-w-screen- mx-auto">
 			<HomeSection />
 			{/* <ProjectsSection /> */}
 			<StackSection />
