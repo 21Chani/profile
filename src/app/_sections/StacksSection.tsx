@@ -31,24 +31,14 @@ import { cn } from "~/lib/styles"
 
 export function StackSection() {
 	return (
-		<section className=" relative mx-auto mt-24 flex w-full max-w-screen-xl  snap-start overflow-hidden">
-			{/* <div className="flex items-center justify-center gap-4">
-				<OperatingSystem />
-				<Card className="size-96 rounded-xl p-10 ">
-					<div className="size-10 rounded-lg bg-orange-400" />
-					<div className="size-10 rounded-lg bg-orange-400" />
-					<div className="size-10 rounded-lg bg-orange-400" />
-					<div className="size-10 rounded-lg bg-orange-400" />
-					<div className="size-10 rounded-lg bg-orange-400" />
-					<div className="size-10 rounded-lg bg-orange-400" />
-					<div className="size-10 rounded-lg bg-orange-400" />
-				</Card>
-			</div> */}
+		<section className="relative mx-auto mt-24 flex w-full snap-start overflow-hidden">
 			<div
-				style={{
-					gridTemplateColumns: "200px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 200px",
-				}}
-				className="relative grid w-full grid-cols-5"
+				style={
+					{
+						// gridTemplateColumns: "",
+					}
+				}
+				className="relative grid w-full grid-cols-[var(--grid-border)_repeat(3,minmax(0,_1fr))_var(--grid-border)] [--grid-border:10px] lg:[--grid-border:150px] xl:[--grid-border:250px]"
 			>
 				{/* Opacity effect */}
 				<div className="absolute bottom-0 left-0 h-full w-60 bg-gradient-to-r from-background to-background/0"></div>

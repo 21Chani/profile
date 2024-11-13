@@ -4,7 +4,7 @@ import { StackSection } from "./_sections/StacksSection"
 
 export default function Home() {
 	return (
-		<main className="">
+		<main className="mx-auto max-w-screen-2xl">
 			<HomeSection />
 			{/* <ProjectsSection /> */}
 			<StackSection />
