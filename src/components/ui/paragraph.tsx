@@ -5,7 +5,7 @@ import { cn } from "~/lib/styles"
 const paragraphStyles = cva("", {
 	variants: {
 		variant: {
-			low: "text-justify font-jetbrains text-foreground-alt text-base ",
+			low: "font-jetbrains text-foreground-alt text-base ",
 		},
 	},
 	defaultVariants: {

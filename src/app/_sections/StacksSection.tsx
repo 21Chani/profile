@@ -7,24 +7,31 @@ import {
 	SiCsharp,
 	SiCss3,
 	SiDebian,
+	SiFirebase,
 	SiGo,
 	SiHcl,
 	SiHtml5,
 	SiJavascript,
 	SiMacos,
+	SiMongodb,
+	SiMysql,
+	SiPostgresql,
 	SiPython,
+	SiRedis,
 	SiSolidity,
 	SiTypescript,
+	SiVk,
 } from "react-icons/si"
 import { Card } from "~/components/ui/card"
 import { Bar } from "~/components/ui/chart/bar/Bar"
 import { Chart } from "~/components/ui/chart/bar/Chart"
+import { Paragraph } from "~/components/ui/paragraph"
 import { useDisclosure } from "~/lib/hooks/useDisclosure"
 import { cn } from "~/lib/styles"
 
 export function StackSection() {
 	return (
-		<section className=" relative mt-24 flex  w-full  snap-start overflow-hidden">
+		<section className=" relative mx-auto mt-24 flex w-full max-w-screen-xl  snap-start overflow-hidden">
 			{/* <div className="flex items-center justify-center gap-4">
 				<OperatingSystem />
 				<Card className="size-96 rounded-xl p-10 ">
@@ -50,71 +57,126 @@ export function StackSection() {
 				<div className="absolute bottom-0 h-60 w-full bg-gradient-to-t from-background to-background/0"></div>
 				{/* Grid */}
 				<FullRowSeparator className="aspect-video" />
-				<FullRowSeparator className="h-20" />
+				<FullRowSeparator className="h-14" />
 
 				{/* Operating Systems Row */}
 				<div className="size-full h-full border border-border-primary "></div>
-				<div className="row-span-2 size-full h-full border border-border-primary p-4">
-					<h1 className="text-2xl font-bold">Operating Systems</h1>
+				<div className="row-span2 flex size-full h-full flex-col border border-border-primary p-4">
+					<h1 className="mt-auto text-2xl font-bold">
+						Operating <br /> Systems
+					</h1>
 				</div>
-				<div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
+				<div className="col-span-2 row-span-2 aspect-video size-full h-full min-h-[440px] border border-border-primary ">
 					<OperatingSystem />
 				</div>
 				<div className="size-full h-full border border-border-primary"></div>
 				<div className="size-full h-full border border-border-primary"></div>
+				<div className="size-full h-full border border-border-primary p-4">
+					<Paragraph className="text-sm">
+						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
+						porro officiis sed dolor voluptate.
+					</Paragraph>
+				</div>
 				<div className="size-full h-full border border-border-primary"></div>
 
-				<FullRowSeparator className="h-20" />
+				<FullRowSeparator className="h-14" />
 
 				{/* Languages Row */}
 				<div className="size-full h-full border border-border-primary "></div>
 				<div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
 					<Card className="size-full flex-wrap border-none p-8">
-						<div className="grid h-fit w-full grid-cols-[repeat(auto-fill,_minmax(80px,1fr))] gap-8">
+						<div className="grid h-fit w-full grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
 							<StackItem className="aspect-square w-full p-4">
-								<SiJavascript className="size-full rounded" />
+								<SiJavascript className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiTypescript className="size-full rounded" />
+								<SiTypescript className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiSolidity className="size-full rounded" />
+								<SiSolidity className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiGo className="size-full rounded" />
+								<SiGo className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiHtml5 className="size-full rounded" />
+								<SiHtml5 className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiCss3 className="size-full rounded" />
+								<SiCss3 className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<FaJava className="size-full rounded" />
+								<FaJava className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiCsharp className="size-full rounded" />
+								<SiCsharp className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiPython className="size-full rounded" />
+								<SiPython className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiHcl className="size-full rounded" />
+								<SiHcl className="size-full rounded fill-black" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiCplusplus className="size-full rounded" />
+								<SiCplusplus className="size-full rounded fill-black" />
 							</StackItem>
 						</div>
 					</Card>
 				</div>
 
-				<div className="row-span-2 size-full h-full border border-border-primary p-4">
-					<h1 className="text-2xl font-bold">Programming Languages</h1>
+				<div className="flex size-full h-full border border-border-primary p-4">
+					<h1 className="mt-auto text-2xl font-bold">Programming Languages</h1>
 				</div>
 				<div className="size-full h-full border border-border-primary"></div>
 				<div className="size-full h-full border border-border-primary"></div>
+				<div className="size-full h-full border border-border-primary p-2">
+					<Paragraph className="text-sm">
+						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
+						porro officiis sed dolor voluptate.
+					</Paragraph>
+				</div>
 				<div className="size-full h-full border border-border-primary"></div>
-				<FullRowSeparator className="h-20" />
+				<FullRowSeparator className="h-14" />
+
+				{/* Operating Systems Row */}
+				<div className="size-full h-full border border-border-primary "></div>
+				<div className="row-span2 flex size-full h-full flex-col border border-border-primary p-4">
+					<h1 className="mt-auto text-2xl font-bold">Database</h1>
+				</div>
+				<div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
+					<Card className="size-full flex-wrap border-none p-8">
+						<div className="grid h-fit w-full grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
+							<StackItem className="aspect-square w-full p-4">
+								<SiPostgresql className="size-full rounded fill-black" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiMysql className="size-full rounded fill-black" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiFirebase className="size-full rounded fill-black" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiMongodb className="size-full rounded fill-black" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiRedis className="size-full rounded fill-black" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiVk className="size-full rounded fill-black" />
+							</StackItem>
+						</div>
+					</Card>
+				</div>
+				<div className="size-full h-full border border-border-primary"></div>
+				<div className="size-full h-full border border-border-primary"></div>
+				<div className="size-full h-full border border-border-primary p-4">
+					<Paragraph className="text-sm">
+						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
+						porro officiis sed dolor voluptate.
+					</Paragraph>
+				</div>
+				<div className="size-full h-full border border-border-primary"></div>
+
+				<FullRowSeparator className="h-14" />
 				<FullRowSeparator className="aspect-video" />
 			</div>
 		</section>
@@ -125,43 +187,43 @@ function OperatingSystem() {
 	const state = useDisclosure(true)
 	return (
 		<div className="flex size-full  flex-col">
-			<Card className="size-full border-none p-4">
+			<Card className="size-full  border-none p-4">
 				<Chart gap={"2%"} open={state.isOpen} className="size-full animate-scale-appear ">
 					<Bar width={"70px"} height={"70%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<SiArchlinux className="size-5 fill-white" />
+							<SiArchlinux className="size-7 fill-black" />
+						</div>
+					</Bar>
+					<Bar width={"70px"} height={"55%"} fill="url(#gradient)">
+						<div className="flex size-full justify-center">
+							<SiMacos className="size-7 fill-black" />
 						</div>
 					</Bar>
 					<Bar width={"70px"} height={"80%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<FaUbuntu className="size-5 fill-white" />
+							<FaUbuntu className="size-7 fill-black" />
 						</div>
 					</Bar>
-					<Bar width={"70px"} height={"35%"} fill="url(#gradient)">
+					<Bar width={"70px"} height={"43%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<SiMacos className="size-5 fill-white" />
+							<FaWindows className="size-7 fill-black" />
 						</div>
 					</Bar>
-					<Bar width={"70px"} height={"50%"} fill="url(#gradient)">
+					<Bar width={"70px"} height={"40%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<FaWindows className="size-5 fill-white" />
+							<SiDebian className="size-7 fill-black" />
 						</div>
 					</Bar>
-					<Bar width={"70px"} height={"20%"} fill="url(#gradient)">
+					<Bar width={"70px"} height={"18%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<SiDebian className="size-5 fill-white" />
-						</div>
-					</Bar>
-					<Bar width={"70px"} height={"15%"} fill="url(#gradient)">
-						<div className="flex size-full justify-center">
-							<FaFedora className="size-5 fill-white" />
+							<FaFedora className="size-7 fill-black" />
 						</div>
 					</Bar>
 
 					<defs>
 						<linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
-							<stop offset="0%" className="stop-color-orange-400" />
-							<stop offset="100%" className="stop-color-orange-950" />
+							<stop offset="0%" className="stop-color-orange-100" />
+							<stop offset="100%" className="stop-color-orange-500" />
 						</linearGradient>
 					</defs>
 				</Chart>
@@ -177,7 +239,7 @@ function FullRowSeparator({ rows = 5, className }: { className?: string; rows?: 
 
 function StackItem(props: PropsWithChildren<{ className?: string }>) {
 	return (
-		<div className={cn("rounded-lg bg-gradient-to-bl from-orange-950 to-orange-400 p-1", props.className)}>
+		<div className={cn("rounded-lg bg-gradient-to-tr from-orange-500 to-orange-100 p-1", props.className)}>
 			{props.children}
 		</div>
 	)
