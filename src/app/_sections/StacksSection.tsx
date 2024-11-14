@@ -1,27 +1,53 @@
 "use client"
+import Image from "next/image"
 import { type PropsWithChildren } from "react"
-import { FaFedora, FaJava, FaUbuntu, FaWindows } from "react-icons/fa"
+import { FaDatabase, FaDesktop, FaFedora, FaJava, FaTerminal, FaTools, FaUbuntu, FaWindows } from "react-icons/fa"
 import {
+	SiAlacritty,
 	SiArchlinux,
+	SiAwsfargate,
+	SiBlender,
 	SiCplusplus,
 	SiCsharp,
 	SiCss3,
 	SiDebian,
+	SiDocker,
+	SiEthers,
+	SiExpress,
+	SiFigma,
 	SiFirebase,
+	SiGnubash,
 	SiGo,
+	SiGooglecloud,
 	SiHcl,
 	SiHtml5,
+	SiInsomnia,
+	SiIntellijidea,
 	SiJavascript,
 	SiMacos,
 	SiMongodb,
 	SiMysql,
+	SiNextdotjs,
+	SiNginx,
+	SiNodedotjs,
+	SiOpenssl,
 	SiPostgresql,
+	SiPowershell,
 	SiPython,
+	SiReact,
 	SiRedis,
 	SiSolidity,
+	SiTailwindcss,
+	SiTerraform,
+	SiTmux,
+	SiTurborepo,
 	SiTypescript,
+	SiVim,
+	SiVisualstudiocode,
 	SiVk,
 } from "react-icons/si"
+
+import { SlEnergy } from "react-icons/sl"
 import { Card } from "~/components/ui/card"
 import { Bar } from "~/components/ui/chart/bar/Bar"
 import { Chart } from "~/components/ui/chart/bar/Chart"
@@ -32,14 +58,7 @@ import { cn } from "~/lib/styles"
 export function StackSection() {
 	return (
 		<section className="relative mx-auto mt-24 flex w-full snap-start overflow-hidden">
-			<div
-				style={
-					{
-						// gridTemplateColumns: "",
-					}
-				}
-				className="relative grid w-full grid-cols-[var(--grid-border)_repeat(3,minmax(0,_1fr))_var(--grid-border)] [--grid-border:10px] lg:[--grid-border:150px] xl:[--grid-border:250px]"
-			>
+			<div className="relative grid w-full grid-cols-[var(--grid-border)_repeat(3,minmax(0,_1fr))_var(--grid-border)] [--grid-border:10px] lg:[--grid-border:150px] xl:[--grid-border:250px]">
 				{/* Opacity effect */}
 				<div className="absolute bottom-0 left-0 h-full w-60 bg-gradient-to-r from-background to-background/0"></div>
 				<div className="absolute bottom-0 right-0 h-full w-60 bg-gradient-to-l from-background to-background/0"></div>
@@ -52,7 +71,8 @@ export function StackSection() {
 				{/* Operating Systems Row */}
 				<div className="size-full h-full border border-border-primary "></div>
 				<div className="row-span2 flex size-full h-full flex-col border border-border-primary p-4">
-					<h1 className="mt-auto text-2xl font-bold">
+					<h1 className="mt-auto  text-2xl font-bold">
+						<FaDesktop />
 						Operating <br /> Systems
 					</h1>
 				</div>
@@ -75,46 +95,52 @@ export function StackSection() {
 				<div className="size-full h-full border border-border-primary "></div>
 				<div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
 					<Card className="size-full flex-wrap border-none p-8">
-						<div className="grid h-fit w-full grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
+						<div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
 							<StackItem className="aspect-square w-full p-4">
-								<SiJavascript className="size-full rounded fill-black" />
+								<SiJavascript className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiTypescript className="size-full rounded fill-black" />
+								<SiTypescript className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiSolidity className="size-full rounded fill-black" />
+								<SiSolidity className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiGo className="size-full rounded fill-black" />
+								<SiGo className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiHtml5 className="size-full rounded fill-black" />
+								<SiHtml5 className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiCss3 className="size-full rounded fill-black" />
+								<SiCss3 className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<FaJava className="size-full rounded fill-black" />
+								<FaJava className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiCsharp className="size-full rounded fill-black" />
+								<SiCsharp className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiPython className="size-full rounded fill-black" />
+								<SiPython className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiHcl className="size-full rounded fill-black" />
+								<SiHcl className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiCplusplus className="size-full rounded fill-black" />
+								<SiCplusplus className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiGnubash className="size-full rounded fill-orange-400" />
 							</StackItem>
 						</div>
 					</Card>
 				</div>
 
 				<div className="flex size-full h-full border border-border-primary p-4">
-					<h1 className="mt-auto text-2xl font-bold">Programming Languages</h1>
+					<h1 className="mt-auto text-2xl font-bold">
+						<FaTerminal />
+						Programming <br /> Languages
+					</h1>
 				</div>
 				<div className="size-full h-full border border-border-primary"></div>
 				<div className="size-full h-full border border-border-primary"></div>
@@ -127,31 +153,34 @@ export function StackSection() {
 				<div className="size-full h-full border border-border-primary"></div>
 				<FullRowSeparator className="h-14" />
 
-				{/* Operating Systems Row */}
+				{/* Database Row */}
 				<div className="size-full h-full border border-border-primary "></div>
 				<div className="row-span2 flex size-full h-full flex-col border border-border-primary p-4">
-					<h1 className="mt-auto text-2xl font-bold">Database</h1>
+					<h1 className="mt-auto inline-flex items-center gap-2 text-2xl font-bold">
+						<FaDatabase />
+						Database
+					</h1>
 				</div>
 				<div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
 					<Card className="size-full flex-wrap border-none p-8">
-						<div className="grid h-fit w-full grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
+						<div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
 							<StackItem className="aspect-square w-full p-4">
-								<SiPostgresql className="size-full rounded fill-black" />
+								<SiPostgresql className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiMysql className="size-full rounded fill-black" />
+								<SiMysql className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiFirebase className="size-full rounded fill-black" />
+								<SiFirebase className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiMongodb className="size-full rounded fill-black" />
+								<SiMongodb className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiRedis className="size-full rounded fill-black" />
+								<SiRedis className="size-full rounded fill-orange-400" />
 							</StackItem>
 							<StackItem className="aspect-square w-full p-4">
-								<SiVk className="size-full rounded fill-black" />
+								<SiVk className="size-full rounded fill-orange-400" />
 							</StackItem>
 						</div>
 					</Card>
@@ -165,8 +194,129 @@ export function StackSection() {
 					</Paragraph>
 				</div>
 				<div className="size-full h-full border border-border-primary"></div>
+				<FullRowSeparator className="h-14" />
+
+				{/* Skills Row */}
+				<div className="size-full h-full border border-border-primary "></div>
+				<div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
+					<Card className="size-full flex-wrap border-none p-8">
+						<div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
+							<StackItem className="aspect-square w-full p-4">
+								<SiNextdotjs className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiReact className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiExpress className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiTailwindcss className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiTerraform className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiNginx className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiDocker className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiAwsfargate className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiGooglecloud className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiTurborepo className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiEthers className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-2">
+								<div className="relative size-full rounded">
+									<Image alt="" fill src={"/assets/stacks/wagmi.svg"} />
+								</div>
+							</StackItem>
+							<StackItem className="aspect-square w-full p-2">
+								<div className="relative size-full rounded">
+									<Image alt="" fill src={"/assets/stacks/viem.png"} />
+								</div>
+							</StackItem>
+						</div>
+					</Card>
+				</div>
+
+				<div className="flex size-full h-full border border-border-primary p-4">
+					<h1 className="mt-auto inline-flex items-center gap-2 text-2xl font-bold">
+						<SlEnergy />
+						Skills
+					</h1>
+				</div>
+				<div className="size-full h-full border border-border-primary"></div>
+				<div className="size-full h-full border border-border-primary"></div>
+				<div className="size-full h-full border border-border-primary p-2">
+					<Paragraph className="text-sm">
+						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
+						porro officiis sed dolor voluptate.
+					</Paragraph>
+				</div>
+				<div className="size-full h-full border border-border-primary"></div>
+
+				<div className="size-full border border-border-primary"></div>
+				<div className=" row-span-2 size-full  border border-border-primary ">
+					<h1 className="mt-auto inline-flex items-center gap-2 p-4 text-2xl font-bold">
+						<FaTools className="" />
+						Tools
+					</h1>
+				</div>
+				<div className="col-span-2 row-span-2 aspect-video size-full border border-border-primary">
+					<Card className="size-full flex-wrap border-none p-8">
+						<div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
+							<StackItem className="aspect-square w-full p-4">
+								<SiTmux className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiBlender className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiVim className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiNodedotjs className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiVisualstudiocode className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiIntellijidea className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiInsomnia className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiFigma className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiAlacritty className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiOpenssl className="size-full rounded fill-orange-400" />
+							</StackItem>
+							<StackItem className="aspect-square w-full p-4">
+								<SiPowershell className="size-full rounded fill-orange-400" />
+							</StackItem>
+						</div>
+					</Card>
+				</div>
+
+				<div className="size-full border border-border-primary"></div>
+				<div className="size-full border border-border-primary"></div>
+				<div className="size-full border border-border-primary"></div>
 
 				<FullRowSeparator className="h-14" />
+
 				<FullRowSeparator className="aspect-video" />
 			</div>
 		</section>
@@ -181,32 +331,32 @@ function OperatingSystem() {
 				<Chart gap={"2%"} open={state.isOpen} className="size-full animate-scale-appear ">
 					<Bar width={"70px"} height={"70%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<SiArchlinux className="size-7 fill-black" />
+							<SiArchlinux className="size-7 fill-orange-400" />
 						</div>
 					</Bar>
 					<Bar width={"70px"} height={"55%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<SiMacos className="size-7 fill-black" />
+							<SiMacos className="size-7 fill-orange-400" />
 						</div>
 					</Bar>
 					<Bar width={"70px"} height={"80%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<FaUbuntu className="size-7 fill-black" />
+							<FaUbuntu className="size-7 fill-orange-400" />
 						</div>
 					</Bar>
 					<Bar width={"70px"} height={"43%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<FaWindows className="size-7 fill-black" />
+							<FaWindows className="size-7 fill-orange-400" />
 						</div>
 					</Bar>
 					<Bar width={"70px"} height={"40%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<SiDebian className="size-7 fill-black" />
+							<SiDebian className="size-7 fill-orange-400" />
 						</div>
 					</Bar>
 					<Bar width={"70px"} height={"18%"} fill="url(#gradient)">
 						<div className="flex size-full justify-center">
-							<FaFedora className="size-7 fill-black" />
+							<FaFedora className="size-7 fill-orange-400" />
 						</div>
 					</Bar>
 
@@ -228,9 +378,5 @@ function FullRowSeparator({ rows = 5, className }: { className?: string; rows?: 
 }
 
 function StackItem(props: PropsWithChildren<{ className?: string }>) {
-	return (
-		<div className={cn("rounded-lg bg-gradient-to-tr from-orange-500 to-orange-100 p-1", props.className)}>
-			{props.children}
-		</div>
-	)
+	return <div className={cn("relative rounded-lg bg-background", props.className)}>{props.children}</div>
 }

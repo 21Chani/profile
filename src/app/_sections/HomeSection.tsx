@@ -6,7 +6,7 @@ import { NavLink } from "../_components/NavLink"
 
 export function HomeSection() {
 	return (
-		<section className="gradient-bg mxau relative flex w-full snap-start flex-col overflow-hidden  ">
+		<section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
 			<div className="relative flex w-full flex-col">
 				<nav className="flex flex-1 justify-between p-4">
 					<h6 className="font-jaro  uppercase">- &emsp; A coding guy.</h6>
