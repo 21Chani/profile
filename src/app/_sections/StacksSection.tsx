@@ -70,23 +70,22 @@ export function StackSection() {
 
 				{/* Operating Systems Row */}
 				<div className="size-full h-full border border-border-primary "></div>
-				<div className="row-span2 flex size-full h-full flex-col border border-border-primary p-4">
-					<h1 className="mt-auto  text-2xl font-bold">
-						<FaDesktop />
+				<div className="row-span-2 flex size-full h-full flex-col items-end justify-end border border-border-primary p-4">
+					<FaDesktop />
+					<h1 className=" text-end text-2xl font-bold">
 						Operating <br /> Systems
 					</h1>
+					<Paragraph className="text-end text-sm">
+						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
+						porro officiis sed dolor voluptate.
+					</Paragraph>
 				</div>
 				<div className="col-span-2 row-span-2 aspect-video size-full h-full min-h-[440px] border border-border-primary ">
 					<OperatingSystem />
 				</div>
 				<div className="size-full h-full border border-border-primary"></div>
 				<div className="size-full h-full border border-border-primary"></div>
-				<div className="size-full h-full border border-border-primary p-4">
-					<Paragraph className="text-sm">
-						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
-						porro officiis sed dolor voluptate.
-					</Paragraph>
-				</div>
+
 				<div className="size-full h-full border border-border-primary"></div>
 
 				<FullRowSeparator className="h-14" />
@@ -136,30 +135,33 @@ export function StackSection() {
 					</Card>
 				</div>
 
-				<div className="flex size-full h-full border border-border-primary p-4">
+				<div className="row-span-2 flex size-full h-full flex-col border border-border-primary p-4">
 					<h1 className="mt-auto text-2xl font-bold">
 						<FaTerminal />
 						Programming <br /> Languages
 					</h1>
-				</div>
-				<div className="size-full h-full border border-border-primary"></div>
-				<div className="size-full h-full border border-border-primary"></div>
-				<div className="size-full h-full border border-border-primary p-2">
 					<Paragraph className="text-sm">
 						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
 						porro officiis sed dolor voluptate.
 					</Paragraph>
 				</div>
 				<div className="size-full h-full border border-border-primary"></div>
+				<div className="size-full h-full border border-border-primary"></div>
+
+				<div className="size-full h-full border border-border-primary"></div>
 				<FullRowSeparator className="h-14" />
 
 				{/* Database Row */}
 				<div className="size-full h-full border border-border-primary "></div>
-				<div className="row-span2 flex size-full h-full flex-col border border-border-primary p-4">
+				<div className="row-span-2 flex size-full h-full flex-col items-end border border-border-primary p-4">
 					<h1 className="mt-auto inline-flex items-center gap-2 text-2xl font-bold">
-						<FaDatabase />
 						Database
+						<FaDatabase />
 					</h1>
+					<Paragraph className="text-end text-sm">
+						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
+						porro officiis sed dolor voluptate.
+					</Paragraph>
 				</div>
 				<div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
 					<Card className="size-full flex-wrap border-none p-8">
@@ -187,12 +189,7 @@ export function StackSection() {
 				</div>
 				<div className="size-full h-full border border-border-primary"></div>
 				<div className="size-full h-full border border-border-primary"></div>
-				<div className="size-full h-full border border-border-primary p-4">
-					<Paragraph className="text-sm">
-						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
-						porro officiis sed dolor voluptate.
-					</Paragraph>
-				</div>
+
 				<div className="size-full h-full border border-border-primary"></div>
 				<FullRowSeparator className="h-14" />
 
@@ -248,30 +245,33 @@ export function StackSection() {
 					</Card>
 				</div>
 
-				<div className="flex size-full h-full border border-border-primary p-4">
+				<div className="row-span-2 flex size-full h-full flex-col border border-border-primary p-4">
 					<h1 className="mt-auto inline-flex items-center gap-2 text-2xl font-bold">
 						<SlEnergy />
 						Skills
 					</h1>
-				</div>
-				<div className="size-full h-full border border-border-primary"></div>
-				<div className="size-full h-full border border-border-primary"></div>
-				<div className="size-full h-full border border-border-primary p-2">
 					<Paragraph className="text-sm">
 						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
 						porro officiis sed dolor voluptate.
 					</Paragraph>
 				</div>
 				<div className="size-full h-full border border-border-primary"></div>
+				<div className="size-full h-full border border-border-primary"></div>
+
+				<div className="size-full h-full border border-border-primary"></div>
 
 				<div className="size-full border border-border-primary"></div>
-				<div className=" row-span-2 size-full  border border-border-primary ">
-					<h1 className="mt-auto inline-flex items-center gap-2 p-4 text-2xl font-bold">
+				<div className=" row-span-2 flex size-full flex-col items-end border border-border-primary ">
+					<h1 className="inline-flex items-center gap-2 p-4 text-2xl font-bold">
 						<FaTools className="" />
 						Tools
 					</h1>
+					<Paragraph className="text-end text-sm">
+						Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
+						porro officiis sed dolor voluptate.
+					</Paragraph>
 				</div>
-				<div className="col-span-2 row-span-2 aspect-video size-full border border-border-primary">
+				<div className="col-span-2 row-span-2 aspect-video size-full border border-border-primary before:content-empty">
 					<Card className="size-full flex-wrap border-none p-8">
 						<div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8">
 							<StackItem className="aspect-square w-full p-4">

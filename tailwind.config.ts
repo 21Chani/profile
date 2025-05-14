@@ -68,7 +68,13 @@ export default {
 	},
 	plugins: [
 		tw_bevel,
-		plugin(function ({ matchUtilities, theme }) {
+		plugin(function ({ matchUtilities, addComponents, theme }) {
+			addComponents({
+				".content-empty": {
+					content: "''",
+				},
+			})
+
 			matchUtilities(
 				{
 					"stop-color": (val) => ({
