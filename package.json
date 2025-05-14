@@ -1,63 +1,40 @@
 {
-	"name": "profile",
-	"version": "0.1.0",
-	"private": true,
-	"type": "module",
-	"scripts": {
-		"build": "next build",
-		"dev": "next dev --turbopack",
-		"lint": "next lint",
-		"start": "next start"
-	},
-	"dependencies": {
-		"@t3-oss/env-nextjs": "^0.10.1",
-		"@tanstack/react-query": "^5.34.2",
-		"@trpc/client": "next",
-		"@trpc/react-query": "next",
-		"@trpc/server": "next",
-		"@types/dat.gui": "^0.7.13",
-		"class-variance-authority": "^0.7.0",
-		"clsx": "^2.1.1",
-		"d3": "^7.9.0",
-		"dat.gui": "^0.7.9",
-		"jotai": "^2.8.0",
-		"leva": "^0.9.35",
-		"next": "15.0.2",
-		"react": "19.0.0-rc-02c0e824-20241028",
-		"react-dom": "19.0.0-rc-02c0e824-20241028",
-		"react-icons": "^5.2.0",
-		"server-only": "^0.0.1",
-		"smooth-scrollbar": "^8.8.4",
-		"superjson": "^2.2.1",
-		"tailwind-bevel": "^1.5.31",
-		"tailwind-merge": "^2.3.0",
-		"three": "^0.164.1",
-		"zod": "^3.23.6"
-	},
-	"devDependencies": {
-		"@types/d3": "^7.4.3",
-		"@types/eslint": "^8.56.10",
-		"@types/node": "^20.12.8",
-		"@types/react": "npm:types-react@19.0.0-rc.1",
-		"@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-		"@typescript-eslint/eslint-plugin": "^7.8.0",
-		"@typescript-eslint/parser": "^7.8.0",
-		"eslint": "^8.57.0",
-		"eslint-config-next": "15.0.2",
-		"postcss": "^8.4.38",
-		"prettier": "^3.2.5",
-		"prettier-plugin-organize-imports": "^3.2.4",
-		"prettier-plugin-tailwindcss": "^0.5.14",
-		"tailwindcss": "^3.4.3",
-		"typescript": "^5.4.5"
-	},
-	"ct3aMetadata": {
-		"initVersion": "7.32.0"
-	},
-	"pnpm": {
-		"overrides": {
-			"@types/react": "npm:types-react@19.0.0-rc.1",
-			"@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
-		}
-	}
+  "name": "chani-profile",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 4000",
+    "start": "vite --port 4000",
+    "build": "vite build && tsc",
+    "serve": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.5",
+    "@fontsource/jaro": "^5.2.5",
+    "@fontsource/jetbrains-mono": "^5.2.5",
+    "@tailwindcss/vite": "^4.1.6",
+    "@tanstack/react-router": "^1.114.3",
+    "@tanstack/react-router-devtools": "^1.114.3",
+    "@tanstack/router-plugin": "^1.114.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "tailwind-merge": "^3.3.0",
+    "tailwindcss": "^4.1.6"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.2.0",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^26.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.1.0",
+    "vitest": "^3.0.5",
+    "web-vitals": "^4.2.4"
+  }
 }

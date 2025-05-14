@@ -1,21 +1,11 @@
 {
-	"prettier.configPath": "prettier.config.js",
-	"editor.codeActionsOnSave": {
-		"source.fixAll": "always"
-	},
-	"files.exclude": {
-		"**/.git": true,
-		"**/.svn": true,
-		"**/node_modules": true,
-		"**/.next": true,
-		"**/.hg": true,
-		"**/CVS": true,
-		"**/.DS_Store": true,
-		"**/Thumbs.db": true
-	},
-	"editor.tabSize": 2,
-	"tailwindCSS.experimental.classRegex": [
-		["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-		["cx\\(([^)]*)\\)", "'([^']*)'"]
-	]
+  "files.watcherExclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    "**/routeTree.gen.ts": true
+  },
+  "files.readonlyInclude": {
+    "**/routeTree.gen.ts": true
+  }
 }
