@@ -1,19 +1,18 @@
 import { rangeRandom } from "@/modules/global/lib/rangeRandom"
 import { useEffect, useState } from "react"
-import { BufferAttribute, type Mesh } from "three"
+import { BufferAttribute, BufferGeometry } from "three"
 
 interface UseEqualizeVerticesProps {
-  meshes: Mesh[]
-  onEqualized?: () => void
+  buffers: BufferGeometry[]
 }
 
-export function useEqualizeVertices({ meshes, onEqualized }: UseEqualizeVerticesProps) {
+export function useEqualizeVertices({ buffers }: UseEqualizeVerticesProps) {
   const [isEqualized, setIsEqualized] = useState(false)
-  const highestVertexCount = Math.max(...meshes.map((mesh) => mesh.geometry.attributes.position.count))
+  const highestVertexCount = Math.max(...buffers.map((geometry) => geometry.attributes.position.count))
 
   useEffect(() => {
-    meshes.forEach((mesh) => {
-      const vertexCount = mesh.geometry.attributes.position.count
+    buffers.forEach((geometry) => {
+      const vertexCount = geometry.attributes.position.count
       if (vertexCount === highestVertexCount) return
 
       // In theory this should never happen.
@@ -21,7 +20,7 @@ export function useEqualizeVertices({ meshes, onEqualized }: UseEqualizeVertices
       if (vertexCount > highestVertexCount) throw new Error("Mesh has more vertices than the highest vertex count")
 
       const newPositions = new Float32Array(highestVertexCount * 3) // * 3 Means that we have XYZ coords for each vertex.
-      newPositions.set(mesh.geometry.attributes.position.array)
+      newPositions.set(geometry.attributes.position.array)
 
       const diff = highestVertexCount - vertexCount
       for (let i = 0; i < diff; i++) {
@@ -36,11 +35,11 @@ export function useEqualizeVertices({ meshes, onEqualized }: UseEqualizeVertices
         const rY = rVertice * 3 + 1
         const rZ = rVertice * 3 + 2
 
-        newPositions[x] = mesh.geometry.attributes.position.array[rX]
-        newPositions[y] = mesh.geometry.attributes.position.array[rY]
-        newPositions[z] = mesh.geometry.attributes.position.array[rZ]
+        newPositions[x] = geometry.attributes.position.array[rX]
+        newPositions[y] = geometry.attributes.position.array[rY]
+        newPositions[z] = geometry.attributes.position.array[rZ]
       }
-      mesh.geometry.setAttribute("position", new BufferAttribute(newPositions, 3))
+      geometry.setAttribute("position", new BufferAttribute(newPositions, 3))
     })
     setIsEqualized(true)
 
@@ -48,7 +47,7 @@ export function useEqualizeVertices({ meshes, onEqualized }: UseEqualizeVertices
     return () => {
       setIsEqualized(false)
     }
-  }, [meshes, setIsEqualized])
+  }, [buffers, setIsEqualized])
 
-  return { isEqualized }
+  return { isEqualized, highestVertexCount }
 }

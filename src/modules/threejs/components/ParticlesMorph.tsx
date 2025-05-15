@@ -4,17 +4,20 @@ import { useEqualizeVertices } from "@/modules/shaders/hooks/useEqualizeVertices
 import { useRandomizeAttributes } from "@/modules/shaders/hooks/useRandomizeAttributes"
 import { MovingParticlesShader } from "@/modules/shaders/particles"
 import { useFrame } from "@react-three/fiber"
-import { useEffect, useRef } from "react"
-import { Clock, type Mesh } from "three"
+import { useEffect, useMemo, useRef } from "react"
+import { BufferAttribute, BufferGeometry, Clock } from "three"
 
 const clock = new Clock()
 
 interface ParticlesMorphProps {
-  meshes: Mesh[]
+  buffers: BufferGeometry[]
   active: number
   randomAnimation?: boolean
   onTransitionStart?: () => void
   onTransitionEnd?: () => void
+  isAppearing?: boolean
+  isDisappearing?: boolean
+  isVisible?: boolean
 }
 
 /**
@@ -23,29 +26,77 @@ interface ParticlesMorphProps {
  * It performs a morphing effect on particles using a shader between two meshes.
  * @param current - The current mesh to be morphed.
  * @param target - The target mesh to morph into.
+ * @param randomAnimation - If true, makes a random animation for the particles.
+ * @param onTransitionStart - Callback function to be called when the transition starts.
+ * @param onTransitionEnd - Callback function to be called when the transition ends.
+ * @param isAppearing - If true, the particles will appear.
+ * @param isDisappearing - If true, the particles will disappear.
  */
 export function ParticlesMorph({
-  meshes,
+  buffers,
   active,
   randomAnimation,
   onTransitionEnd,
   onTransitionStart,
+  isAppearing,
+  isDisappearing,
+  isVisible,
 }: ParticlesMorphProps) {
   // Ref States
-  const previousActive = usePrevious(active)
   const shouldTransition = useRef(false)
   const progress = useRef(0)
+  const finalPosition = useRef<BufferAttribute>(undefined)
+  const previousActive = usePrevious(active)
 
   // Shader Ref individual for each instance
   const particlesShader = useRef(new MovingParticlesShader())
 
-  if (active > meshes.length - 1) throw new Error("active index is out of bounds")
-  const virtualGeometry = useRef(meshes[active].geometry.clone())
+  if (active > buffers.length - 1) throw new Error("active index is out of bounds")
+  const virtualGeometry = useRef(buffers[active].clone())
 
   // This is necessary to make sure all meshes will share the same vertex count
   // So that they can transition between each other
   useRandomizeAttributes({ geometry: virtualGeometry.current, enabled: randomAnimation })
-  useEqualizeVertices({ meshes })
+  const equalize = useEqualizeVertices({ buffers: buffers })
+
+  function initializeTransition({ target, from }: { target: BufferGeometry; from?: BufferGeometry }) {
+    // Define the new target geometry
+    if (from) virtualGeometry.current.setAttribute("position", from.attributes.position)
+    virtualGeometry.current.setAttribute("a_Target", target.attributes.position)
+
+    finalPosition.current = target.attributes.position as BufferAttribute
+
+    // Set the transition state
+    progress.current = 0
+    onTransitionStart?.()
+    shouldTransition.current = true
+    particlesShader.current.uniforms.u_Progress.value = 0
+  }
+
+  const appearGeometry = useMemo(() => {
+    const positions = new Float32Array(equalize.highestVertexCount * 3)
+    new Array(equalize.highestVertexCount).forEach((_, i) => {
+      const normalizedIndex = i * 3 // Amount of vertices
+      const iX = normalizedIndex + 0
+      const iY = normalizedIndex + 1
+      const iZ = normalizedIndex + 2
+
+      positions[iX] = 0
+      positions[iY] = 0
+      positions[iZ] = 0
+    })
+
+    const geometry = new BufferGeometry()
+    geometry.setAttribute("position", new BufferAttribute(positions, 3))
+    return geometry
+  }, [equalize.highestVertexCount])
+
+  // Appear and disappear effect.
+  useEffect(() => void (isDisappearing && initializeTransition({ target: appearGeometry })), [isDisappearing])
+  useEffect(
+    () => void (isAppearing && initializeTransition({ target: buffers[active], from: appearGeometry })),
+    [isAppearing]
+  )
 
   /**
    * Listen to active changes effect
@@ -53,15 +104,7 @@ export function ParticlesMorph({
    */
   useEffect(() => {
     if (active === previousActive || shouldTransition.current) return
-
-    // Define the new target geometry
-    virtualGeometry.current.setAttribute("a_Target", meshes[active].geometry.attributes.position)
-
-    // Set the transition state
-    progress.current = 0
-    onTransitionStart?.()
-    shouldTransition.current = true
-    particlesShader.current.uniforms.u_Progress.value = 0
+    initializeTransition({ target: buffers[active] })
   }, [active, previousActive])
 
   function updateTransition(delta: number) {
@@ -72,8 +115,10 @@ export function ParticlesMorph({
     if (progress.current >= 1) {
       onTransitionEnd?.()
       // Reasign the geometry to the new target and new position
-      virtualGeometry.current.setAttribute("position", meshes[active].geometry.attributes.position)
-      virtualGeometry.current.setAttribute("a_Target", meshes[active].geometry.attributes.position)
+      if (finalPosition.current) {
+        virtualGeometry.current.setAttribute("position", finalPosition.current)
+        virtualGeometry.current.setAttribute("a_Target", finalPosition.current)
+      }
 
       // Reset the transition state
       particlesShader.current.uniforms.u_Progress.value = 0
@@ -89,6 +134,7 @@ export function ParticlesMorph({
     const delta = clock.getDelta()
     updateTransition(delta)
 
+    if (!isVisible) return
     if (randomAnimation) particlesShader.current.uniforms.u_Time.value = clock.getElapsedTime()
   })
 
