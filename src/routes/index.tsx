@@ -2,16 +2,56 @@ import { Card } from "@/modules/global/components/Card";
 import { ItemInfo } from "@/modules/global/components/ItemInfo";
 import { NavLink } from "@/modules/global/components/NavLink";
 import { Paragraph } from "@/modules/global/components/Paragraph";
+import { MovingParticlesShader } from "@/modules/shaders/particles";
+import { useGLTF } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { FaDatabase, FaDesktop, FaTerminal, FaTools } from "react-icons/fa";
 import { SlEnergy } from "react-icons/sl";
 import { twMerge } from "tailwind-merge";
+import { BufferAttribute, Clock, Uniform, type Mesh } from "three";
 
 export const Route = createFileRoute("/")({
   component: App,
 });
 
+const particlesShader = new MovingParticlesShader();
+
+const clock = new Clock();
+
+function getTime() {
+  const time = clock.getElapsedTime();
+  particlesShader.uniforms.u_Time = new Uniform(time);
+
+  requestAnimationFrame(getTime);
+}
+
 function App() {
+  const { scene } = useGLTF("/models/arch.glb");
+  const archMesh = scene.children[0] as Mesh;
+
+  archMesh.geometry.setIndex(null);
+
+  useEffect(() => {
+    requestAnimationFrame(getTime);
+  }, []);
+
+  useEffect(() => {
+    if (!archMesh) return;
+
+    const length = archMesh.geometry.attributes.position.count;
+
+    const randomAttributes = new Float32Array(length);
+    for (let i = 0; i < length; i++) {
+      randomAttributes[i] = (Math.random() * 2 - 1) / 2;
+    }
+    archMesh.geometry.setAttribute(
+      "a_Random",
+      new BufferAttribute(randomAttributes, 1)
+    );
+  }, []);
+
   return (
     <div className=" bg-background h-screen min-h-screen">
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
@@ -59,7 +99,19 @@ function App() {
             </Paragraph>
           </div>
           <div className="col-span-2 row-span-2 aspect-video size-full h-full min-h-[440px] border border-border-primary ">
-            {/* <OperatingSystem /> */}
+            <Card className="size-full flex-wrap border-none ">
+              <Canvas className="">
+                {/* <OrbitControls /> */}
+                <points
+                  geometry={archMesh.geometry}
+                  rotation={[Math.PI / 2, 0, 0]}
+                  position={[0, -0.2, 3.5]}
+                  material={particlesShader}
+                >
+                  {" "}
+                </points>
+              </Canvas>
+            </Card>
           </div>
           <div className="size-full h-full border border-border-primary"></div>
           <div className="size-full h-full border border-border-primary"></div>
