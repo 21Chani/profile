@@ -1,4 +1,4 @@
-import { usePrevious } from "@/modules/global/hoos/usePrevious"
+import { usePrevious } from "@/modules/global/hooks/usePrevious"
 import { easeInOutCubic } from "@/modules/global/lib/easeInOut"
 import { useEqualizeVertices } from "@/modules/shaders/hooks/useEqualizeVertices"
 import { useRandomizeAttributes } from "@/modules/shaders/hooks/useRandomizeAttributes"

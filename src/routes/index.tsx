@@ -2,34 +2,15 @@ import { Card } from "@/modules/global/components/Card"
 import { ItemInfo } from "@/modules/global/components/ItemInfo"
 import { NavLink } from "@/modules/global/components/NavLink"
 import { Paragraph } from "@/modules/global/components/Paragraph"
-import { ParticlesMorph } from "@/modules/threejs/components/ParticlesMorph"
-import { useGLTF } from "@react-three/drei"
-import { Canvas } from "@react-three/fiber"
+import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { createFileRoute } from "@tanstack/react-router"
-import { useRef, useState } from "react"
 import { FaDatabase, FaDesktop, FaTerminal, FaTools } from "react-icons/fa"
 import { SlEnergy } from "react-icons/sl"
 import { twMerge } from "tailwind-merge"
-import { type Mesh } from "three"
 
 export const Route = createFileRoute("/")({ component: App })
 
 function App() {
-  const fedora = useGLTF("/models/fedora.glb")
-  const ubuntu = useGLTF("/models/ubuntu.glb")
-  const arch = useGLTF("/models/arch.glb")
-  const fedoraMesh = fedora.scene.children[0] as Mesh
-  const ubuntuMesh = ubuntu.scene.children[0] as Mesh
-  const archMesh = arch.scene.children[0] as Mesh
-
-  fedoraMesh.geometry.setIndex(null)
-  ubuntuMesh.geometry.setIndex(null)
-  archMesh.geometry.setIndex(null)
-
-  const [activeOS, setActiveOS] = useState(1)
-
-  const nextButtonRef = useRef<HTMLButtonElement>(null)
-
   return (
     <div className=" bg-background h-screen min-h-screen">
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
@@ -76,20 +57,7 @@ function App() {
             </Paragraph>
           </div>
           <div className="col-span-2 row-span-2 aspect-video size-full h-full min-h-[440px] border border-border-primary ">
-            <Card className="size-full flex-wrap border-none ">
-              <button ref={nextButtonRef} className="absolute z-10" onClick={() => setActiveOS(activeOS + 1)}>
-                <h1 className="text-3xl">next</h1>
-              </button>
-              <Canvas className="">
-                <ParticlesMorph
-                  onTransitionStart={() => (nextButtonRef.current!.disabled = true)}
-                  onTransitionEnd={() => (nextButtonRef.current!.disabled = false)}
-                  meshes={[fedoraMesh, ubuntuMesh, archMesh]}
-                  active={activeOS % 3}
-                  randomAnimation
-                />
-              </Canvas>
-            </Card>
+            <OperatingSystemCard />
           </div>
           <div className="size-full h-full border border-border-primary"></div>
           <div className="size-full h-full border border-border-primary"></div>
