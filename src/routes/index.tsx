@@ -28,7 +28,7 @@ function getTime() {
 }
 
 function App() {
-  const { scene } = useGLTF("/models/arch.glb");
+  const { scene } = useGLTF("/models/fedora.glb");
   const archMesh = scene.children[0] as Mesh;
 
   archMesh.geometry.setIndex(null);
@@ -105,7 +105,7 @@ function App() {
                 <points
                   geometry={archMesh.geometry}
                   rotation={[Math.PI / 2, 0, 0]}
-                  position={[0, -0.2, 3.5]}
+                  position={[0, -0, 3.5]}
                   material={particlesShader}
                 >
                   {" "}
