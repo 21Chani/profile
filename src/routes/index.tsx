@@ -1,10 +1,11 @@
 import { Card } from "@/modules/global/components/Card"
+import { EncryptedText } from "@/modules/global/components/EncryptedText"
 import { ItemInfo } from "@/modules/global/components/ItemInfo"
 import { NavLink } from "@/modules/global/components/NavLink"
 import { Paragraph } from "@/modules/global/components/Paragraph"
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { createFileRoute } from "@tanstack/react-router"
-import { Suspense } from "react"
+import { Suspense, useRef } from "react"
 import { FaDatabase, FaDesktop, FaTerminal, FaTools } from "react-icons/fa"
 import { SlEnergy } from "react-icons/sl"
 import { twMerge } from "tailwind-merge"
@@ -19,6 +20,8 @@ const material = new MeshStandardMaterial({
 export const Route = createFileRoute("/")({ component: App })
 
 function App() {
+  const ref = useRef<HTMLHeadingElement>(null)
+
   return (
     <div className=" bg-background h-screen min-h-screen">
       {/* <div className="absolute w-full h-full z-[40] p-10  flex  ">
@@ -198,14 +201,17 @@ function Summary() {
         {/* Title */}
         <span className="mx-auto uppercase ">
           <h1 className="text-xl font-bold md:text-4xl text-foreground-alt xl:text-5xl xl:leading-[42px]">
-            {"I'm Chani"}
+            <EncryptedText text="I'm Chani" iterations={12} />
           </h1>
           <h1 className="text-xl font-bold md:text-4xl text-foreground-alt xl:text-5xl xl:leading-[42px]">
-            A{" "}
-            <span className="bg-gradient-to-br text-gradient-highlight">
-              full stack <br className="max-xl:hidden" /> software
-            </span>{" "}
-            engineer
+            <EncryptedText text="A" iterations={1} />
+            &nbsp;
+            <EncryptedText className="text-gradient-highlight" text="full stack" iterations={12} />
+            <br className="ma-xl:hidden" />
+            <EncryptedText className="text-gradient-highlight" text="software" iterations={12} />
+            &nbsp;
+            <EncryptedText text="engineer" iterations={12} />
+            {/* engineer */}
           </h1>
         </span>
 

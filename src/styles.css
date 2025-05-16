@@ -40,6 +40,18 @@
   @apply bg-gradient-to-br from-white to-foreground bg-clip-text text-transparent;
 }
 
+.bg-dotted {
+  opacity: 0.7;
+  /* background-image: radial-gradient(var(--color-border-primary) 1px, transparent 0);
+  background-size: 15px 15px;
+  background-color: var(--color-background); */
+  /* background-position: -19px -19px; */
+}
+
+/* 
+  KEYFRAMES
+*/
+
 @keyframes expand-from-top-to-bottom {
   0% {
     transform: scaleY(0);
@@ -49,12 +61,4 @@
     transform: scaleY(1);
     transform-origin: top;
   }
-}
-
-.bg-dotted {
-  opacity: 0.7;
-  /* background-image: radial-gradient(var(--color-border-primary) 1px, transparent 0);
-  background-size: 15px 15px;
-  background-color: var(--color-background); */
-  /* background-position: -19px -19px; */
 }
