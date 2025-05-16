@@ -1,4 +1,5 @@
 import { Card } from "@/modules/global/components/Card"
+import { ProgressCountBar } from "@/modules/global/components/ProgressCountBar"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { ParticlesMorph } from "@/modules/threejs/components/ParticlesMorph"
 import { useGLTF } from "@react-three/drei"
@@ -48,23 +49,16 @@ export function OperatingSystemCard() {
 
   return (
     <Card ref={setCardRef} className="size-full flex-wrap border-none ">
-      <div className="flex flex-col absolute z-[9999] left-0 gap-1 h-full p-3">
-        {OSGeometries.map((_, index) => (
-          <button
-            role="option"
-            key={`operating_system_selector_${index}`}
-            aria-hidden={!intersection.isVisible}
-            className="w-1.5 h-full bg-foreground-alt/30 aria-hidden:opacity-0 transition-all ease-out duration-1000 from-orange-200 cursor-pointer relative to-orange-900 rounded-2xl overflow-hidden"
-            onClick={() => !isTransitioning.current && setActiveOS(index)}
-          >
-            <div
-              data-active={index === normalizedIndex && intersection.isVisible}
-              className="w-full absolute data-[active=false]:scale-0 top-0 data-[active=true]:animate-expand-from-top-to-bottom-4000 h-full bg-gradient-to-b from-orange-200 to-orange-900 rounded-full"
-              onAnimationEnd={() => setActiveOS(index + 1)}
-            />
-          </button>
-        ))}
-      </div>
+      <ProgressCountBar
+        aria-hidden={!intersection.isVisible}
+        itemCount={OSGeometries.length}
+        activeIndex={normalizedIndex}
+        onCompleteCycle={(newIndex) => {
+          if (isTransitioning.current) return
+          setActiveOS(newIndex)
+        }}
+        className="absolute top-0 left-0 w-full h-full"
+      />
 
       <Canvas>
         <ParticlesMorph
