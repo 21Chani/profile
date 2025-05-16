@@ -3,14 +3,41 @@
 @theme {
   --color-background: hsl(270 11.1% 3.5%);
   --color-background-alt: hsl(0 0% 10%);
-  --color-foreground: hsl(0 0% 100%);
-  --color-foreground-alt: hsl(0 0% 60%);
+  --color-foreground: hsl(0 0% 50%);
+  --color-foreground-alt: hsl(0 0% 40%);
   --color-border-primary: hsl(0 0% 14%);
 
-  --font-jaro: "Jaro";
-  --font-jetbrains: "JetBrains Mono", monospace;
+  /* Gray scale */
+  --color-gray-50: hsl(0 0% 98%);
+  --color-gray-100: hsl(0 0% 95%);
+  --color-gray-200: hsl(0 0% 90%);
+  --color-gray-300: hsl(0 0% 80%);
+  --color-gray-400: hsl(0 0% 70%);
+  --color-gray-500: hsl(0 0% 60%);
+  --color-gray-600: hsl(0 0% 50%);
+  --color-gray-700: hsl(0 0% 40%);
+  --color-gray-800: hsl(0 0% 30%);
+  --color-gray-900: hsl(0 0% 20%);
+  --color-gray-1000: hsl(0 0% 10%);
+
+  /* --font-jaro: "Jaro"; */
+  --font-jetbrains: "Cascadia Code", monospace;
 
   --animate-expand-from-top-to-bottom-4000: expand-from-top-to-bottom 6s ease-out forwards;
+}
+
+@layer base {
+  h1 {
+    @apply text-foreground font-jetbrains font-bold;
+  }
+
+  p {
+    @apply font-jetbrains;
+  }
+}
+
+@utility text-gradient-highlight {
+  @apply bg-gradient-to-br from-white to-foreground bg-clip-text text-transparent;
 }
 
 @keyframes expand-from-top-to-bottom {
@@ -25,16 +52,9 @@
 }
 
 .bg-dotted {
-  background-image: radial-gradient(var(--color-border-primary) 1px, transparent 0);
-  background-size: 20px 20px;
-  background-color: var(--color-background);
+  opacity: 0.7;
+  /* background-image: radial-gradient(var(--color-border-primary) 1px, transparent 0);
+  background-size: 15px 15px;
+  background-color: var(--color-background); */
   /* background-position: -19px -19px; */
-}
-
-h1 {
-  @apply text-foreground font-jaro font-bold;
-}
-
-p {
-  @apply font-jetbrains;
 }

@@ -8,16 +8,34 @@ import { Suspense } from "react"
 import { FaDatabase, FaDesktop, FaTerminal, FaTools } from "react-icons/fa"
 import { SlEnergy } from "react-icons/sl"
 import { twMerge } from "tailwind-merge"
+import { MeshStandardMaterial } from "three"
 
+const material = new MeshStandardMaterial({
+  color: "#fff",
+  // emissive: "#fff",
+  // roughness: 0.5,
+  // metalness: 0.5,
+})
 export const Route = createFileRoute("/")({ component: App })
 
 function App() {
   return (
     <div className=" bg-background h-screen min-h-screen">
+      {/* <div className="absolute w-full h-full z-[40] p-10  flex  ">
+        <Canvas>
+          <OrbitControls />
+          <pointLight position={[10, -10, -10]} intensity={20} /> 
+          <mesh material={material}>
+            <sphereGeometry />
+          </mesh>
+        </Canvas> 
+      </div> */}
+
+      {/* oi */}
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
         <div className="relative flex w-full flex-col">
           <nav className="flex flex-1 justify-between p-4 ">
-            <h6 className="font-jaro  uppercase">- &emsp; A coding guy.</h6>
+            <h6 className="font-jaro text-foreground uppercase">- &emsp; A coding guy.</h6>
 
             <div className="flex flex-col">
               <NavLink>Home</NavLink>
@@ -46,10 +64,10 @@ function App() {
           <FullRowSeparator className="h-14" />
 
           {/* Operating Systems Row */}
-          <div className="size-full h-full border border-border-primary "></div>
-          <div className="row-span-2 flex size-full h-full flex-col items-end justify-end border border-border-primary p-4">
+          <div className="size-full h-full borde border-imary "></div>
+          <div className="row-span-2 flex size-full h-full flex-col items-end justify-end borde border-imary p-4">
             <FaDesktop />
-            <h1 className=" text-end text-3xl font-bold">
+            <h1 className=" text-end text-3xl font-extrabold uppercase text-gradient-highlight">
               Operating <br /> Systems
             </h1>
             <Paragraph className="text-end text-sm">
@@ -57,27 +75,27 @@ function App() {
               sit porro officiis sed dolor voluptate.
             </Paragraph>
           </div>
-          <div className="col-span-2 row-span-2 aspect-video size-full h-full min-h-[440px] border border-border-primary ">
+          <div className="col-span-2 row-span-2 aspect-video size-full h-full min-h-[440px] borde border-imary ">
             <Suspense fallback={<h1>LOADING</h1>}>
               <OperatingSystemCard />
             </Suspense>
           </div>
-          <div className="size-full h-full border border-border-primary"></div>
-          <div className="size-full h-full border border-border-primary"></div>
+          <div className="size-full h-full borde border-imary"></div>
+          <div className="size-full h-full borde border-imary"></div>
 
-          <div className="size-full h-full border border-border-primary"></div>
+          <div className="size-full h-full borde border-imary"></div>
 
           <FullRowSeparator className="h-14" />
 
           {/* Languages Row */}
-          <div className="size-full h-full border border-border-primary "></div>
-          <div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
+          <div className="size-full h-full borde border-imary "></div>
+          <div className="col-span-2 row-span-2 aspect-video size-full h-full borde border-imary ">
             <Card className="size-full flex-wrap border-none p-8">
               <div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8"></div>
             </Card>
           </div>
 
-          <div className="row-span-2 flex size-full h-full flex-col border border-border-primary p-4">
+          <div className="row-span-2 flex size-full h-full flex-col borde border-imary p-4">
             <h1 className="mt-auto text-3xl font-bold">
               <FaTerminal />
               Programming <br /> Languages
@@ -87,15 +105,15 @@ function App() {
               sit porro officiis sed dolor voluptate.
             </Paragraph>
           </div>
-          <div className="size-full h-full border border-border-primary"></div>
-          <div className="size-full h-full border border-border-primary"></div>
+          <div className="size-full h-full borde border-imary"></div>
+          <div className="size-full h-full borde border-imary"></div>
 
-          <div className="size-full h-full border border-border-primary"></div>
+          <div className="size-full h-full borde border-imary"></div>
           <FullRowSeparator className="h-14" />
 
           {/* Database Row */}
-          <div className="size-full h-full border border-border-primary "></div>
-          <div className="row-span-2 flex size-full h-full flex-col items-end border border-border-primary p-4">
+          <div className="size-full h-full borde border-imary "></div>
+          <div className="row-span-2 flex size-full h-full flex-col items-end borde border-imary p-4">
             <h1 className="mt-auto inline-flex items-center gap-2 text-3xl font-bold">
               Database
               <FaDatabase />
@@ -105,26 +123,26 @@ function App() {
               sit porro officiis sed dolor voluptate.
             </Paragraph>
           </div>
-          <div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
+          <div className="col-span-2 row-span-2 aspect-video size-full h-full borde border-imary ">
             <Card className="size-full flex-wrap border-none p-8">
               <div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8"></div>
             </Card>
           </div>
-          <div className="size-full h-full border border-border-primary"></div>
-          <div className="size-full h-full border border-border-primary"></div>
+          <div className="size-full h-full borde border-imary"></div>
+          <div className="size-full h-full borde border-imary"></div>
 
-          <div className="size-full h-full border border-border-primary"></div>
+          <div className="size-full h-full borde border-imary"></div>
           <FullRowSeparator className="h-14" />
 
           {/* Skills Row */}
-          <div className="size-full h-full border border-border-primary "></div>
-          <div className="col-span-2 row-span-2 aspect-video size-full h-full border border-border-primary ">
+          <div className="size-full h-full borde border-imary "></div>
+          <div className="col-span-2 row-span-2 aspect-video size-full h-full borde border-imary ">
             <Card className="size-full flex-wrap border-none p-8">
               <div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8"></div>
             </Card>
           </div>
 
-          <div className="row-span-2 flex size-full h-full flex-col border border-border-primary p-4">
+          <div className="row-span-2 flex size-full h-full flex-col borde border-imary p-4">
             <h1 className="mt-auto inline-flex items-center gap-2 text-3xl font-bold">
               <SlEnergy />
               Skills
@@ -134,13 +152,13 @@ function App() {
               sit porro officiis sed dolor voluptate.
             </Paragraph>
           </div>
-          <div className="size-full h-full border border-border-primary"></div>
-          <div className="size-full h-full border border-border-primary"></div>
+          <div className="size-full h-full borde border-imary"></div>
+          <div className="size-full h-full borde border-imary"></div>
 
-          <div className="size-full h-full border border-border-primary"></div>
+          <div className="size-full h-full borde border-imary"></div>
 
-          <div className="size-full border border-border-primary"></div>
-          <div className=" row-span-2 flex size-full flex-col items-end border border-border-primary ">
+          <div className="size-full borde border-imary"></div>
+          <div className=" row-span-2 flex size-full flex-col items-end borde border-imary ">
             <h1 className="inline-flex items-center gap-2 p-4 text-3xl font-bold">
               <FaTools className="" />
               Tools
@@ -150,15 +168,15 @@ function App() {
               sit porro officiis sed dolor voluptate.
             </Paragraph>
           </div>
-          <div className="col-span-2 row-span-2 aspect-video size-full border border-border-primary before:content-empty">
+          <div className="col-span-2 row-span-2 aspect-video size-full borde border-imary before:content-empty">
             <Card className="size-full flex-wrap border-none p-8">
               <div className="m-auto grid h-fit w-2/4 grid-cols-[repeat(auto-fill,_minmax(50px,1fr))] gap-8"></div>
             </Card>
           </div>
 
-          <div className="size-full border border-border-primary"></div>
-          <div className="size-full border border-border-primary"></div>
-          <div className="size-full border border-border-primary"></div>
+          <div className="size-full borde border-imary"></div>
+          <div className="size-full borde border-imary"></div>
+          <div className="size-full borde border-imary"></div>
         </div>
       </section>
     </div>
@@ -170,19 +188,21 @@ function Summary() {
     <div className=" flex items-start gap-2 max-md:flex-col ">
       {/* Details */}
       <div className="mt-2 flex flex-1 flex-col items-center gap-1 max-md:flex-row">
-        <div className="z-10 size-4 rounded border-2 border-orange-500" />
-        <div className="z-10 size-4 rounded border-2 border-orange-400" />
-        <div className="z-10 size-4 rounded border-2 border-orange-300" />
+        <div className="z-10 size-4 rounded border-2 border-gray-500" />
+        <div className="z-10 size-4 rounded border-2 border-gray-400" />
+        <div className="z-10 size-4 rounded border-2 border-gray-300" />
       </div>
 
       {/* Summary */}
       <div className="text-foreground ">
         {/* Title */}
         <span className="mx-auto uppercase ">
-          <h1 className="text-xl font-bold md:text-4xl  xl:text-5xl xl:leading-[42px]">{"Hey there, I'm Chani!"}</h1>
-          <h1 className="text-xl font-bold md:text-4xl  xl:text-5xl xl:leading-[42px]">
+          <h1 className="text-xl font-bold md:text-4xl text-foreground-alt xl:text-5xl xl:leading-[42px]">
+            {"I'm Chani"}
+          </h1>
+          <h1 className="text-xl font-bold md:text-4xl text-foreground-alt xl:text-5xl xl:leading-[42px]">
             A{" "}
-            <span className="bg-gradient-to-br from-orange-100 to-orange-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-br text-gradient-highlight">
               full stack <br className="max-xl:hidden" /> software
             </span>{" "}
             engineer
@@ -201,11 +221,10 @@ function Summary() {
     </div>
   )
 }
-
 function ProfileView() {
   return (
     <div className="max-md:w-full">
-      <Card className=" aspect-video w-[550px] justify-center  max-md:w-full ">
+      <Card className=" bg-gradient-to-br from-background-alt/20 from-30% border border-border-primary to-black aspect-video w-[550px] justify-center rounded-none shadow-[6px_6px_0px_0px_#666] max-md:w-full  ">
         <img
           className=" mx-auto absolute bottom-0 w-[90%] object-contain "
           alt="Picture of the author"
@@ -213,12 +232,12 @@ function ProfileView() {
         />
 
         {/* Plus Signes */}
-        <span className="absolute right-4 top-2 font-jetbrains text-3xl text-orange-400">+</span>
-        <span className="absolute right-7 top-1.5 font-jetbrains text-xl text-orange-400">+</span>
+        <span className="absolute right-4 top-2 font-jetbrains text-3xl text-gray-400">+</span>
+        <span className="absolute right-7 top-1.5 font-jetbrains text-xl text-gray-400">+</span>
         <div className="absolute right-2 top-20 flex flex-col gap-2">
-          <span className=" h-12 w-1 bg-gradient-to-b to-orange-400 from-orange-900 font-jetbrains text-3xl"></span>
-          <span className=" h-12 w-1 bg-gradient-to-b to-orange-200 from-orange-400 font-jetbrains text-3xl"></span>
-          <span className=" h-12 w-1 bg-gradient-to-b to-orange-200 from-orange-400 font-jetbrains text-3xl"></span>
+          <span className=" h-12 w-1 bg-gradient-to-b to-gray-400 from-gray-900 font-jetbrains text-3xl"></span>
+          <span className=" h-12 w-1 bg-gradient-to-b to-gray-200 from-gray-400 font-jetbrains text-3xl"></span>
+          <span className=" h-12 w-1 bg-gradient-to-b to-gray-200 from-gray-400 font-jetbrains text-3xl"></span>
         </div>
         <div className="absolute left-2 top-8 flex flex-col gap-1 ">
           <ItemInfo>
@@ -245,5 +264,84 @@ function ProfileView() {
 function FullRowSeparator({ rows = 5, className }: { className?: string; rows?: number }) {
   return new Array(rows)
     .fill(0)
-    .map((_, i) => <div className={twMerge("size-full h-full border border-border-primary", className)} key={i} />)
+    .map((_, i) => <div className={twMerge("size-full h-full borde border-imary", className)} key={i} />)
+}
+
+function CodeBlocks() {
+  return (
+    <>
+      <div className=" flex flex-col gap-2">
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-96 h-2 bg-gray-400 rounded-full"></div>
+      </div>
+      <div className=" flex flex-col gap-2">
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>{" "}
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-96 h-2 bg-gray-400 rounded-full"></div>
+      </div>
+      <div className=" flex flex-col gap-2">
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-96 h-2 bg-gray-400 rounded-full"></div>
+      </div>
+      <div className=" flex flex-col gap-2">
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>{" "}
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>{" "}
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>{" "}
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-96 h-2 bg-gray-400 rounded-full"></div>
+      </div>
+      <div className=" flex flex-col gap-2">
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>{" "}
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>{" "}
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>{" "}
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-96 h-2 bg-gray-400 rounded-full"></div>
+      </div>
+      <div className=" flex flex-col gap-2">
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>{" "}
+        <div className="w-72 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-20 h-2 bg-gray-400 rounded-full"></div>
+        <div className="w-62 h-2 bg-gray-400 rounded-full"></div>
+      </div>
+    </>
+  )
 }

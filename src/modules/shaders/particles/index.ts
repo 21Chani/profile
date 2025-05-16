@@ -17,6 +17,7 @@ export class MovingParticlesShader extends particlesMaterial {
   constructor(props: ShaderMaterialParameters = {}) {
     super({
       depthWrite: false,
+      // transparent: true,
       blending: AdditiveBlending,
       ...props,
     })

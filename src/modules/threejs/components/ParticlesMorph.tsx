@@ -73,6 +73,7 @@ export function ParticlesMorph({
 
     // Set the transition state
     progress.current = 0
+    clock.start()
     onTransitionStart?.()
     shouldTransition.current = true
     particlesShader.current.uniforms.u_Progress.value = 0
@@ -132,7 +133,7 @@ export function ParticlesMorph({
       material={particlesShader.current}
       rotation={[Math.PI / 2, 0, 0]}
       geometry={virtualGeometry.current}
-      position={[0, -0, 3.5]}
+      position={[-0.3, -0, 3]}
     />
   )
 }

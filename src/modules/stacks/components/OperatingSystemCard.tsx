@@ -50,24 +50,52 @@ export function OperatingSystemCard() {
   return (
     <Card ref={setCardRef} className="size-full flex-wrap border-none ">
       <ProgressCountBar
-        aria-hidden={!intersection.isVisible}
-        itemCount={OSGeometries.length}
         activeIndex={normalizedIndex}
-        onCompleteCycle={(newIndex) => {
-          if (isTransitioning.current) return
-          setActiveOS(newIndex)
-        }}
+        onCompleteCycle={setActiveOS}
+        itemCount={OSGeometries.length}
+        aria-hidden={!intersection.isVisible}
         className="absolute top-0 left-0 w-full h-full"
+        onSelectItem={(index) => !isTransitioning.current && setActiveOS(index)}
       />
+
+      <div className="absolute w-2/4 h-full inset-0 bg-gradient-to-r from-background from-30% to-background/0 z-[999]"></div>
+      <Card
+        // hidden
+        variant={"glassy"}
+        className="!absolute gap-2 bg-back/50 backdrop- border- shado-[6px_6px_0px_0px_#2227] border-border-primary z-40 border-dashed rounded-2xl bottom-2 right-2 flex items-end justify-end flex-col p-2"
+      >
+        <div className="flex flex-col justify-end items-end">
+          <p className="text-foreground-alt font-jaro font-bold text-center">Name</p>
+          <h1 className="text-2xl text-gradient-highlight leading-5 uppercase">Windows 11</h1>
+        </div>
+        <div className="flex flex-col justify-end items-end">
+          <p className="text-foreground-alt font-jaro font-bold text-center text-sm leading-2">Skill</p>
+          <div className="flex gap-2 w-40 ">
+            <div className="h-2 w-full rounded-full bg-gray-100"></div>
+            <div className="h-2 w-full rounded-full bg-gray-200"></div>
+            <div className="h-2 w-full rounded-full bg-gray-300"></div>
+            <div className="h-2 w-full rounded-full bg-gray-400"></div>
+            <div className="h-2 w-full rounded-full bg-gray-500"></div>
+          </div>
+        </div>
+        {/* <div className="flex flex-col justify-end items-end">
+          <p className="text-foreground-alt font-jaro font-bold text-center text-sm leading-2">Proeficiency</p>
+          <div className="h-2 w-20 rounded-full bg-white/20"></div>
+        </div>
+        <div className="flex flex-col justify-end items-end">
+          <p className="text-foreground-alt font-jaro font-bold text-center text-sm leading-2">Time spent</p>
+          <div className="h-2 w-40 rounded-full bg-white/20"></div>
+        </div> */}
+      </Card>
 
       <Canvas>
         <ParticlesMorph
           onTransitionStart={() => (isTransitioning.current = true)}
           onTransitionEnd={() => (isTransitioning.current = false)}
-          buffers={OSGeometries}
           active={normalizedIndex}
-          randomAnimation
+          buffers={OSGeometries}
           {...intersection}
+          randomAnimation
         />
       </Canvas>
     </Card>
