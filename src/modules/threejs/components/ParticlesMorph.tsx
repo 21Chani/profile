@@ -6,6 +6,7 @@ import { MovingParticlesShader } from "@/modules/shaders/particles"
 import { useFrame } from "@react-three/fiber"
 import { useEffect, useMemo, useRef } from "react"
 import { BufferAttribute, BufferGeometry, Clock } from "three"
+import { generateSingularity } from "../lib/geometires"
 
 const clock = new Clock()
 
@@ -56,8 +57,12 @@ export function ParticlesMorph({
 
   // This is necessary to make sure all meshes will share the same vertex count
   // So that they can transition between each other
-  useRandomizeAttributes({ geometry: virtualGeometry.current, enabled: randomAnimation })
   const equalize = useEqualizeVertices({ buffers })
+  useRandomizeAttributes({
+    geometry: virtualGeometry.current,
+    overridePosCount: equalize.highestVertexCount,
+    enabled: randomAnimation,
+  })
 
   function initializeTransition({ target, from }: { target: BufferGeometry; from?: BufferGeometry }) {
     // Define the new target geometry
@@ -73,30 +78,14 @@ export function ParticlesMorph({
     particlesShader.current.uniforms.u_Progress.value = 0
   }
 
-  const appearGeometry = useMemo(() => {
-    const positions = new Float32Array(equalize.highestVertexCount * 3)
-    new Array(equalize.highestVertexCount).forEach((_, i) => {
-      const normalizedIndex = i * 3 // Amount of vertices
-      const iX = normalizedIndex + 0
-      const iY = normalizedIndex + 1
-      const iZ = normalizedIndex + 2
-
-      positions[iX] = 0
-      positions[iY] = 0
-      positions[iZ] = 0
-    })
-
-    const geometry = new BufferGeometry()
-    geometry.setAttribute("position", new BufferAttribute(positions, 3))
-    return geometry
-  }, [equalize.highestVertexCount])
+  const appearGeometry = useMemo(() => generateSingularity(equalize.highestVertexCount), [equalize.highestVertexCount])
 
   // Appear and disappear effect.
-  // useEffect(() => void (isDisappearing && initializeTransition({ target: appearGeometry })), [isDisappearing])
-  // useEffect(
-  //   () => void (isAppearing && initializeTransition({ target: buffers[active], from: appearGeometry })),
-  //   [isAppearing]
-  // )
+  useEffect(() => void (isDisappearing && initializeTransition({ target: appearGeometry })), [isDisappearing])
+  useEffect(
+    () => void (isAppearing && initializeTransition({ target: buffers[active], from: appearGeometry })),
+    [isAppearing]
+  )
 
   /**
    * Listen to active changes effect
@@ -144,8 +133,6 @@ export function ParticlesMorph({
       rotation={[Math.PI / 2, 0, 0]}
       geometry={virtualGeometry.current}
       position={[0, -0, 3.5]}
-    >
-      {" "}
-    </points>
+    />
   )
 }

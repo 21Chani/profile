@@ -6,9 +6,15 @@ interface UseRandomizeAttributesProps {
   geometry?: BufferGeometry
   enabled?: boolean
   attributeName?: string
+  overridePosCount?: number
 }
 
-export function useRandomizeAttributes({ geometry, enabled, attributeName = "a_Random" }: UseRandomizeAttributesProps) {
+export function useRandomizeAttributes({
+  geometry,
+  enabled,
+  overridePosCount,
+  attributeName = "a_Random",
+}: UseRandomizeAttributesProps) {
   function clearRandomAttributes() {
     if (!geometry) return
     const length = geometry.attributes.position.count
@@ -26,9 +32,9 @@ export function useRandomizeAttributes({ geometry, enabled, attributeName = "a_R
       if (!geometry) return clearRandomAttributes
       if (!enabled) return clearRandomAttributes
 
-      randomizeAttributes(geometry, attributeName)
+      randomizeAttributes(geometry, attributeName, overridePosCount)
     },
-    [geometry, enabled]
+    [geometry, enabled, overridePosCount]
   )
 
   useEffect(() => void randomize(), [randomize])
