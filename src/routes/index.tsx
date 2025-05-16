@@ -4,6 +4,7 @@ import { NavLink } from "@/modules/global/components/NavLink"
 import { Paragraph } from "@/modules/global/components/Paragraph"
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { createFileRoute } from "@tanstack/react-router"
+import { Suspense } from "react"
 import { FaDatabase, FaDesktop, FaTerminal, FaTools } from "react-icons/fa"
 import { SlEnergy } from "react-icons/sl"
 import { twMerge } from "tailwind-merge"
@@ -57,7 +58,9 @@ function App() {
             </Paragraph>
           </div>
           <div className="col-span-2 row-span-2 aspect-video size-full h-full min-h-[440px] border border-border-primary ">
-            <OperatingSystemCard />
+            <Suspense fallback={<h1>LOADING</h1>}>
+              <OperatingSystemCard />
+            </Suspense>
           </div>
           <div className="size-full h-full border border-border-primary"></div>
           <div className="size-full h-full border border-border-primary"></div>

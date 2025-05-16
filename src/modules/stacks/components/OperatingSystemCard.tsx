@@ -26,21 +26,24 @@ export function OperatingSystemCard() {
   const fedora = useGLTF("/models/fedora.glb")
   const ubuntu = useGLTF("/models/ubuntu.glb")
   const arch = useGLTF("/models/arch.glb")
+  const windows = useGLTF("/models/windows.glb")
 
   // Extract Meshes
   const fedoraGeometry = (fedora.scene.children[0] as Mesh).geometry
   const ubuntuGeometry = (ubuntu.scene.children[0] as Mesh).geometry
   const archGeometry = (arch.scene.children[0] as Mesh).geometry
+  const windowsGeometry = (windows.scene.children[0] as Mesh).geometry
 
   // Remove index to avoid duplicated vertices
   fedoraGeometry.setIndex(null)
   ubuntuGeometry.setIndex(null)
   archGeometry.setIndex(null)
+  windowsGeometry.setIndex(null)
 
   // Disallow switch to different target when transitioning
-  const [activeOS, setActiveOS] = useState(1)
+  const [activeOS, setActiveOS] = useState(0)
 
-  const OSGeometries = [fedoraGeometry, ubuntuGeometry, archGeometry]
+  const OSGeometries = [fedoraGeometry, ubuntuGeometry, windowsGeometry, archGeometry]
   const normalizedIndex = activeOS % OSGeometries.length
 
   return (

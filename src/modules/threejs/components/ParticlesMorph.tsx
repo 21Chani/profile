@@ -57,7 +57,7 @@ export function ParticlesMorph({
   // This is necessary to make sure all meshes will share the same vertex count
   // So that they can transition between each other
   useRandomizeAttributes({ geometry: virtualGeometry.current, enabled: randomAnimation })
-  const equalize = useEqualizeVertices({ buffers: buffers })
+  const equalize = useEqualizeVertices({ buffers })
 
   function initializeTransition({ target, from }: { target: BufferGeometry; from?: BufferGeometry }) {
     // Define the new target geometry
@@ -92,11 +92,11 @@ export function ParticlesMorph({
   }, [equalize.highestVertexCount])
 
   // Appear and disappear effect.
-  useEffect(() => void (isDisappearing && initializeTransition({ target: appearGeometry })), [isDisappearing])
-  useEffect(
-    () => void (isAppearing && initializeTransition({ target: buffers[active], from: appearGeometry })),
-    [isAppearing]
-  )
+  // useEffect(() => void (isDisappearing && initializeTransition({ target: appearGeometry })), [isDisappearing])
+  // useEffect(
+  //   () => void (isAppearing && initializeTransition({ target: buffers[active], from: appearGeometry })),
+  //   [isAppearing]
+  // )
 
   /**
    * Listen to active changes effect
