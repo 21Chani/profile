@@ -16,14 +16,23 @@ interface EncryptedTextProps {
   autoStart?: boolean | number
   iterations: number
   iterationDelay?: number
+  animate?: boolean
 }
 
-export function EncryptedText({ text, autoStart, iterations, iterationDelay = 75, className }: EncryptedTextProps) {
+export function EncryptedText({
+  text,
+  autoStart,
+  animate,
+  iterations,
+  iterationDelay = 75,
+  className,
+}: EncryptedTextProps) {
   const id = useId()
 
   // Ref Variables
   const ignoredIndexes = useRef(new Set<number>())
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const randomGlitchInterval = useRef<NodeJS.Timeout | null>(null)
 
   // Help Functions
   function changeCharAtIndex(index: number, char: string) {
@@ -82,6 +91,32 @@ export function EncryptedText({ text, autoStart, iterations, iterationDelay = 75
     }
   }, [autoStart])
 
+  async function randomGlitch(delay: number) {
+    await new Promise((resolve) => setTimeout(resolve, delay))
+
+    let randomIndex = rangeRandom(0, text.length - 1)
+    while (text[randomIndex] === " ") {
+      randomIndex = rangeRandom(0, text.length - 1)
+    }
+
+    const randomChar = randomCrypto()
+    changeCharAtIndex(randomIndex, randomChar)
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    changeCharAtIndex(randomIndex, text[randomIndex])
+
+    const randomness = rangeRandom(1000, 8000)
+    if (randomness > 7500) await shuffleReview(text)
+
+    randomGlitch(randomness)
+  }
+
+  useEffect(() => {
+    if (!animate) return
+    if (randomGlitchInterval.current) clearInterval(randomGlitchInterval.current)
+
+    randomGlitch(rangeRandom(2000, 6000))
+  }, [animate])
+
   return (
     <>
       {new Array(text.length).fill(0).map((_, index) =>
@@ -89,6 +124,7 @@ export function EncryptedText({ text, autoStart, iterations, iterationDelay = 75
           <span
             id={`${id}_char_${index}`}
             key={`${id}_char_${index}`}
+            data-animate={animate}
             className={twMerge(" data-[animate=true]:animate-glitch relative inline-flex", className)}
           >
             {0}

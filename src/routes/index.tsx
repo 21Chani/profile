@@ -201,16 +201,16 @@ function Summary() {
         {/* Title */}
         <span className="mx-auto uppercase ">
           <h1 className="text-xl font-bold md:text-4xl text-foreground-alt xl:text-5xl xl:leading-[42px]">
-            <EncryptedText text="I'm Chani" iterations={12} />
+            <EncryptedText animate text="I'm Chani" iterations={12} />
           </h1>
           <h1 className="text-xl font-bold md:text-4xl text-foreground-alt xl:text-5xl xl:leading-[42px]">
-            <EncryptedText text="A" iterations={1} />
+            <EncryptedText animate text="A" iterations={1} />
             &nbsp;
-            <EncryptedText className="text-gradient-highlight" text="full stack" iterations={12} />
+            <EncryptedText animate className="text-gradient-highlight" text="full stack" iterations={12} />
             <br className="ma-xl:hidden" />
-            <EncryptedText className="text-gradient-highlight" text="software" iterations={12} />
+            <EncryptedText animate className="text-gradient-highlight" text="software" iterations={12} />
             &nbsp;
-            <EncryptedText text="engineer" iterations={12} />
+            <EncryptedText animate text="engineer" iterations={12} />
             {/* engineer */}
           </h1>
         </span>
