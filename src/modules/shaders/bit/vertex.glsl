@@ -1,0 +1,36 @@
+
+uniform sampler2D u_Texture;
+uniform float u_Time;
+
+varying vec4 v_Color;
+varying vec2 v_Uv;
+varying float v_RandomNess;
+
+attribute float a_Random;
+
+vec3 waveEffect(vec3 position, float frequency, float speed, float amplitude) {
+    float wave = sin(((u_Time * speed) + position.x * 10.0  ) * frequency) ;
+    wave = smoothstep(0.99, 1.0, abs(wave));
+
+    return vec3(0.0, wave * amplitude, 0.0 ); 
+}
+
+void main() {
+   
+    vec3 mPos = position;
+    // mPos += waveEffect(mPos, 1.0, 1.0, 10.04) ;
+
+    vec4 modelPosition = modelMatrix * vec4(mPos, 1.0);
+    vec4 viewPosition = viewMatrix * modelPosition;
+    vec4 modelProjection = projectionMatrix * viewPosition;
+
+    vec4 intensity = texture(u_Texture, uv);
+    
+    v_Uv = uv;
+    v_Color = vec4(intensity);
+    v_RandomNess = a_Random;
+
+    gl_PointSize =  10.0;
+    gl_Position = modelProjection;
+
+}
