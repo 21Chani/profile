@@ -21,18 +21,18 @@
   --color-gray-1000: hsl(0 0% 10%);
 
   /* --font-jaro: "Jaro"; */
-  --font-jetbrains: "Cascadia Code", monospace;
+  --font-cascadia: "Cascadia Code", monospace;
 
   --animate-expand-from-top-to-bottom-4000: expand-from-top-to-bottom 6s ease-out forwards;
 }
 
 @layer base {
   h1 {
-    @apply text-foreground font-jetbrains font-bold;
+    @apply text-foreground font-cascadia font-bold;
   }
 
   p {
-    @apply font-jetbrains;
+    @apply font-cascadia;
   }
 }
 

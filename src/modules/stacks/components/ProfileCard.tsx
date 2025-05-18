@@ -60,12 +60,12 @@ function GlichedImage() {
   src={"/assets/profile.png"}
 />
 
-<span className="absolute right-4 top-2 font-jetbrains text-3xl text-gray-400">+</span>
-<span className="absolute right-7 top-1.5 font-jetbrains text-xl text-gray-400">+</span>
+<span className="absolute right-4 top-2 font-cascadia text-3xl text-gray-400">+</span>
+<span className="absolute right-7 top-1.5 font-cascadia text-xl text-gray-400">+</span>
 <div className="absolute right-2 top-20 flex flex-col gap-2">
-  <span className=" h-12 w-1 bg-gradient-to-b to-gray-400 from-gray-900 font-jetbrains text-3xl"></span>
-  <span className=" h-12 w-1 bg-gradient-to-b to-gray-200 from-gray-400 font-jetbrains text-3xl"></span>
-  <span className=" h-12 w-1 bg-gradient-to-b to-gray-200 from-gray-400 font-jetbrains text-3xl"></span>
+  <span className=" h-12 w-1 bg-gradient-to-b to-gray-400 from-gray-900 font-cascadia text-3xl"></span>
+  <span className=" h-12 w-1 bg-gradient-to-b to-gray-200 from-gray-400 font-cascadia text-3xl"></span>
+  <span className=" h-12 w-1 bg-gradient-to-b to-gray-200 from-gray-400 font-cascadia text-3xl"></span>
 </div>
 <div className="absolute left-2 top-8 flex flex-col gap-1 ">
   <ItemInfo>

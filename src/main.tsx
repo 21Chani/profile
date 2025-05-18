@@ -9,9 +9,6 @@ import reportWebVitals from "./reportWebVitals.ts"
 
 import "@fontsource/cascadia-code/200.css"
 import "@fontsource/cascadia-code/400.css"
-import "@fontsource/cascadia-code/600.css"
-import "@fontsource/jetbrains-mono/600.css"
-// import "@fontsource/cascadia-code/80230.css";
 import "@fontsource/cascadia-code/700.css"
 import "./styles.css"
 

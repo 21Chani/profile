@@ -11,9 +11,6 @@
   },
   "dependencies": {
     "@fontsource/cascadia-code": "^5.2.1",
-    "@fontsource/inter": "^5.2.5",
-    "@fontsource/jaro": "^5.2.5",
-    "@fontsource/jetbrains-mono": "^5.2.5",
     "@react-three/drei": "^10.0.7",
     "@react-three/fiber": "^9.1.2",
     "@tailwindcss/vite": "^4.1.6",
