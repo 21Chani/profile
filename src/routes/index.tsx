@@ -13,11 +13,13 @@ export const Route = createFileRoute("/")({ component: App })
 
 function App() {
   return (
-    <div className=" bg-background max-w-7xl h-screen min-h-screen">
+    <div className=" bg-background max-w-7xl relative h-screen min-h-screen">
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
         <div className="relative flex w-full flex-col">
           <nav className="flex flex-1 justify-between p-4 ">
-            <h6 className="font-jaro text-foreground uppercase">- &emsp; A coding guy.</h6>
+            <h6 className="font-extrabold text-foreground uppercase">
+              <EncryptedText text="- A coding guy." iterations={16} />
+            </h6>
 
             <div className="flex flex-col">
               <NavLink>Home</NavLink>

@@ -33,7 +33,7 @@ const imageWidth = 687,
   planeHeight = planeWidth / aspect
 
 // Particles geometry
-const particlesGeometry = new PlaneGeometry(planeWidth, planeHeight, 90, 90)
+const particlesGeometry = new PlaneGeometry(planeWidth, planeHeight, 60, 60)
 particlesGeometry.setIndex(null) // Disable index to avoid duplicated vertices
 
 // Add `a_Random` attribute to the geometry with random values from 0 to 1
