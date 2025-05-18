@@ -89,7 +89,7 @@ export function EncryptedText({
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
-  }, [autoStart])
+  }, [autoStart, text])
 
   async function randomGlitch(delay: number) {
     await new Promise((resolve) => setTimeout(resolve, delay))

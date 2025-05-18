@@ -1,11 +1,16 @@
 import { Card } from "@/modules/global/components/Card"
+import { EncryptedText } from "@/modules/global/components/EncryptedText"
 import { ProgressCountBar } from "@/modules/global/components/ProgressCountBar"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { ParticlesMorph } from "@/modules/threejs/components/ParticlesMorph"
 import { useGLTF } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { useRef, useState } from "react"
+import { BsFillLightningFill } from "react-icons/bs"
+import { RiTimeFill } from "react-icons/ri"
 import type { Mesh } from "three"
+
+const OS_NAMES = ["Fedora", "Ubuntu", "Windows 11", "Arch Linux"]
 
 /**
  * Operating System Card Component.
@@ -47,6 +52,8 @@ export function OperatingSystemCard() {
   const OSGeometries = [fedoraGeometry, ubuntuGeometry, windowsGeometry, archGeometry]
   const normalizedIndex = activeOS % OSGeometries.length
 
+  const osName = OS_NAMES[normalizedIndex]
+
   return (
     <Card ref={setCardRef} className="size-full flex-wrap border-none ">
       <ProgressCountBar
@@ -66,11 +73,13 @@ export function OperatingSystemCard() {
       >
         <div className="flex flex-col justify-end items-end">
           <p className="text-foreground-alt font-jaro font-bold text-center">Name</p>
-          <h1 className="text-2xl text-gradient-highlight leading-5 uppercase">Windows 11</h1>
+          <h1 className="text-2xl leading-5 uppercase">
+            <EncryptedText className="text-gradient-highlight" text={osName} iterations={20} />
+          </h1>
         </div>
         <div className="flex flex-col justify-end items-end">
-          <p className="text-foreground-alt font-jaro font-bold text-center text-sm leading-2">Skill</p>
-          <div className="flex gap-2 w-40 ">
+          <div className="flex gap-2 w-40 items-center">
+            <BsFillLightningFill className="size-4 min-w-4 fill-white" />
             <div className="h-2 w-full rounded-full bg-gray-100"></div>
             <div className="h-2 w-full rounded-full bg-gray-200"></div>
             <div className="h-2 w-full rounded-full bg-gray-300"></div>
@@ -78,14 +87,16 @@ export function OperatingSystemCard() {
             <div className="h-2 w-full rounded-full bg-gray-500"></div>
           </div>
         </div>
-        {/* <div className="flex flex-col justify-end items-end">
-          <p className="text-foreground-alt font-jaro font-bold text-center text-sm leading-2">Proeficiency</p>
-          <div className="h-2 w-20 rounded-full bg-white/20"></div>
-        </div>
         <div className="flex flex-col justify-end items-end">
-          <p className="text-foreground-alt font-jaro font-bold text-center text-sm leading-2">Time spent</p>
-          <div className="h-2 w-40 rounded-full bg-white/20"></div>
-        </div> */}
+          <div className="flex gap-2 w-40 items-center">
+            <RiTimeFill className="size-4 min-w-4 fill-white" />
+            <div className="h-2 w-full rounded-full bg-gray-100"></div>
+            <div className="h-2 w-full rounded-full bg-gray-200"></div>
+            <div className="h-2 w-full rounded-full bg-gray-300"></div>
+            <div className="h-2 w-full rounded-full bg-gray-400"></div>
+            <div className="h-2 w-full rounded-full bg-gray-500"></div>
+          </div>
+        </div>
       </Card>
 
       <Canvas>
