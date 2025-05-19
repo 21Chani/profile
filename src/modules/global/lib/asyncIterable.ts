@@ -7,11 +7,12 @@ export async function* asyncIterable<
   IterableList extends unknown[] | readonly unknown[] = unknown[] | readonly unknown[],
   Payload extends number | IterableList = number | IterableList,
   Return = Payload extends IterableList ? Payload[number] : number
->(payload: Payload, delay = 50): AsyncGenerator<Return> {
+>(payload: Payload, delay = 50, { signal }: { signal?: AbortSignal } = {}): AsyncGenerator<Return> {
   if (typeof payload === "number") {
     // If the payload is a number, create an iterable from 0 to payload length -1 and yield each number
     // This will create a simple list of numbers
     for (let i = 0; i < payload; i++) {
+      signal?.throwIfAborted()
       yield i as Return
       await new Promise((resolve) => setTimeout(resolve, delay))
     }
@@ -19,6 +20,7 @@ export async function* asyncIterable<
     // If the payload is an array, yield each element of the array
     // There is no creation here, just a simple iteration on the given array
     for (const i of payload) {
+      signal?.throwIfAborted()
       yield i
       await new Promise((resolve) => setTimeout(resolve, delay))
     }

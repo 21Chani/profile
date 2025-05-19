@@ -42,7 +42,6 @@ export function StatProgress({
    */
   async function updateLevels(levels: number[], status: "closed" | "open", delay = 400) {
     for await (const lvl of asyncIterable(levels, delay)) {
-      console.log(lvl)
       const div = container.current!.querySelector(`#stat_level_${lvl}`) as HTMLDivElement
       div.style.setProperty("transition-duration", `${delay}ms`) // Update transition duration to match the delay
       div.setAttribute("data-status", status)

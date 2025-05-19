@@ -18,6 +18,10 @@ const OS_STATS = [
   { name: "Arch Linux", skill: 5, time: 5 },
 ] as const
 
+interface OperatingSystemCardProps {
+  intersection: ReturnType<typeof useIntersectionObserverState>
+}
+
 /**
  * Operating System Card Component.
  *
@@ -29,11 +33,8 @@ const OS_STATS = [
  * The animation is made by using css animation and listening to the `onAnimationEnd` event
  * This way we can avoid the use extra renders and make the animation smoother
  */
-export function OperatingSystemCard() {
+export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) {
   const isTransitioning = useRef(false)
-  const [cardRef, setCardRef] = useState<HTMLDivElement | null>(null)
-  const intersection = useIntersectionObserverState(cardRef, { threshold: 0.5 })
-
   // Load models
   const fedora = useGLTF("/models/fedora.glb")
   const ubuntu = useGLTF("/models/ubuntu.glb")
@@ -61,7 +62,7 @@ export function OperatingSystemCard() {
   const osStat = OS_STATS[normalizedIndex]
 
   return (
-    <Card ref={setCardRef} className="size-full flex-wrap border-none ">
+    <Card className="size-full flex-wrap border-none ">
       <ProgressCountBar
         activeIndex={normalizedIndex}
         onCompleteCycle={setActiveOS}
@@ -92,7 +93,6 @@ export function OperatingSystemCard() {
           onTransitionEnd={() => (isTransitioning.current = false)}
           active={normalizedIndex}
           buffers={OSGeometries}
-          {...intersection}
           randomAnimation
         />
       </Canvas>

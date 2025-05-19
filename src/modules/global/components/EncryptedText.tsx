@@ -1,5 +1,4 @@
 import { useEffect, useId, useRef } from "react"
-import { twMerge } from "tailwind-merge"
 import { asyncIterable } from "../lib/asyncIterable"
 import { rangeRandom } from "../lib/rangeRandom"
 
@@ -12,6 +11,7 @@ const randomCrypto = () => CHARACTERS.charAt(rangeRandom(0, CHARACTERS.length - 
 
 interface EncryptedTextProps {
   text: string
+  isVisible?: boolean
   className?: string
   autoStart?: boolean | number
   iterations: number
@@ -25,13 +25,13 @@ export function EncryptedText({
   animate,
   iterations,
   iterationDelay = 75,
+  isVisible = true,
   className,
 }: EncryptedTextProps) {
   const id = useId()
 
   // Ref Variables
   const ignoredIndexes = useRef(new Set<number>())
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const randomGlitchInterval = useRef<NodeJS.Timeout | null>(null)
 
   // Help Functions
@@ -42,54 +42,58 @@ export function EncryptedText({
     span.innerHTML = char
   }
 
-  function randomEncryptText() {
+  function replaceText(replacer: (index: number) => string) {
     text.split("").forEach((_, index) => {
       // This means that the index is already replaced
       if (ignoredIndexes.current.has(index)) return
 
-      changeCharAtIndex(index, randomCrypto())
+      changeCharAtIndex(index, replacer(index))
     })
   }
 
-  async function shuffleReview(finalText: string) {
-    for await (const i of asyncIterable(iterations, iterationDelay)) {
-      // Replace entire text with random characters
-      // Within the loop this will give a encryption effect
-      randomEncryptText()
+  async function shuffleReview(finalText: string, options?: { signal?: AbortSignal }) {
+    try {
+      ignoredIndexes.current.clear()
+      for await (const i of asyncIterable(iterations, iterationDelay, options)) {
+        // Replace entire text with random characters
+        // Within the loop this will give a encryption effect
+        replaceText(randomCrypto)
 
-      // Replace 1 char at a time until the text is fully replaced
-      const reviewIndex = Math.floor((i * text.length) / iterations)
+        // Replace 1 char at a time until the text is fully replaced
+        const reviewIndex = Math.floor((i * text.length) / iterations)
 
-      if (reviewIndex !== Math.floor(((i - 1) * text.length) / iterations)) {
-        let randomIndex = rangeRandom(0, finalText.length - 1)
-        let iteration = 0
-        while (ignoredIndexes.current.has(randomIndex) && iteration <= finalText.length) {
-          iteration += 1
-          randomIndex = (randomIndex + 1) % finalText.length
+        if (reviewIndex !== Math.floor(((i - 1) * text.length) / iterations)) {
+          let randomIndex = rangeRandom(0, finalText.length - 1)
+          let iteration = 0
+          while (ignoredIndexes.current.has(randomIndex) && iteration <= finalText.length) {
+            iteration += 1
+            randomIndex = (randomIndex + 1) % finalText.length
+          }
+          // TODO: Avoid this verification with a better algorithm
+          if (ignoredIndexes.current.has(randomIndex)) continue
+          ignoredIndexes.current.add(randomIndex)
+          const span = document.querySelector(`#${id}_char_${randomIndex}`)
+          if (!span) continue
+
+          span.innerHTML = finalText.charAt(randomIndex)
         }
-        // TODO: Avoid this verification with a better algorithm
-        if (ignoredIndexes.current.has(randomIndex)) continue
-        ignoredIndexes.current.add(randomIndex)
-        const span = document.querySelector(`#${id}_char_${randomIndex}`)
-        if (!span) continue
-
-        span.innerHTML = finalText.charAt(randomIndex)
       }
+    } catch {
+      console.log("Aborted", finalText)
+    } finally {
     }
   }
 
   // Effects
   useEffect(() => {
-    const delay = typeof autoStart === "number" ? autoStart : 0
-    timeoutRef.current = setTimeout(async () => {
-      await shuffleReview(text)
-      ignoredIndexes.current.clear()
-    }, delay)
+    if (!isVisible) return
 
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
-  }, [autoStart, text])
+    const ac = new AbortController()
+    const { signal } = ac
+    shuffleReview(text, { signal })
+
+    return () => ac.abort()
+  }, [autoStart, text, isVisible])
 
   async function randomGlitch(delay: number) {
     await new Promise((resolve) => setTimeout(resolve, delay))
@@ -121,12 +125,7 @@ export function EncryptedText({
     <>
       {new Array(text.length).fill(0).map((_, index) =>
         text[index] !== " " ? (
-          <span
-            id={`${id}_char_${index}`}
-            key={`${id}_char_${index}`}
-            data-animate={animate}
-            className={twMerge(" data-[animate=true]:animate-glitch relative inline-flex", className)}
-          >
+          <span id={`${id}_char_${index}`} key={`${id}_char_${index}`} data-animate={animate} className={className}>
             {0}
           </span>
         ) : (
