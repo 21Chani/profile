@@ -7,11 +7,7 @@ import { twMerge } from "tailwind-merge"
 const cardStyles = cva("flex", {
   variants: {
     variant: {
-      primary: [
-        "rounded-lg relative bordr border-border-primary from-white/5 to-black bg-white/5 bg-gradient-to-bl hadow-[32px_-32px_0px_0px] ",
-        "bg-dotted",
-      ],
-      glassy: [""],
+      primary: ["rounded-lg relative"],
     },
   },
   defaultVariants: {

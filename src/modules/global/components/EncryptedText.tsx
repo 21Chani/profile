@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from "react"
 import { twMerge } from "tailwind-merge"
+import { asyncIterable } from "../lib/asyncIterable"
 import { rangeRandom } from "../lib/rangeRandom"
-import { asyncIterable } from "../lib/shuffleText"
 
 const CHARACTERS = new Array(10)
   .fill(0)

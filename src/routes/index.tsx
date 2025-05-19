@@ -43,8 +43,7 @@ function App() {
             Operating <br /> Systems
           </h1>
           <Paragraph className="text-end text-sm">
-            Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
-            porro officiis sed dolor voluptate.
+            Through my career, I have worked with a variety of operating systems, including Linux, Windows, and macOS.
           </Paragraph>
         </div>
         <div className="col-span-2 aspect-video size-full h-full min-h-[440px] borde border-imary ">

@@ -21,7 +21,7 @@ export function ProgressCountBar({
   return (
     <div
       className={twMerge(
-        "flex flex-col z-[9999] gap-1 p-3 aria-hidden:opacity-0 transition-[opacity] duration-700 ease-out",
+        "flex flex-col gap-1 p-3 aria-hidden:opacity-0 transition-[opacity] duration-700 ease-out",
         className
       )}
       {...props}
