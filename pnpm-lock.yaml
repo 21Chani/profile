@@ -11,15 +11,6 @@ importers:
       '@fontsource/cascadia-code':
         specifier: ^5.2.1
         version: 5.2.1
-      '@fontsource/inter':
-        specifier: ^5.2.5
-        version: 5.2.5
-      '@fontsource/jaro':
-        specifier: ^5.2.5
-        version: 5.2.5
-      '@fontsource/jetbrains-mono':
-        specifier: ^5.2.5
-        version: 5.2.5
       '@react-three/drei':
         specifier: ^10.0.7
         version: 10.0.7(@react-three/fiber@9.1.2(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.176.0))(@types/react@19.1.4)(@types/three@0.176.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.176.0)
@@ -390,15 +381,6 @@ packages:
 
   '@fontsource/cascadia-code@5.2.1':
     resolution: {integrity: sha512-IzexAbT8xrANVOih9oiUoH/VetYRkS7kf6SmI+WsRF+frJTtgW0c7XsCVdRjcg50Gqe/oK64q3TEdvNNTcL8+g==}
-
-  '@fontsource/inter@5.2.5':
-    resolution: {integrity: sha512-kbsPKj0S4p44JdYRFiW78Td8Ge2sBVxi/PIBwmih+RpSXUdvS9nbs1HIiuUSPtRMi14CqLEZ/fbk7dj7vni1Sg==}
-
-  '@fontsource/jaro@5.2.5':
-    resolution: {integrity: sha512-fYHk81bcDpE2LAfnXMR06dxs450LgYXgGzSQro+aEpl5ymlb0be1ZkaZWOxLbmdjxWwVG2qzBgKKfskz5p9Olw==}
-
-  '@fontsource/jetbrains-mono@5.2.5':
-    resolution: {integrity: sha512-TPZ9b/uq38RMdrlZZkl0RwN8Ju9JxuqMETrw76pUQFbGtE1QbwQaNsLlnUrACNNBNbd0NZRXiJJSkC8ajPgbew==}
 
   '@isaacs/fs-minipass@4.0.1':
     resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
@@ -2270,12 +2252,6 @@ snapshots:
     optional: true
 
   '@fontsource/cascadia-code@5.2.1': {}
-
-  '@fontsource/inter@5.2.5': {}
-
-  '@fontsource/jaro@5.2.5': {}
-
-  '@fontsource/jetbrains-mono@5.2.5': {}
 
   '@isaacs/fs-minipass@4.0.1':
     dependencies:
