@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({ component: App })
 function App() {
   const [osSection, setOSSection] = useState<HTMLElement | null>(null)
 
-  const osSectionIntersection = useIntersectionObserverState(osSection)
+  const osSectionIntersection = useIntersectionObserverState(osSection, { threshold: 0.7 })
 
   return (
     <div className=" bg-background max-w-7xl relative h-screen min-h-screen">

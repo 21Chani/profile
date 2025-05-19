@@ -50,7 +50,7 @@ function GlichedImage() {
     shaderMaterial.uniforms.u_Time.value = time
   })
 
-  return <points position={[0, 0, 0]} geometry={particlesGeometry} material={shaderMaterial} />
+  return <points position={[0, 0, 0]} rotation={[0, 0, 0]} geometry={particlesGeometry} material={shaderMaterial} />
 }
 
 /* <Card className=" bg-gradient-to-br from-background-alt/20 from-30% border border-border-primary to-black aspect-video w-[550px] justify-center rounded-none shadow-[6px_6px_0px_0px_#666] max-md:w-full  ">

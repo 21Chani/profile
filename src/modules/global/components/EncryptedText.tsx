@@ -1,13 +1,7 @@
 import { useEffect, useId, useRef } from "react"
+import { randomNumericChar } from "../constants/number"
 import { asyncIterable } from "../lib/asyncIterable"
 import { rangeRandom } from "../lib/rangeRandom"
-
-const CHARACTERS = new Array(10)
-  .fill(0)
-  .map((_, i) => i.toString())
-  .join("")
-
-const randomCrypto = () => CHARACTERS.charAt(rangeRandom(0, CHARACTERS.length - 1))
 
 interface EncryptedTextProps {
   text: string
@@ -57,12 +51,12 @@ export function EncryptedText({
       for await (const i of asyncIterable(iterations, iterationDelay, options)) {
         // Replace entire text with random characters
         // Within the loop this will give a encryption effect
-        replaceText(randomCrypto)
+        replaceText(randomNumericChar)
 
         // Replace 1 char at a time until the text is fully replaced
-        const reviewIndex = Math.floor((i * text.length) / iterations)
+        const reviewIndex = Math.floor((i * finalText.length) / iterations)
 
-        if (reviewIndex !== Math.floor(((i - 1) * text.length) / iterations)) {
+        if (reviewIndex !== Math.floor(((i - 1) * finalText.length) / iterations)) {
           let randomIndex = rangeRandom(0, finalText.length - 1)
           let iteration = 0
           while (ignoredIndexes.current.has(randomIndex) && iteration <= finalText.length) {
@@ -79,8 +73,8 @@ export function EncryptedText({
         }
       }
     } catch {
-      console.log("Aborted", finalText)
-    } finally {
+      // DO NOTHING
+      // The cleanup function might abort future requests, so it is better to make it before start the function on top.
     }
   }
 
@@ -103,7 +97,7 @@ export function EncryptedText({
       randomIndex = rangeRandom(0, text.length - 1)
     }
 
-    const randomChar = randomCrypto()
+    const randomChar = randomNumericChar()
     changeCharAtIndex(randomIndex, randomChar)
     await new Promise((resolve) => setTimeout(resolve, 100))
     changeCharAtIndex(randomIndex, text[randomIndex])

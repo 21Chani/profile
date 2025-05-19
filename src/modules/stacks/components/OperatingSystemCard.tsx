@@ -12,10 +12,11 @@ import { RiTimeFill } from "react-icons/ri"
 import type { Mesh } from "three"
 
 const OS_STATS = [
-  { name: "Fedora", skill: 3, time: 2 },
+  { name: "Arch Linux", skill: 5, time: 5 },
   { name: "Ubuntu", skill: 5, time: 4 },
   { name: "Windows", skill: 3, time: 2 },
-  { name: "Arch Linux", skill: 5, time: 5 },
+  { name: "Fedora", skill: 3, time: 2 },
+  { name: "Macos", skill: 5, time: 5 },
 ] as const
 
 interface OperatingSystemCardProps {
@@ -36,27 +37,30 @@ interface OperatingSystemCardProps {
 export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) {
   const isTransitioning = useRef(false)
   // Load models
-  const fedora = useGLTF("/models/fedora.glb")
-  const ubuntu = useGLTF("/models/ubuntu.glb")
-  const arch = useGLTF("/models/arch.glb")
   const windows = useGLTF("/models/windows.glb")
+  const ubuntu = useGLTF("/models/ubuntu.glb")
+  const fedora = useGLTF("/models/fedora.glb")
+  const macos = useGLTF("/models/macos.glb")
+  const arch = useGLTF("/models/arch.glb")
 
   // Extract Meshes
+  const windowsGeometry = (windows.scene.children[0] as Mesh).geometry
   const fedoraGeometry = (fedora.scene.children[0] as Mesh).geometry
   const ubuntuGeometry = (ubuntu.scene.children[0] as Mesh).geometry
+  const macosGeometry = (macos.scene.children[0] as Mesh).geometry
   const archGeometry = (arch.scene.children[0] as Mesh).geometry
-  const windowsGeometry = (windows.scene.children[0] as Mesh).geometry
 
   // Remove index to avoid duplicated vertices
+  windowsGeometry.setIndex(null)
   fedoraGeometry.setIndex(null)
   ubuntuGeometry.setIndex(null)
+  macosGeometry.setIndex(null)
   archGeometry.setIndex(null)
-  windowsGeometry.setIndex(null)
 
   // Disallow switch to different target when transitioning
   const [activeOS, setActiveOS] = useState(0)
 
-  const OSGeometries = [fedoraGeometry, ubuntuGeometry, windowsGeometry, archGeometry]
+  const OSGeometries = [archGeometry, ubuntuGeometry, windowsGeometry, fedoraGeometry, macosGeometry]
   const normalizedIndex = activeOS % OSGeometries.length
 
   const osStat = OS_STATS[normalizedIndex]
@@ -93,6 +97,7 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
           onTransitionEnd={() => (isTransitioning.current = false)}
           active={normalizedIndex}
           buffers={OSGeometries}
+          {...intersection}
           randomAnimation
         />
       </Canvas>
