@@ -76,8 +76,8 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
         onSelectItem={(index) => !isTransitioning.current && setActiveOS(index)}
       />
 
-      <Card className="!absolute gap-2  z-[40] border-dashed rounded-2xl bottom-2 right-2 flex items-end justify-end flex-col p-2">
-        <div className="flex flex-col justify-end items-end">
+      <Card className="!absolute gap-2  z-[40] border-dashed rounded-2xl top-4 left-10 flex items-start justify-start flex-col p-2">
+        <div className="flex flex-col items-start">
           <p className="text-foreground-alt font-jaro font-bold text-center">Name</p>
           <h1 className="text-2xl leading-5 uppercase">
             <EncryptedText
@@ -87,8 +87,16 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
             />
           </h1>
         </div>
-        <StatProgress level={osStat.skill} icon={<BsFillLightningFill className="size-4 min-w-4 fill-white" />} />
-        <StatProgress level={osStat.time} icon={<RiTimeFill className="size-4 min-w-4 fill-white" />} />
+        <StatProgress
+          className="flex-row-reverse"
+          level={osStat.skill}
+          icon={<BsFillLightningFill className="size-4 min-w-4 fill-white" />}
+        />
+        <StatProgress
+          className="flex-row-reverse"
+          level={osStat.time}
+          icon={<RiTimeFill className="size-4 min-w-4 fill-white" />}
+        />
       </Card>
 
       <Canvas>

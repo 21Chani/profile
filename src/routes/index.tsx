@@ -1,6 +1,6 @@
 import { Card } from "@/modules/global/components/Card"
 import { EncryptedText } from "@/modules/global/components/EncryptedText"
-import { NavLink } from "@/modules/global/components/NavLink"
+import { Navbar } from "@/modules/global/components/Navbar"
 import { Paragraph } from "@/modules/global/components/Paragraph"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
@@ -21,22 +21,9 @@ function App() {
   return (
     <div className=" bg-background max-w-7xl h-screen min-h-screen">
       <Terminal defaultCommand="wget https://chani.sh" />
+      <Navbar />
+
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
-        <div className="relative flex w-full flex-col">
-          <nav className="flex flex-1 justify-between p-4 ">
-            <h6 className="font-extrabold text-foreground uppercase">
-              <EncryptedText text="- A coding guy." iterations={16} />
-            </h6>
-
-            <div className="flex flex-col">
-              <NavLink>Home</NavLink>
-              <NavLink>About me</NavLink>
-              <NavLink>Projects</NavLink>
-              <NavLink>Social</NavLink>
-            </div>
-          </nav>
-        </div>
-
         <div className="mt-10 flex flex-1 items-center gap-14 px-2 font-jaro max-xl:flex-col lg:px-20">
           <Summary />
           <ProfileCard />

@@ -24,8 +24,10 @@
   --font-cascadia: "Cascadia Code", monospace;
 
   --animate-expand-from-top-to-bottom-4000: expand-from-top-to-bottom 2s ease-out forwards;
-  --animate-scale-appear: scale-appear 1s ease-out forwards;
-  --animate-scale-disappear: scale-disappear 1s ease-out forwards;
+  --animate-scale-appear-x: scale-appear-x 1s ease-out forwards;
+  --animate-scale-disappear-x: scale-disappear-x 1s ease-out forwards;
+  --animate-scale-appear: scale-appear var(--duration, 200ms) ease-out forwards;
+  --animate-scale-disappear: scale-disappear var(--duration, 200ms) ease-out forwards;
 }
 
 @layer base {
@@ -65,7 +67,7 @@
   }
 }
 
-@keyframes scale-appear {
+@keyframes scale-appear-x {
   0% {
     transform: scaleX(0);
   }
@@ -74,11 +76,29 @@
   }
 }
 
-@keyframes scale-disappear {
+@keyframes scale-disappear-x {
   0% {
     transform: scaleX(1);
   }
   100% {
     transform: scaleX(0);
+  }
+}
+
+@keyframes scale-appear {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes scale-disappear {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
   }
 }
