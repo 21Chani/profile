@@ -9,7 +9,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills"
 export default defineConfig({
   plugins: [
     TanStackRouterVite({ autoCodeSplitting: true }),
-    nodePolyfills({ include: ["stream"] }),
+    nodePolyfills({ include: ["events"] }),
     tailwindcss(),
     viteReact(),
     glsl(),
