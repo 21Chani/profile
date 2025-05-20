@@ -133,7 +133,7 @@ export function ParticlesMorph({
       material={particlesShader.current}
       rotation={[Math.PI / 2, 0, 0]}
       geometry={virtualGeometry.current}
-      position={[-0.3, -0, 3]}
+      position={[0.2, -0.2, 3]}
     />
   )
 }

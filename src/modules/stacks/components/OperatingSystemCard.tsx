@@ -66,7 +66,7 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
   const osStat = OS_STATS[normalizedIndex]
 
   return (
-    <Card className="size-full flex-wrap border-none ">
+    <Card className="size-full flex-wrap border-none max-md:flex-col">
       <ProgressCountBar
         activeIndex={normalizedIndex}
         onCompleteCycle={setActiveOS}

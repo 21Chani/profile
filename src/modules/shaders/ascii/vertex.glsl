@@ -1,6 +1,8 @@
 
 uniform sampler2D u_Texture;
 uniform float u_Time;
+uniform float u_Scroll;
+uniform vec2 u_Resolution;
 
 varying vec4 v_Color;
 varying vec2 v_Uv;
@@ -27,7 +29,11 @@ void main() {
     // v_Color = vec4(intensity);
     v_RandomNess = a_Random;
 
-    gl_PointSize = 10.0;
+    float size = 10.0;
+    float perspective = size * u_Resolution.y;
+    
+
+    gl_PointSize = perspective * (1.0 / -viewPosition.z);
     gl_Position = modelProjection;
 
 }

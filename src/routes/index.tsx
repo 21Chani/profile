@@ -15,11 +15,10 @@ export const Route = createFileRoute("/")({ component: App })
 
 function App() {
   const [osSection, setOSSection] = useState<HTMLElement | null>(null)
-
   const osSectionIntersection = useIntersectionObserverState(osSection, { threshold: 0.7 })
 
   return (
-    <div className=" bg-background max-w-7xl h-screen min-h-screen">
+    <div id="container" className=" bg-background max-w-7xl h-screen min-h-screen">
       <ASCIIBackground />
       {/* <Terminal defaultCommand="wget https://chani.sh" /> */}
       <Navbar />
@@ -31,8 +30,8 @@ function App() {
         </div>
       </section>
 
-      <section ref={setOSSection} aria-label="Opearing Systems" className="grid grid-cols-3">
-        <div className="flex size-full h-full flex-col items-end justify-end borde border-imary p-4">
+      <section ref={setOSSection} aria-label="Opearing Systems" className="grid grid-cols-3 max-md:grid-cols-1">
+        <div className="flex size-full h-full flex-col items-end justify-end p-4">
           <FaDesktop />
           <h1 className=" text-end text-3xl font-extrabold uppercase text-gradient-highlight">
             <EncryptedText iterations={20} text={"Operating"} isVisible={osSectionIntersection.isVisible} />
@@ -44,20 +43,20 @@ function App() {
             Through my career, I have worked with a variety of operating systems, including Linux, Windows, and macOS.
           </Paragraph>
         </div>
-        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] borde border-imary ">
+        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
           <Suspense fallback={<h1>LOADING</h1>}>
             <OperatingSystemCard intersection={osSectionIntersection} />
           </Suspense>
         </div>
       </section>
 
-      <section aria-label="Programming Languages" className="grid grid-cols-3">
-        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] borde border-imary ">
+      <section aria-label="Programming Languages" className="grid grid-cols-3 max-md:grid-cols-1">
+        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
           <Card className="size-full flex-wrap border-none p-8">
             <div className="m-auto h-fit w-2/4 gap-8"></div>
           </Card>
         </div>
-        <div className="row-span-2 flex size-full h-full flex-col borde border-imary p-4">
+        <div className="row-span-2 flex size-full h-full flex-col p-4">
           <h1 className="mt-auto text-3xl font-bold">
             <FaTerminal />
             Programming <br /> Languages
@@ -69,8 +68,8 @@ function App() {
         </div>
       </section>
 
-      <section aria-label="Database" className="grid grid-cols-3">
-        <div className="row-span-2 flex size-full h-full flex-col items-end borde border-imary p-4">
+      <section aria-label="Database" className="grid grid-cols-3 max-md:grid-cols-1">
+        <div className="row-span-2 flex size-full h-full flex-col items-end p-4">
           <h1 className="mt-auto inline-flex items-center gap-2 text-3xl font-bold">
             Database
             <FaDatabase />
@@ -80,20 +79,20 @@ function App() {
             porro officiis sed dolor voluptate.
           </Paragraph>
         </div>
-        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] borde border-imary ">
+        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
           <Card className="size-full flex-wrap border-none p-8">
             <div className="m-auto h-fit w-2/4 gap-8"></div>
           </Card>
         </div>
       </section>
 
-      <section aria-label="Skills" className="grid grid-cols-3">
-        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] borde border-imary ">
+      <section aria-label="Skills" className="grid grid-cols-3 max-md:grid-cols-1">
+        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
           <Card className="size-full flex-wrap border-none p-8">
             <div className="m-auto h-fit w-2/4 gap-8"></div>
           </Card>
         </div>
-        <div className="row-span-2 flex size-full h-full flex-col borde border-imary p-4">
+        <div className="row-span-2 flex size-full h-full flex-col p-4">
           <h1 className="mt-auto inline-flex items-center gap-2 text-3xl font-bold">
             <SlEnergy />
             Skills

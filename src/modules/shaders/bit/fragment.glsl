@@ -19,8 +19,8 @@ void main() {
     vec2 uv = gl_PointCoord;
     float sprite = floor(mod(u_Time + (v_RandomNess) * 10.0, 10.0));
     uv.x = (uv.x + sprite) / 10.0;  
+
     vec4 cryptoTexture = texture2D(u_BitTexture, uv);
-    
     float alpha = 0.01 / distance - 0.1;
 
     float intensity = sin((u_Time + v_RandomNess) * 1.0) * 0.5 ;
