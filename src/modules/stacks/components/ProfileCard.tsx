@@ -9,7 +9,7 @@ import { Clock, PlaneGeometry } from "three"
 export function ProfileCard() {
   return (
     <div className="max-md:w-full">
-      <Card className=" bg-gradient-to-br from-background-alt/20 from-30% border border-border-primary to-black aspect-video w-[550px] justify-center max-md:w-full rounded-3xl ">
+      <Card className=" bg-gradient-to-br from-background-alt/20 backdrop-blur from-30% border border-border-primary to-black aspect-video w-[550px] justify-center max-md:w-full rounded-3xl ">
         <div className="absolute w-[90%] bottom-0 aspect-[687/530] ">
           <Suspense fallback="LOADING">
             <Canvas className="">

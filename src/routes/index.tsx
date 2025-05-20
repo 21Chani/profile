@@ -1,3 +1,4 @@
+import { ASCIIBackground } from "@/modules/global/components/ASCIIBackground"
 import { Card } from "@/modules/global/components/Card"
 import { EncryptedText } from "@/modules/global/components/EncryptedText"
 import { Navbar } from "@/modules/global/components/Navbar"
@@ -5,7 +6,6 @@ import { Paragraph } from "@/modules/global/components/Paragraph"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
-import { Terminal } from "@/modules/terminal/components/Terminal"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense, useState } from "react"
 import { FaDatabase, FaDesktop, FaTerminal } from "react-icons/fa"
@@ -20,7 +20,8 @@ function App() {
 
   return (
     <div className=" bg-background max-w-7xl h-screen min-h-screen">
-      <Terminal defaultCommand="wget https://chani.sh" />
+      <ASCIIBackground />
+      {/* <Terminal defaultCommand="wget https://chani.sh" /> */}
       <Navbar />
 
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
