@@ -5,6 +5,7 @@ import { Paragraph } from "@/modules/global/components/Paragraph"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
+import { Terminal } from "@/modules/terminal/components/Terminal"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense, useState } from "react"
 import { FaDatabase, FaDesktop, FaTerminal } from "react-icons/fa"
@@ -18,7 +19,8 @@ function App() {
   const osSectionIntersection = useIntersectionObserverState(osSection, { threshold: 0.7 })
 
   return (
-    <div className=" bg-background max-w-7xl relative h-screen min-h-screen">
+    <div className=" bg-background max-w-7xl h-screen min-h-screen">
+      <Terminal defaultCommand="wget https://chani.sh" />
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
         <div className="relative flex w-full flex-col">
           <nav className="flex flex-1 justify-between p-4 ">

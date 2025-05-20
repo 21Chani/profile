@@ -23,7 +23,7 @@
   /* --font-jaro: "Jaro"; */
   --font-cascadia: "Cascadia Code", monospace;
 
-  --animate-expand-from-top-to-bottom-4000: expand-from-top-to-bottom 6s ease-out forwards;
+  --animate-expand-from-top-to-bottom-4000: expand-from-top-to-bottom 2s ease-out forwards;
   --animate-scale-appear: scale-appear 1s ease-out forwards;
   --animate-scale-disappear: scale-disappear 1s ease-out forwards;
 }
