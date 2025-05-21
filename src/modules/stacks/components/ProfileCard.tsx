@@ -1,6 +1,6 @@
 import { Card } from "@/modules/global/components/Card"
-import { BitShaderMaterial } from "@/modules/shaders/bit"
-import { randomizeAttributes } from "@/modules/shaders/lib/randomizeAttributes"
+import { randomizeAttributes } from "@/modules/threejs/lib/randomizeAttributes"
+import { ASCIIShaderMaterial } from "@/modules/threejs/shaders/ascii"
 import { useTexture } from "@react-three/drei"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { Suspense } from "react"
@@ -9,8 +9,8 @@ import { Clock, PlaneGeometry } from "three"
 export function ProfileCard() {
   return (
     <div className="max-md:w-full">
-      <Card className=" bg-gradient-to-br from-background-alt/20 backdrop-blur from-30% border-2 border-border-primary to-black/20 border-dashed aspect-video w-[550px] justify-center max-md:w-full rounded-3xl ">
-        <div className="absolute w-[90%] bottom-0 aspect-[687/530] ">
+      <Card className=" bg-gradient-to-br from-background-alt/20 backdrop-blur-[2px] from-30% border-2 border-border-primary to-black/20 border-dashed aspect-video w-[550px] justify-center max-md:w-full rounded-3xl ">
+        <div className="absolute w-[90%] bottom-0 aspect-[687/530] z-40 ">
           <Suspense fallback="LOADING">
             <Canvas className="">
               <GlichedImage />
@@ -23,7 +23,7 @@ export function ProfileCard() {
 }
 
 const clock = new Clock()
-const shaderMaterial = new BitShaderMaterial({ transparent: true, depthWrite: false })
+const shaderMaterial = new ASCIIShaderMaterial({ transparent: true, depthWrite: false })
 
 // Plane geometry dimensions
 const imageWidth = 687,
@@ -42,7 +42,7 @@ randomizeAttributes(particlesGeometry, "a_Random")
 function GlichedImage() {
   // Load necessary textures
   useTexture("/assets/profile.png", (txt) => shaderMaterial.setTexture(txt))
-  useTexture("/sprites/numeric.png", (texture) => shaderMaterial.setBitTexture(texture))
+  useTexture("/sprites/numeric.png", (texture) => shaderMaterial.setSpriteSheet(texture))
 
   // Time updater
   useFrame(() => {

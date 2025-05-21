@@ -1,17 +1,17 @@
 
-// ########################
-// Uniforms
-// ########################
+// ##########################################
+// ---------------- Uniforms ----------------
+// ##########################################
 uniform float u_Time;
 uniform float u_Progress;
 
-// ########################
-// Attributes
-// ########################
+// ##########################################
+// --------------- Attributes ---------------
+// ##########################################
 attribute float a_Random;
 attribute vec3 a_Target;
 
-
+ 
 vec3 randomizedPosition(vec3 position, float randomnessFactor) {
     // zGlitch will create a flickering effect
     float zGlitch = tan(u_Time * 2.0 ) * 0.01;

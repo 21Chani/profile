@@ -1,12 +1,12 @@
 import { usePrevious } from "@/modules/global/hooks/usePrevious"
 import { easeInOutCubic } from "@/modules/global/lib/easeInOut"
-import { useEqualizeVertices } from "@/modules/shaders/hooks/useEqualizeVertices"
-import { useRandomizeAttributes } from "@/modules/shaders/hooks/useRandomizeAttributes"
-import { MovingParticlesShader } from "@/modules/shaders/particles"
+import { useEqualizeVertices } from "@/modules/threejs/hooks/useEqualizeVertices"
+import { useRandomizeAttributes } from "@/modules/threejs/hooks/useRandomizeAttributes"
+import { MovingParticlesShader } from "@/modules/threejs/shaders/particles"
 import { useFrame } from "@react-three/fiber"
 import { useEffect, useMemo, useRef } from "react"
 import { BufferAttribute, BufferGeometry, Clock } from "three"
-import { generateSingularity } from "../lib/geometires"
+import { generateSingularity } from "../lib/geometries"
 
 const clock = new Clock()
 

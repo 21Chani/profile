@@ -30,7 +30,7 @@ void main() {
     v_Color = vec4(intensity);
     v_RandomNess = a_Random;
 
-    gl_PointSize =  10.0;
+    gl_PointSize =  9.0;
     gl_Position = modelProjection;
 
 }

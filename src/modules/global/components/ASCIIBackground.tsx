@@ -1,10 +1,10 @@
-import { ASCIIShaderMaterial } from "@/modules/shaders/ascii"
-import { randomizeAttributes } from "@/modules/shaders/lib/randomizeAttributes"
+import { randomizeAttributes } from "@/modules/threejs/lib/randomizeAttributes"
+import { ASCIIWaveShaderMaterial } from "@/modules/threejs/shaders/ascii_wave"
 import { useTexture } from "@react-three/drei"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 
-import { Suspense, useEffect } from "react"
-import { Clock, PlaneGeometry, Uniform, Vector2 } from "three"
+import { Suspense, useEffect, useRef } from "react"
+import { Clock, PlaneGeometry, Uniform } from "three"
 
 /**
  * ASCII Background Component
@@ -24,31 +24,33 @@ export function ASCIIBackground() {
   )
 }
 
-const asciiMaterial = new ASCIIShaderMaterial({
-  uniforms: {
-    u_Resolution: new Uniform(new Vector2(window.innerWidth, window.innerHeight)),
-  },
-  transparent: true,
-  depthWrite: false,
-})
-const clock = new Clock()
-const geometry = new PlaneGeometry(10, 10, 100, 100)
-geometry.setIndex(null)
-
-randomizeAttributes(geometry, "a_Random")
+const asciiMaterial = new ASCIIWaveShaderMaterial({ transparent: true, depthWrite: false })
 
 function ASCIIWaves() {
-  const { aspect, height, width } = useThree(({ viewport: { width, aspect, height } }) => ({ width, aspect, height }))
-  useTexture("/assets/waves.png", (txt) => asciiMaterial.setTexture(txt))
-  useTexture("/sprites/numeric.png", (txt) => asciiMaterial.setBitTexture(txt))
-
-  useEffect(() => {
-    asciiMaterial.uniforms.u_Resolution.value.set(width, height)
-  }, [height, width])
-
-  useFrame(() => {
-    asciiMaterial.uniforms.u_Time.value = clock.getElapsedTime()
+  // Load necessary textures
+  useTexture("/assets/waves.png", (texture) => asciiMaterial.setTexture(texture))
+  useTexture("/sprites/numeric.png", (texture) => {
+    const spriteAmount = texture.image.width / texture.image.height
+    // Make sure it is a square sprite
+    if (spriteAmount % 1 !== 0) throw new Error("Sprite texture is not a square sequence.")
+    asciiMaterial.uniforms.u_SpriteCount = new Uniform(spriteAmount)
+    asciiMaterial.setSpriteTexture(texture)
   })
 
-  return <points scale={[Math.min(aspect, 1), 1, 1]} geometry={geometry} material={asciiMaterial} />
+  // Reference variables
+  const clock = useRef(new Clock())
+  const geometry = useRef<PlaneGeometry>(new PlaneGeometry(10, 10, 100, 100))
+  useEffect(() => randomizeAttributes(geometry.current, "a_Random"), [geometry.current])
+
+  // State
+  const { height, width, aspect } = useThree(({ viewport: { width, aspect, height } }) => ({ width, aspect, height }))
+
+  // Update the resolution of the shader material
+  asciiMaterial.setResolution(width, height)
+  useEffect(() => asciiMaterial.setResolution(width, height), [height, width])
+  useFrame(() => {
+    asciiMaterial.uniforms.u_Time.value = clock.current.getElapsedTime()
+  })
+
+  return <points scale={[Math.max(aspect, 1.0), 1, 1]} geometry={geometry.current} material={asciiMaterial} />
 }
