@@ -29,12 +29,22 @@ export function Terminal({
   useEffect(() => {
     const updateOpen = () => setIsOpen(true)
     const updateClose = () => setIsOpen(false)
+    const runCommand = (command: string | undefined) => {
+      if (command) execCommand(command)
+      else {
+        command = input.current?.value
+        execCommand(command)
+      }
+    }
+
     TerminalEvents.addListener("open", updateOpen)
     TerminalEvents.addListener("close", updateClose)
+    TerminalEvents.addListener("execute", runCommand)
 
     return () => {
       TerminalEvents.removeListener("open", updateOpen)
       TerminalEvents.removeListener("close", updateClose)
+      TerminalEvents.removeListener("execute", runCommand)
     }
   }, [])
 

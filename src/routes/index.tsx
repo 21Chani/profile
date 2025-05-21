@@ -7,8 +7,9 @@ import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersec
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
 import { Terminal } from "@/modules/terminal/components/Terminal"
+import { TerminalEvents } from "@/modules/terminal/events"
 import { createFileRoute } from "@tanstack/react-router"
-import { Suspense, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { FaDatabase, FaDesktop, FaTerminal } from "react-icons/fa"
 import { SlEnergy } from "react-icons/sl"
 
@@ -18,10 +19,14 @@ function App() {
   const [osSection, setOSSection] = useState<HTMLElement | null>(null)
   const osSectionIntersection = useIntersectionObserverState(osSection, { threshold: 0.7 })
 
+  useEffect(() => {
+    TerminalEvents.emit("execute", "wget https://chani.sh")
+  }, [])
+
   return (
     <div id="container" className=" bg-background max-w-7xl h-screen min-h-screen">
       <ASCIIBackground />
-      <Terminal defaultCommand="wget https://chani.sh" />
+      <Terminal />
       <Navbar />
 
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
