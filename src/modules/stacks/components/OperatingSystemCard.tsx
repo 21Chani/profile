@@ -3,7 +3,7 @@ import { EncryptedText } from "@/modules/global/components/EncryptedText"
 import { ProgressCountBar } from "@/modules/global/components/ProgressCountBar"
 import { StatProgress } from "@/modules/global/components/StatProgress"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
-import { ParticlesMorph } from "@/modules/threejs/components/ParticlesMorph"
+import { ParticlesMorphPoints } from "@/modules/threejs/components/ParticlesMorph"
 import { useGLTF } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { useRef, useState } from "react"
@@ -100,7 +100,7 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
       </Card>
 
       <Canvas>
-        <ParticlesMorph
+        <ParticlesMorphPoints
           onTransitionStart={() => (isTransitioning.current = true)}
           onTransitionEnd={() => (isTransitioning.current = false)}
           active={normalizedIndex}

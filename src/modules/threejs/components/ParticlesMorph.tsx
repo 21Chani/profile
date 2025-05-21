@@ -2,7 +2,7 @@ import { usePrevious } from "@/modules/global/hooks/usePrevious"
 import { easeInOutCubic } from "@/modules/global/lib/easeInOut"
 import { useEqualizeVertices } from "@/modules/threejs/hooks/useEqualizeVertices"
 import { useRandomizeAttributes } from "@/modules/threejs/hooks/useRandomizeAttributes"
-import { MovingParticlesShader } from "@/modules/threejs/shaders/particles"
+import { ParticlesMorph } from "@/modules/threejs/shaders/particles_morph"
 import { useFrame } from "@react-three/fiber"
 import { useEffect, useMemo, useRef } from "react"
 import { BufferAttribute, BufferGeometry, Clock } from "three"
@@ -33,7 +33,7 @@ interface ParticlesMorphProps {
  * @param isAppearing - If true, the particles will appear.
  * @param isDisappearing - If true, the particles will disappear.
  */
-export function ParticlesMorph({
+export function ParticlesMorphPoints({
   buffers,
   active,
   randomAnimation,
@@ -50,7 +50,7 @@ export function ParticlesMorph({
   const previousActive = usePrevious(active)
 
   // Shader Ref individual for each instance
-  const particlesShader = useRef(new MovingParticlesShader())
+  const particlesShader = useRef(new ParticlesMorph())
 
   if (active > buffers.length - 1) throw new Error("active index is out of bounds")
   const virtualGeometry = useRef(buffers[active].clone())
