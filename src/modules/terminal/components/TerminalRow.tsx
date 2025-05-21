@@ -1,6 +1,7 @@
 import { format } from "date-fns"
 import { BsApple, BsClockFill, BsFillFolderFill } from "react-icons/bs"
 import { twMerge } from "tailwind-merge"
+import { PROFILE_PATH } from "../constants"
 
 interface TerminalRowProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   path?: string
@@ -13,13 +14,7 @@ interface TerminalRowProps extends React.DetailedHTMLProps<React.HTMLAttributes<
  * @param - date - Date of when the line was fired.
  * @param - path - Path of the directory.
  */
-export function TerminalRow({
-  date,
-  children,
-  className,
-  path = "~/repos/github.com/21Chani/profile",
-  ...props
-}: TerminalRowProps) {
+export function TerminalRow({ date, children, className, path = PROFILE_PATH, ...props }: TerminalRowProps) {
   return (
     <div className={twMerge("flex flex-col gap-1", className)} {...props}>
       <div className="flex items-center">

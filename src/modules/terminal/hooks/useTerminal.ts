@@ -8,8 +8,22 @@ interface UseTerminalParams {
   initialMessages?: TerminalMessage[]
 }
 
+/**
+ * Use Terminal hook
+ * This hook is used to manage the terminal state and execute commands.
+ * It provides the following features:
+ * - Input ref to focus on the input element
+ * - Messages state to store the terminal messages
+ * - isExecuting state to indicate if a command is being executed
+ * - execCommand function to execute a command
+ * @param initialMessages - Initial messages to be displayed in the terminal
+ * @returns
+ */
 export function useTerminal({ initialMessages = [] }: UseTerminalParams = {}) {
+  // Refs
   const input = useRef<HTMLInputElement>(null)
+
+  // State variables
   const [messages, setMessages] = useState<TerminalMessage[]>(initialMessages)
   const [isExecuting, setIsExecuting] = useState(false)
 
