@@ -6,7 +6,7 @@ import { Paragraph } from "@/modules/global/components/Paragraph"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
-import { Terminal } from "@/modules/terminal/components/Terminal"
+import { Summary } from "@/modules/stacks/components/Summary"
 import { TerminalEvents } from "@/modules/terminal/events"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense, useEffect, useState } from "react"
@@ -26,7 +26,7 @@ function App() {
   return (
     <div id="container" className=" bg-background max-w-7xl h-screen min-h-screen">
       <ASCIIBackground />
-      <Terminal />
+      {/* <Terminal /> */}
       <Navbar />
 
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
@@ -109,48 +109,6 @@ function App() {
           </Paragraph>
         </div>
       </section>
-    </div>
-  )
-}
-
-function Summary() {
-  return (
-    <div className=" flex items-start gap-2 max-md:flex-col ">
-      {/* Details */}
-      <div className="mt-2 flex flex-1 flex-col items-center gap-1 max-md:flex-row">
-        <div className="z-10 size-4 rounded border-2 border-gray-500" />
-        <div className="z-10 size-4 rounded border-2 border-gray-400" />
-        <div className="z-10 size-4 rounded border-2 border-gray-300" />
-      </div>
-
-      {/* Summary */}
-      <div className="text-foreground ">
-        {/* Title */}
-        <span className="mx-auto uppercase ">
-          <h1 className="text-xl font-bold md:text-4xl text-foreground-alt xl:text-5xl xl:leading-[42px]">
-            <EncryptedText animate text="I'm Chani" iterations={12} />
-          </h1>
-          <h1 className="text-xl font-bold md:text-4xl text-foreground-alt xl:text-5xl xl:leading-[42px]">
-            <EncryptedText animate text="A" iterations={1} />
-            &nbsp;
-            <EncryptedText animate className="text-gradient-highlight" text="full stack" iterations={12} />
-            <br className="ma-xl:hidden" />
-            <EncryptedText animate className="text-gradient-highlight" text="software" iterations={12} />
-            &nbsp;
-            <EncryptedText animate text="engineer" iterations={12} />
-            {/* engineer */}
-          </h1>
-        </span>
-
-        {/* Description */}
-        <Paragraph className="mt-4 text-justify text-xs md:text-sm">
-          My real name is Diogo, but you can call me Chani. I am a passionate technology enthusiast from Brazil who
-          loves to learn new things and solve problems. I do know a lot of everything in this programming world, from
-          hardware to software, but I have focused the past 3 years to dedicate into the web3 ecosystem, where I have
-          been working with blockchain technologies, smart contracts, and decentralized applications.
-        </Paragraph>
-        <div className="mt-2 h-[1px] w-52 bg-white/20"></div>
-      </div>
     </div>
   )
 }
