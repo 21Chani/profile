@@ -39,7 +39,7 @@ function ASCIIWaves() {
 
   // Reference variables
   const clock = useRef(new Clock())
-  const geometry = useRef<PlaneGeometry>(new PlaneGeometry(10, 10, 100, 100))
+  const geometry = useRef<PlaneGeometry>(new PlaneGeometry(10, 10, 80, 80))
   useEffect(() => randomizeAttributes(geometry.current, "a_Random"), [geometry.current])
 
   // State
