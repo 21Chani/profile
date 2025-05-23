@@ -8,6 +8,9 @@ const cardStyles = cva("flex", {
   variants: {
     variant: {
       primary: ["rounded-lg relative"],
+      glassy: [
+        "bg-gradient-to-br rounded-3xl border-dashed from-background-alt/20 backdrop-blur-[4px] from-40% border-2 border-border-primary to-black/80 ",
+      ],
     },
   },
   defaultVariants: {

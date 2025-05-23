@@ -14,7 +14,7 @@ import { Clock, PlaneGeometry, Uniform } from "three"
  */
 export function ASCIIBackground() {
   return (
-    <div className="w-screen h-screen fixed inset-0 ">
+    <div className="w-screen h-screen fixed inset-0 -z-10 ">
       <Canvas>
         <Suspense fallback={null}>
           <ASCIIWaves />
@@ -39,7 +39,7 @@ function ASCIIWaves() {
 
   // Reference variables
   const clock = useRef(new Clock())
-  const geometry = useRef<PlaneGeometry>(new PlaneGeometry(10, 10, 80, 80))
+  const geometry = useRef<PlaneGeometry>(new PlaneGeometry(10, 10, 60, 60))
   useEffect(() => randomizeAttributes(geometry.current, "a_Random"), [geometry.current])
 
   // State

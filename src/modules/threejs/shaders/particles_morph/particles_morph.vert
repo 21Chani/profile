@@ -33,7 +33,7 @@ void main(){
     vec3 randomizedTarget = randomizedPosition(a_Target, 0.2);
  
     // Interpolate between model position and target position
-    vec3 finalPos = mix(modelPos, randomizedTarget, u_Progress);
+    vec3 finalPos = mix(position, a_Target, u_Progress);
     
     vec4 modelPosition = modelMatrix * vec4(finalPos, 1.0);
     vec4 viewPosition = viewMatrix * modelPosition;

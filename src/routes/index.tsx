@@ -24,7 +24,7 @@ function App() {
   }, [])
 
   return (
-    <div id="container" className=" bg-background max-w-7xl h-screen min-h-screen">
+    <div id="container" className="max-w-7xl h-screen min-h-screen">
       <ASCIIBackground />
       {/* <Terminal /> */}
       <Navbar />
@@ -38,7 +38,7 @@ function App() {
 
       <section ref={setOSSection} aria-label="Opearing Systems" className="grid grid-cols-3 max-md:grid-cols-1">
         <div className="flex size-full h-full flex-col items-end justify-end p-4">
-          <FaDesktop />
+          <FaDesktop className="size-6 fill-white" />
           <h1 className=" text-end text-3xl font-extrabold uppercase text-gradient-highlight">
             <EncryptedText iterations={20} text={"Operating"} isVisible={osSectionIntersection.isVisible} />
             <br />
