@@ -4,6 +4,7 @@ import { EncryptedText } from "@/modules/global/components/EncryptedText"
 import { Navbar } from "@/modules/global/components/Navbar"
 import { Paragraph } from "@/modules/global/components/Paragraph"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
+import { DatabasesCard } from "@/modules/stacks/components/DatabasesCard"
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
 import { ProgrammingLangsCard } from "@/modules/stacks/components/ProgrammingLangsCard"
@@ -37,6 +38,26 @@ function App() {
         </div>
       </section>
 
+      <section aria-label="Programming Languages" className=" h-screen  flex items-center">
+        <div className="grid grid-cols-3 max-md:grid-cols-1">
+          <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
+            <ProgrammingLangsCard />
+          </div>
+          <div className="row-span-2 flex size-full h-full flex-col p-4 max-md:-order-1">
+            <FaTerminal className="size-6 mt-auto fill-white" />
+            <h1 className="text-3xl font-bold uppercase text-gradient-highlight">
+              <EncryptedText text="Programming" iterations={20} /> <br />{" "}
+              <EncryptedText text="Languages" iterations={20} />
+            </h1>
+            <Paragraph className="text-sm ">
+              I began my programming journey at 15 by teaching myself Java to create Minecraft plugins and mods. That
+              early curiosity sparked a deep passion for software development, leading me to explore a wide range of
+              languages over the years — including C, C++, C#, JavaScript, TypeScript, Python, Go, and more.
+            </Paragraph>
+          </div>
+        </div>
+      </section>
+
       <section ref={setOSSection} aria-label="Opearing Systems" className=" h-screen  flex items-center">
         <div className="grid grid-cols-3 max-md:grid-cols-1">
           <div className="flex size-full h-full flex-col items-end justify-end p-4">
@@ -59,41 +80,21 @@ function App() {
         </div>
       </section>
 
-      <section aria-label="Programming Languages" className=" h-screen  flex items-center">
-        <div className="grid grid-cols-3 max-md:grid-cols-1">
-          <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
-            <ProgrammingLangsCard />
-          </div>
-          <div className="row-span-2 flex size-full h-full flex-col p-4">
-            <FaTerminal className="size-6 mt-auto fill-white" />
-            <h1 className="text-3xl font-bold uppercase text-gradient-highlight">
-              <EncryptedText text="Programming" iterations={20} /> <br />{" "}
-              <EncryptedText text="Languages" iterations={20} />
-            </h1>
-            <Paragraph className="text-sm">
-              I began my programming journey at 15 by teaching myself Java to create Minecraft plugins and mods. That
-              early curiosity sparked a deep passion for software development, leading me to explore a wide range of
-              languages over the years — including C, C++, C#, JavaScript, TypeScript, Python, Go, and more.
-            </Paragraph>
-          </div>
-        </div>
-      </section>
-
       <section aria-label="Database" className="grid grid-cols-3 max-md:grid-cols-1">
         <div className="row-span-2 flex size-full h-full flex-col items-end p-4">
-          <h1 className="mt-auto inline-flex items-center gap-2 text-3xl font-bold">
-            Database
-            <FaDatabase />
+          <FaDatabase className="size-5 fill-white mt-auto" />
+          <h1 className=" text-3xl font-bold text-gradient-highlight">
+            <EncryptedText text="Database" iterations={12} />
           </h1>
+
           <Paragraph className="text-end text-sm">
-            Lorem ipsum dolor sit amet. Aut itaque veritatis id quis harum quo quod deserunt sed numquam voluptatem sit
-            porro officiis sed dolor voluptate.
+            My first experience with data persistence came from using .yaml files as a quick solution for storing simple
+            data. Over time, I moved on to more robust databases like PostgreSQL and MongoDB for handling more complex
+            and scalable storage needs.
           </Paragraph>
         </div>
         <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
-          <Card className="size-full flex-wrap border-none p-8">
-            <div className="m-auto h-fit w-2/4 gap-8"></div>
-          </Card>
+          <DatabasesCard />
         </div>
       </section>
 
