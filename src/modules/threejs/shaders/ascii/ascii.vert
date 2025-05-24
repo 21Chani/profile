@@ -7,13 +7,7 @@ varying vec2 v_Uv;
 varying float v_RandomNess;
 
 attribute float a_Random;
-
-vec3 waveEffect(vec3 position, float frequency, float speed, float amplitude) {
-    float wave = sin(((u_Time * speed) + position.x * 10.0  ) * frequency) ;
-    wave = smoothstep(0.99, 1.0, abs(wave));
-
-    return vec3(0.0, wave * amplitude, 0.0 ); 
-}
+ 
 
 void main() {
    
