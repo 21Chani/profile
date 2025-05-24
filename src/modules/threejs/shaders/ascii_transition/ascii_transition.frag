@@ -28,7 +28,7 @@ void main() {
     vec4 spriteShape = sprite(gl_PointCoord, spriteX, u_SpriteSheet, 10.0);
        
     vec4 color = vec4(v_Color * spriteShape);   
-    color.rgb += v_RandomNess * 2.0;
+    color.rgb += v_RandomNess * 0.5;
     color.a = smoothstep(0.2, 1.0, color.a); 
      
     gl_FragColor = color;

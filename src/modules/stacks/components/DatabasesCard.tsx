@@ -1,8 +1,6 @@
 import { Card } from "@/modules/global/components/Card"
-import { randomizeAttributes } from "@/modules/threejs/lib/randomizeAttributes"
 import { Canvas } from "@react-three/fiber"
 import { Suspense, useState } from "react"
-import { PlaneGeometry } from "three"
 
 import { ProgressCountBar } from "@/modules/global/components/ProgressCountBar"
 import { StatInfo } from "@/modules/global/components/StatInfo"
@@ -11,6 +9,7 @@ import { BiLogoMongodb, BiLogoPostgresql } from "react-icons/bi"
 import { BsFillLightningFill } from "react-icons/bs"
 import { DiMysql, DiRedis } from "react-icons/di"
 import { RiTimeFill } from "react-icons/ri"
+import { ASCII_PLANE_GEOMETRY } from "../constants/geometries"
 
 const DB_STATS = [
   { name: "Postgres", skill: 5, time: 5, icon: BiLogoPostgresql, src: "/assets/database/psql.png" },
@@ -73,19 +72,15 @@ export function DatabasesCard() {
         ))}
       </div>
 
-      <Suspense fallback={<h1>LOADING</h1>}>
-        <Canvas>
+      <Canvas>
+        <Suspense fallback={null}>
           <AsciiTransition
             activeIndex={normalizedIndex}
-            geometry={planeGeometry}
+            geometry={ASCII_PLANE_GEOMETRY}
             images={DB_STATS.map((lang) => lang.src)}
           />
-        </Canvas>
-      </Suspense>
+        </Suspense>
+      </Canvas>
     </Card>
   )
 }
-
-const planeGeometry = new PlaneGeometry(5, 5, 30, 30)
-planeGeometry.setIndex(null)
-randomizeAttributes(planeGeometry)

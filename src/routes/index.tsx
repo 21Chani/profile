@@ -1,5 +1,4 @@
 import { ASCIIBackground } from "@/modules/global/components/ASCIIBackground"
-import { Card } from "@/modules/global/components/Card"
 import { EncryptedText } from "@/modules/global/components/EncryptedText"
 import { Navbar } from "@/modules/global/components/Navbar"
 import { Paragraph } from "@/modules/global/components/Paragraph"
@@ -11,10 +10,13 @@ import { ProgrammingLangsCard } from "@/modules/stacks/components/ProgrammingLan
 import { Summary } from "@/modules/stacks/components/Summary"
 import { TerminalEvents } from "@/modules/terminal/events"
 import { createFileRoute } from "@tanstack/react-router"
+
+import gsap from "gsap"
+import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import { Suspense, useEffect, useState } from "react"
 import { FaDatabase, FaDesktop, FaTerminal } from "react-icons/fa"
-import { SlEnergy } from "react-icons/sl"
 
+gsap.registerPlugin(ScrollToPlugin)
 export const Route = createFileRoute("/")({ component: App })
 
 function App() {
@@ -38,7 +40,7 @@ function App() {
         </div>
       </section>
 
-      <section aria-label="Programming Languages" className=" h-screen  flex items-center">
+      <section id="plang" aria-label="Programming Languages" className="flex h-screen items-center">
         <div className="grid grid-cols-3 max-md:grid-cols-1">
           <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
             <ProgrammingLangsCard />
@@ -58,7 +60,7 @@ function App() {
         </div>
       </section>
 
-      <section ref={setOSSection} aria-label="Opearing Systems" className=" h-screen  flex items-center">
+      <section ref={setOSSection} aria-label="Opearing Systems" className="flex h-screen items-center">
         <div className="grid grid-cols-3 max-md:grid-cols-1">
           <div className="flex size-full h-full flex-col items-end justify-end p-4">
             <FaDesktop className="size-6 fill-white" />
@@ -80,25 +82,27 @@ function App() {
         </div>
       </section>
 
-      <section aria-label="Database" className="grid grid-cols-3 max-md:grid-cols-1">
-        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
-          <DatabasesCard />
-        </div>
-        <div className="row-span-2 flex size-full h-full flex-col items-start max-md:-order-1 p-4">
-          <FaDatabase className="size-5 fill-white mt-auto" />
-          <h1 className=" text-3xl font-bold text-gradient-highlight">
-            <EncryptedText text="Database" iterations={12} />
-          </h1>
+      <section aria-label="Databases" className="flex h-screen items-center">
+        <div className="grid grid-cols-3 max-md:grid-cols-1">
+          <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
+            <DatabasesCard />
+          </div>
+          <div className="row-span-2 flex size-full h-full flex-col items-start max-md:-order-1 p-4">
+            <FaDatabase className="size-5 fill-white mt-auto" />
+            <h1 className=" text-3xl font-bold text-gradient-highlight">
+              <EncryptedText text="Database" iterations={12} />
+            </h1>
 
-          <Paragraph className="text-start text-sm">
-            My first experience with data persistence came from using .yaml files as a quick solution for storing simple
-            data. Over time, I moved on to more robust databases like PostgreSQL and MongoDB for handling more complex
-            and scalable storage needs.
-          </Paragraph>
+            <Paragraph className="text-start text-sm">
+              My first experience with data persistence came from using .yaml files as a quick solution for storing
+              simple data. Over time, I moved on to more robust databases like PostgreSQL and MongoDB for handling more
+              complex and scalable storage needs.
+            </Paragraph>
+          </div>
         </div>
       </section>
 
-      <section aria-label="Skills" className="grid grid-cols-3 max-md:grid-cols-1">
+      {/* <section aria-label="Skills" className="grid grid-cols-3 max-md:grid-cols-1">
         <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
           <Card className="size-full flex-wrap border-none p-8">
             <div className="m-auto h-fit w-2/4 gap-8"></div>
@@ -114,7 +118,7 @@ function App() {
             porro officiis sed dolor voluptate.
           </Paragraph>
         </div>
-      </section>
+      </section> */}
     </div>
   )
 }
