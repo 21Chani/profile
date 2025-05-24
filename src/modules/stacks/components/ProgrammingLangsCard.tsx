@@ -25,10 +25,8 @@ const LANG_STATS = [
 ] as const
 
 /**
- * Operating System Card Component.
- *
- * This cards displays a 3D model a given list of operating systems.
- * They transitionate between each other when clicked or by timer.
+ * Programming Languages Card Component.
+ * This card displays a 3D model particles of a given list of programming languages.
  *
  * How transition works:
  * Instead of making use of a hook such as `useTimer`
@@ -62,7 +60,7 @@ export function ProgrammingLangsCard() {
         ]}
       />
 
-      <div className="flex absolute left-4 top-4 gap-3 z-40 ">
+      <div className="flex absolute left-4 bottom-4 gap-3 z-40 ">
         {LANG_STATS.map(({ icon: Icon }, index) => (
           <button
             className="cursor-pointer"

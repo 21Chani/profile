@@ -56,7 +56,7 @@ export function DatabasesCard() {
         ]}
       />
 
-      <div className="flex absolute left-4 top-4 gap-3 z-40 ">
+      <div className="flex absolute left-4 bottom-4 gap-3 z-40 ">
         {DB_STATS.map(({ icon: Icon }, index) => (
           <button
             role="option"

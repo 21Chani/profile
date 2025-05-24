@@ -52,13 +52,8 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
         className="absolute z-[40] top-0 left-0 w-fit h-full"
         onSelectItem={(index) => setActiveOS(index)}
       />
-      <div className="w-fit p-4 flex gap-3   absolute bottom-0 nslate-y-full right-0 ">
-        <div className="size-4 rounded-full bg-radial bg-gray-800"></div>
-        <div className="size-4 rounded-full bg-gray-600 "></div>
-        <div className="size-4 rounded-full bg-gray-400"></div>
-      </div>
 
-      <div className="flex absolute right-4 top-4 gap-3 z-40 ">
+      <div className="flex absolute right-4 bottom-4 gap-3 z-40 ">
         {OS_STATS.map(({ icon: Icon }, index) => (
           <button
             className="cursor-pointer"

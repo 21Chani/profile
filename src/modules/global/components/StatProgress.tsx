@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { usePrevious } from "../hooks/usePrevious"
 import { asyncIterable } from "../lib/asyncIterable"
@@ -29,7 +29,7 @@ export function StatProgress({
   if (level > MAX_SEGMENTS) throw new Error(`Level ${level} is greater than max segments ${MAX_SEGMENTS}`)
 
   // Ref Variables
-  const container = useRef<HTMLDivElement>(null)
+  const [container, setContainer] = useState<HTMLDivElement | null>(null)
   const previousLevel = usePrevious(level)
 
   /**
@@ -40,14 +40,17 @@ export function StatProgress({
    * @param status - Status of the level, either "open" or "closed"
    * @param delay - Delay between each level animation
    */
-  async function updateLevels(levels: number[], status: "closed" | "open", delay = 400) {
-    for await (const lvl of asyncIterable(levels, delay)) {
-      if (!container.current) return // Type verification
-      const div = container.current.querySelector(`#stat_level_${lvl}`) as HTMLDivElement
-      div.style.setProperty("transition-duration", `${delay}ms`) // Update transition duration to match the delay
-      div.setAttribute("data-status", status)
-    }
-  }
+  const updateLevels = useCallback(
+    async function (levels: number[], status: "closed" | "open", delay = 400) {
+      for await (const lvl of asyncIterable(levels, delay)) {
+        if (!container) return // Type verification
+        const div = container.querySelector(`#stat_level_${lvl}`) as HTMLDivElement
+        div.style.setProperty("transition-duration", `${delay}ms`) // Update transition duration to match the delay
+        div.setAttribute("data-status", status)
+      }
+    },
+    [container]
+  )
 
   /**
    * Close, Open and Initial state effect.
@@ -74,10 +77,10 @@ export function StatProgress({
       const levels = new Array(level - previousLevel).fill(0).map((_, i) => level - i)
       updateLevels(levels.reverse(), "open")
     }
-  }, [level])
+  }, [level, updateLevels])
 
   return (
-    <div ref={container} className={twMerge("flex items-center ", className)} {...props}>
+    <div ref={setContainer} className={twMerge("flex items-center ", className)} {...props}>
       {new Array(MAX_SEGMENTS)
         .fill(0)
         .map((_, i) => MAX_SEGMENTS - i)
