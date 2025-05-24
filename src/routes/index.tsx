@@ -71,8 +71,9 @@ function App() {
               <EncryptedText text="Languages" iterations={20} />
             </h1>
             <Paragraph className="text-sm">
-              Starting by Java doing Minecraft Plugins and Mods, I have expanded my knowledge to a bunch of different
-              languages for different purposes with typescript being the most used so far.
+              I began my programming journey at 15 by teaching myself Java to create Minecraft plugins and mods. That
+              early curiosity sparked a deep passion for software development, leading me to explore a wide range of
+              languages over the years — including C, C++, C#, JavaScript, TypeScript, Python, Go, and more.
             </Paragraph>
           </div>
         </div>

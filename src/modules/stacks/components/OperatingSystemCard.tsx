@@ -1,13 +1,11 @@
 import { Card } from "@/modules/global/components/Card"
-import { EncryptedText } from "@/modules/global/components/EncryptedText"
 import { ProgressCountBar } from "@/modules/global/components/ProgressCountBar"
-import { StatProgress } from "@/modules/global/components/StatProgress"
+import { StatInfo } from "@/modules/global/components/StatInfo"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { ParticlesMorphPoints } from "@/modules/threejs/components/ParticlesMorph"
 import { useGLTF } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { useRef, useState } from "react"
-import { BiChevronRight } from "react-icons/bi"
 import { BsFillLightningFill } from "react-icons/bs"
 import { FaApple } from "react-icons/fa"
 import { GrArchlinux, GrFedora, GrUbuntu, GrWindows } from "react-icons/gr"
@@ -100,36 +98,16 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
         ))}
       </div>
 
-      <Card className="!absolute gap-2  z-[40] border-dashed rounded-2xl top-4 left-10 flex items-start justify-start flex-col p-2">
-        <div className="flex flex-col items-start pt-4">
-          <h1 className="text-2xl font-thin leading-5 ">
-            {/* {`{{ ${osStat.name} }}`} */}
-            {`{{ `}
-            <EncryptedText
-              className="text-gradient-highlight"
-              text={osStat.name}
-              iterations={osStat.name.trim().length + 6}
-            />
-            {`. }}`}
-          </h1>
-        </div>
-        <div className="flex">
-          <BiChevronRight className=" size-6 scale-x-75 stroke-2 stroke-gray-300" />
-          <StatProgress
-            className="flex-row-reverse"
-            level={osStat.skill}
-            icon={<BsFillLightningFill className="size-4 min-w-4 fill-white" />}
-          />
-        </div>
-        <div className="flex">
-          <BiChevronRight className=" size-6 scale-x-75 stroke-2 stroke-gray-300" />
-          <StatProgress
-            className="flex-row-reverse"
-            level={osStat.time}
-            icon={<RiTimeFill className="size-4 min-w-4 fill-white" />}
-          />
-        </div>
-      </Card>
+      <StatInfo
+        direction={"lr"}
+        text={osStat.name}
+        iterations={osStat.name.length * 2}
+        className="top-4 left-10 absolute z-40"
+        bars={[
+          { level: osStat.skill, icon: <BsFillLightningFill className="size-5 fill-gray-500" /> },
+          { level: osStat.time, icon: <RiTimeFill className="size-5 fill-gray-500" /> },
+        ]}
+      />
 
       <Canvas>
         <ParticlesMorphPoints
