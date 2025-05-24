@@ -81,20 +81,20 @@ function App() {
       </section>
 
       <section aria-label="Database" className="grid grid-cols-3 max-md:grid-cols-1">
-        <div className="row-span-2 flex size-full h-full flex-col items-end p-4">
+        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
+          <DatabasesCard />
+        </div>
+        <div className="row-span-2 flex size-full h-full flex-col items-start max-md:-order-1 p-4">
           <FaDatabase className="size-5 fill-white mt-auto" />
           <h1 className=" text-3xl font-bold text-gradient-highlight">
             <EncryptedText text="Database" iterations={12} />
           </h1>
 
-          <Paragraph className="text-end text-sm">
+          <Paragraph className="text-start text-sm">
             My first experience with data persistence came from using .yaml files as a quick solution for storing simple
             data. Over time, I moved on to more robust databases like PostgreSQL and MongoDB for handling more complex
             and scalable storage needs.
           </Paragraph>
-        </div>
-        <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
-          <DatabasesCard />
         </div>
       </section>
 
