@@ -9,16 +9,27 @@ import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
 import { ProgrammingLangsCard } from "@/modules/stacks/components/ProgrammingLangsCard"
 import { Summary } from "@/modules/stacks/components/Summary"
 import { Terminal } from "@/modules/terminal/components/Terminal"
+import { TerminalRow } from "@/modules/terminal/components/TerminalRow"
 import { TerminalEvents } from "@/modules/terminal/events"
 import { createFileRoute } from "@tanstack/react-router"
 
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import { Suspense, useEffect, useState } from "react"
+import { BiChevronRight } from "react-icons/bi"
 import { FaDatabase, FaDesktop, FaTerminal } from "react-icons/fa"
+import { RiGithubFill, RiLinkedinBoxFill } from "react-icons/ri"
+import { TbMailFilled } from "react-icons/tb"
 
 gsap.registerPlugin(ScrollToPlugin)
-export const Route = createFileRoute("/")({ component: App })
+export const Route = createFileRoute("/")({
+  component: App,
+  head(c) {
+    return {
+      meta: [{ title: "Chani._" }],
+    }
+  },
+})
 
 function App() {
   const [osSection, setOSSection] = useState<HTMLElement | null>(null)
@@ -29,19 +40,19 @@ function App() {
   }, [])
 
   return (
-    <div id="container" className="max-w-7xl h-screen min-h-screen">
+    <div id="container" className="w-full h-screen min-h-screen">
       <ASCIIBackground />
       <Terminal />
       <Navbar />
 
-      <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
+      <section className="max-w-7xl mx-auto relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
         <div className="mt-10 flex flex-1 items-center gap-14 px-2 font-jaro max-xl:flex-col lg:px-20">
           <Summary />
           <ProfileCard />
         </div>
       </section>
 
-      <section id="plang" aria-label="Programming Languages" className="flex h-screen items-center">
+      <section id="plang" aria-label="Programming Languages" className="max-w-7xl mx-auto flex h-screen items-center">
         <div className="grid grid-cols-3 max-md:grid-cols-1">
           <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
             <ProgrammingLangsCard />
@@ -61,7 +72,11 @@ function App() {
         </div>
       </section>
 
-      <section ref={setOSSection} aria-label="Opearing Systems" className="flex h-screen items-center">
+      <section
+        ref={setOSSection}
+        aria-label="Opearing Systems"
+        className="max-w-7xl mx-auto flex h-screen items-center"
+      >
         <div className="grid grid-cols-3 max-md:grid-cols-1">
           <div className="flex size-full h-full flex-col items-end justify-end p-4">
             <FaDesktop className="size-6 fill-white" />
@@ -83,7 +98,7 @@ function App() {
         </div>
       </section>
 
-      <section aria-label="Databases" className="flex h-screen items-center">
+      <section aria-label="Databases" className="max-w-7xl mx-auto flex h-screen items-center">
         <div className="grid grid-cols-3 max-md:grid-cols-1">
           <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
             <DatabasesCard />
@@ -102,6 +117,47 @@ function App() {
           </div>
         </div>
       </section>
+
+      <footer className="w-full bg-background-alt-2 flex p-10 flex-col">
+        <div className="flex">
+          <BiChevronRight className=" size-12 scale-x-75 stroke-2 stroke-gray-500" />
+          <h1 className="text-5xl text-gradient-highlight">Chani._</h1>
+        </div>
+
+        <div className="gap-2 flex flex-col">
+          {/* <h2 className="text-2xl text-gray-500 font-cascadia font-bold uppercase mt-4">Social </h2> */}
+          <TerminalRow path="/usr/socials" className="mt-6">
+            <div className="flex">
+              <BiChevronRight className=" size-6 scale-x-75 stroke-2 stroke-green-500" />
+              <p className="text-gray-600">ls</p>
+            </div>
+            <a
+              className="text-foreground-alt hover:text-foreground hover:underline transition-colors flex items-center gap-2 "
+              href="mailto: contact@chani.sh"
+              target="_blank"
+            >
+              <TbMailFilled className="text-white size-5" />
+              <p>contact@chani.sh</p>
+            </a>
+            <a
+              className="text-foreground-alt hover:text-foreground hover:underline transition-colors flex items-center gap-2 "
+              href="https://github.com/21Chani"
+              target="_blank"
+            >
+              <RiGithubFill className="text-white size-5" />
+              <p>21Chani</p>
+            </a>
+            <a
+              className="text-foreground-alt hover:text-foreground hover:underline transition-colors flex items-center gap-2 "
+              href="mailto: "
+              target="_blank"
+            >
+              <RiLinkedinBoxFill className="text-white size-5" />
+              <p>Diogo Mendonça</p>
+            </a>
+          </TerminalRow>
+        </div>
+      </footer>
 
       {/* <section aria-label="Skills" className="grid grid-cols-3 max-md:grid-cols-1">
         <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">

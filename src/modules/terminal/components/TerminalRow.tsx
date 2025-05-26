@@ -34,7 +34,7 @@ export function TerminalRow({ date, children, className, path = PROFILE_PATH, ..
         </div>
 
         {/* Path Section */}
-        <div className="h-6 p-3 py-1 bg-gray-400 gap-0.5 flex">
+        <div className={twMerge("h-6 p-3 py-1 bg-gray-400 gap-0.5 flex", !date && "rounded-r-sm")}>
           <BsFillFolderFill className="fill-black size-4  " />
           <p className="text-sm leading-4">{handledPath}</p>
         </div>
