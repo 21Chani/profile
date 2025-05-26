@@ -69,9 +69,9 @@ export function AsciiTransition({
 
   // Initialize the shaders textures
   useEffect(() => {
-    if (textures.length < 2) throw new Error("Please provide at least 2 images to create ascii transition")
     shaders.current.setTexture(textures[0])
     shaders.current.setTextureTarget(textures[1])
+    // if (textures.length < 2) throw new Error("Please provide at least 2 images to create ascii transition")
   }, [textures])
 
   /**

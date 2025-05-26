@@ -44,7 +44,7 @@ export async function* wgetCommand(_url: string): AsyncGenerator<string[]> {
     "Length: 12345678 (12M) [text/html]",
     "Saving to: 'index.html'",
     " ",
-    `index.html 100%[${progressLabel}] 12.34M   1234KB/s    in 10s`,
+    `index.html 100%[${progressLabel}] 021  --.-KB/s    in 10s`,
   ]
   //   if(initialMessage)
 
@@ -53,9 +53,9 @@ export async function* wgetCommand(_url: string): AsyncGenerator<string[]> {
     yield lines.slice(0, i)
   }
 
-  for await (const i of asyncIterable(30, 100)) {
+  for await (const i of asyncIterable(30, 50)) {
     progressLabel = progressLabel.replace("> ", "=>")
-    lines[6] = `index.html     100%[${progressLabel}]  12.34M   1234KB/s    in ${i / 10}s`
+    lines[6] = `index.html     100%[${progressLabel}]  021  --.-KB/s    in ${i / 10}s`
     yield lines
   }
 }

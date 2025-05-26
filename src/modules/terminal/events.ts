@@ -1,5 +1,6 @@
 import { EventEmitter } from "events"
 
+type Command = string
 /**
  * Terminal events
  * Used to communicate between the terminal and other components.
@@ -14,7 +15,7 @@ import { EventEmitter } from "events"
 export const TerminalEvents = new EventEmitter<{
   open: []
   close: []
-  execute: [string]
+  execute: [Command]
   enter: [] // to execute the command in the input.
 }>()
 

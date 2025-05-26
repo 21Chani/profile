@@ -17,23 +17,18 @@ interface TerminalProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTM
  * @param - defaultCommand - Default command to be executed when the terminal is opened.
  * @param - title - Title of the terminal.
  */
-export function Terminal({
-  className,
-  defaultCommand,
-  title = "chani - chani@Chani-Portfolio-Pro - zsh",
-  ...props
-}: TerminalProps) {
+export function Terminal({ className, defaultCommand, title = "chani@Portfolio-Pro", ...props }: TerminalProps) {
   const [isOpen, setIsOpen] = useState(true)
   const { execCommand, input, isExecuting, messages } = useTerminal()
 
   useEffect(() => {
     const updateOpen = () => setIsOpen(true)
     const updateClose = () => setIsOpen(false)
-    const runCommand = (command: string | undefined) => {
-      if (command) execCommand(command)
+    const runCommand = (command: string) => {
+      if (command) execCommand(command).then(({ shouldClose }) => setIsOpen(!shouldClose))
       else {
-        command = input.current?.value
-        execCommand(command)
+        command = input.current?.value ?? ""
+        execCommand(command).then(({ shouldClose }) => setIsOpen(!shouldClose))
       }
     }
 
@@ -58,14 +53,17 @@ export function Terminal({
           )}
           {...props}
         >
-          <div aria-label="Title-Bar" className="h-10 w-full bg-background-alt flex items-center gap-2 relative px-2">
+          <div
+            aria-label="Title-Bar"
+            className="h-10 w-full border bg-background-alt flex items-center gap-2 relative px-2"
+          >
             <button className="size-3.5 rounded-full bg-red-500" />
             <button className="size-3.5 rounded-full bg-yellow-500" onClick={() => setIsOpen(false)} />
             <button className="size-3.5 rounded-full bg-green-500" />
-            <div className="absolute left-2/4 flex gap-2 -translate-x-2/4">
+            <div className="absolute items-center max-md:right-6 md:left-2/4  flex gap-2 md:-translate-x-2/4">
               <BiFolder className="size-6 fill-foreground" />
               <Dialog.Title className="text-foreground" asChild>
-                <p>{title}</p>
+                <p className="max-md:text-sm">{title}</p>
               </Dialog.Title>
             </div>
           </div>
@@ -85,7 +83,7 @@ export function Terminal({
                 {lines.slice(1).map((line, lineIndex) => (
                   <p
                     key={`terminal_row_${index}_line_${lineIndex}`}
-                    className="text-sm text-white h-5 whitespace-pre-wrap"
+                    className="text-sm text-white min-h-5 whitespace-pre-wrap"
                   >
                     {line}
                   </p>
@@ -104,7 +102,9 @@ export function Terminal({
                     else if (event.ctrlKey && event.key === "u") {
                       event.target.value = ""
                     } else if (event.key === "Enter") {
-                      execCommand((event.target as HTMLInputElement).value)
+                      execCommand((event.target as HTMLInputElement).value).then(({ shouldClose }) =>
+                        setIsOpen(!shouldClose)
+                      )
                       if (!input.current) return
                       ;(event.target as HTMLInputElement).value = "" // Clear the input
                     }

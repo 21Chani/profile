@@ -8,6 +8,7 @@ import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystem
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
 import { ProgrammingLangsCard } from "@/modules/stacks/components/ProgrammingLangsCard"
 import { Summary } from "@/modules/stacks/components/Summary"
+import { Terminal } from "@/modules/terminal/components/Terminal"
 import { TerminalEvents } from "@/modules/terminal/events"
 import { createFileRoute } from "@tanstack/react-router"
 
@@ -30,7 +31,7 @@ function App() {
   return (
     <div id="container" className="max-w-7xl h-screen min-h-screen">
       <ASCIIBackground />
-      {/* <Terminal /> */}
+      <Terminal />
       <Navbar />
 
       <section className="gradient-bg relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">

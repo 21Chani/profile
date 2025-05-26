@@ -37,7 +37,7 @@ export function useTerminal({ initialMessages = [] }: UseTerminalParams = {}) {
    * @param message - Input message containing the command and arguments
    * @returns - void
    */
-  async function execCommand(message?: string) {
+  async function execCommand(message?: string): Promise<{ shouldClose?: boolean }> {
     // Essential variables
     const command = message?.split(" ")[0]
     const args = message?.split(" ").slice(1)
@@ -47,12 +47,13 @@ export function useTerminal({ initialMessages = [] }: UseTerminalParams = {}) {
       case "":
         // Add an empty message to the terminal.
         setMessages((p) => [...p, { date: new Date(), lines: [""], path: PROFILE_PATH }])
-        break
+
+        return { shouldClose: false }
       case "wget":
         // If there is no argument, show the usage of the command.
         if (!args?.length || args[0] === "") {
           setMessages((p) => [...p, wgetCommandUsage()])
-          return
+          return { shouldClose: false }
         }
 
         try {
@@ -66,16 +67,21 @@ export function useTerminal({ initialMessages = [] }: UseTerminalParams = {}) {
               return _messages
             })
           }
+          return { shouldClose: true }
+        } catch {
+          return { shouldClose: false }
         } finally {
           setTimeout(() => input.current?.focus(), 200)
           setIsExecuting(false)
         }
-        break
+
       case "clear":
         setMessages(() => [])
-        break
+        return { shouldClose: false }
+
       default:
         setMessages((p) => [...p, commandNotFound(command || "zsh")])
+        return { shouldClose: false }
     }
   }
 
