@@ -1,9 +1,7 @@
 import { Card } from "@/modules/global/components/Card"
-import { randomizeAttributes } from "@/modules/threejs/lib/randomizeAttributes"
 import { Canvas } from "@react-three/fiber"
 import { Suspense, useState } from "react"
 import { GrJs } from "react-icons/gr"
-import { PlaneGeometry } from "three"
 
 import { ProgressCountBar } from "@/modules/global/components/ProgressCountBar"
 import { StatInfo } from "@/modules/global/components/StatInfo"
@@ -13,6 +11,7 @@ import { BsFillLightningFill } from "react-icons/bs"
 import { FaHtml5, FaJava } from "react-icons/fa"
 import { RiTimeFill } from "react-icons/ri"
 import { TbBrandCpp, TbBrandCSharp } from "react-icons/tb"
+import { ASCII_PLANE_GEOMETRY } from "../constants/geometries"
 
 const LANG_STATS = [
   { name: "Javascript", skill: 5, time: 5, icon: GrJs, src: "/assets/lang/js.png" },
@@ -80,7 +79,7 @@ export function ProgrammingLangsCard() {
         <Canvas>
           <AsciiTransition
             activeIndex={normalizedIndex}
-            geometry={planeGeometry}
+            geometry={ASCII_PLANE_GEOMETRY}
             images={LANG_STATS.map((lang) => lang.src)}
           />
         </Canvas>
@@ -88,7 +87,3 @@ export function ProgrammingLangsCard() {
     </Card>
   )
 }
-
-const planeGeometry = new PlaneGeometry(5, 5, 30, 30)
-planeGeometry.setIndex(null)
-randomizeAttributes(planeGeometry)

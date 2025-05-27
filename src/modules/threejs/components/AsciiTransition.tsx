@@ -1,9 +1,8 @@
 import { usePrevious } from "@/modules/global/hooks/usePrevious"
 import { useTexture } from "@react-three/drei"
-import { useLoader } from "@react-three/fiber"
 import gsap from "gsap"
 import { useEffect, useRef } from "react"
-import { TextureLoader, type BufferGeometry } from "three"
+import { type BufferGeometry } from "three"
 import { ASCIITransitionShaderMaterial } from "../shaders/ascii_transition"
 
 interface AsciiTransitionProps {
@@ -35,9 +34,16 @@ export function AsciiTransition({
   onTransitionEnd,
   onTransitionStart,
 }: AsciiTransitionProps) {
+  const loaded = useRef(false)
   // Threejs related hooks
   useTexture("/sprites/numeric.png", (t) => shaders.current.setSpriteSheet(t))
-  const textures = useLoader(TextureLoader, images, undefined)
+  const textures = useTexture(images, (t) => {
+    if (loaded.current) return
+    loaded.current = true
+
+    shaders.current.setTexture(t[0])
+    shaders.current.setTextureTarget(t[1])
+  })
 
   // Reference variables
   const shaders = useRef(new ASCIITransitionShaderMaterial())
@@ -68,11 +74,11 @@ export function AsciiTransition({
   // EFFECTS
 
   // Initialize the shaders textures
-  useEffect(() => {
-    shaders.current.setTexture(textures[0])
-    shaders.current.setTextureTarget(textures[1])
-    // if (textures.length < 2) throw new Error("Please provide at least 2 images to create ascii transition")
-  }, [textures])
+  // useEffect(() => {
+  //   shaders.current.setTexture(textures[0])
+  //   shaders.current.setTextureTarget(textures[1])
+  //   // if (textures.length < 2) throw new Error("Please provide at least 2 images to create ascii transition")
+  // }, [textures])
 
   /**
    * Use effect responsible for detecting updates on the active index

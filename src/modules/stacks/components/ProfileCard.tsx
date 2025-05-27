@@ -5,7 +5,7 @@ import { ASCIIShaderMaterial } from "@/modules/threejs/shaders/ascii"
 import { useTexture } from "@react-three/drei"
 import { Canvas, useFrame } from "@react-three/fiber"
 import gsap from "gsap"
-import { Suspense, useRef, useState } from "react"
+import { Suspense, useRef } from "react"
 import { BiChevronRight } from "react-icons/bi"
 import { Clock, PlaneGeometry, Points } from "three"
 
@@ -36,15 +36,14 @@ const imageAppearTween = gsap.to(shaderMaterial.uniforms.u_Progress, {
 export function ProfileCard() {
   // ############################
   // Component States
-  const [divRef, setDivRef] = useState<HTMLDivElement | null>(null)
-  useIntersectionObserver(divRef, {
+  useIntersectionObserver(["#profile-wrapper"], {
     threshold: 0.5,
     onAppear: () => imageAppearTween.restart(),
     onLeave: () => imageAppearTween.reverse(),
   })
 
   return (
-    <div ref={setDivRef} className="max-md:w-full">
+    <div id="profile-wrapper" className="max-md:w-full">
       <Card variant={"glassy"} className="aspect-video w-[550px] justify-center max-md:w-full ">
         <p className="text-gray-300 text-xl absolute right-5 top-5">+</p>
         <p className="text-white text-2xl absolute right-2 top-2">+</p>
