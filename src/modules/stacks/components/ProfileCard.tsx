@@ -1,11 +1,11 @@
 import { Card } from "@/modules/global/components/Card"
-import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
+import { useIntersectionObserver } from "@/modules/global/hooks/useIntersectionObserver"
 import { randomizeAttributes } from "@/modules/threejs/lib/randomizeAttributes"
 import { ASCIIShaderMaterial } from "@/modules/threejs/shaders/ascii"
 import { useTexture } from "@react-three/drei"
 import { Canvas, useFrame } from "@react-three/fiber"
 import gsap from "gsap"
-import { Suspense, useEffect, useRef, useState } from "react"
+import { Suspense, useRef, useState } from "react"
 import { BiChevronRight } from "react-icons/bi"
 import { Clock, PlaneGeometry, Points } from "three"
 
@@ -37,14 +37,11 @@ export function ProfileCard() {
   // ############################
   // Component States
   const [divRef, setDivRef] = useState<HTMLDivElement | null>(null)
-  const { isAppearing } = useIntersectionObserverState(divRef, { threshold: 0.5 })
-
-  // ############################
-  // Effect Handlers
-  useEffect(() => {
-    if (!isAppearing) return
-    imageAppearTween.restart()
-  }, [isAppearing])
+  useIntersectionObserver(divRef, {
+    threshold: 0.5,
+    onAppear: () => imageAppearTween.restart(),
+    onLeave: () => imageAppearTween.reverse(),
+  })
 
   return (
     <div ref={setDivRef} className="max-md:w-full">

@@ -10,17 +10,17 @@ export function useIntersectionObserverState(
   const [isDisappearing, setIsDisappearing] = useState(false)
 
   useIntersectionObserver(element, {
-    onAppear: () => {
+    onAppear: (element, options) => {
       setIsVisible(true)
       setIsAppearing(true)
       setIsDisappearing(false)
-      onAppear?.()
+      onAppear?.(element, options)
     },
-    onLeave: () => {
+    onLeave: (element, options) => {
       setIsVisible(false)
       setIsAppearing(false)
       setIsDisappearing(true)
-      onLeave?.()
+      onLeave?.(element, options)
     },
     ...options,
   })

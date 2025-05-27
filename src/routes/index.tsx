@@ -2,20 +2,19 @@ import { ASCIIBackground } from "@/modules/global/components/ASCIIBackground"
 import { EncryptedText } from "@/modules/global/components/EncryptedText"
 import { Navbar } from "@/modules/global/components/Navbar"
 import { Paragraph } from "@/modules/global/components/Paragraph"
-import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
+import { useIntersectionObserver } from "@/modules/global/hooks/useIntersectionObserver"
 import { DatabasesCard } from "@/modules/stacks/components/DatabasesCard"
 import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystemCard"
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
 import { ProgrammingLangsCard } from "@/modules/stacks/components/ProgrammingLangsCard"
 import { Summary } from "@/modules/stacks/components/Summary"
-import { Terminal } from "@/modules/terminal/components/Terminal"
 import { TerminalRow } from "@/modules/terminal/components/TerminalRow"
 import { TerminalEvents } from "@/modules/terminal/events"
 import { createFileRoute } from "@tanstack/react-router"
 
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useEffect } from "react"
 import { BiChevronRight } from "react-icons/bi"
 import { FaDatabase, FaDesktop, FaTerminal } from "react-icons/fa"
 import { RiGithubFill, RiLinkedinBoxFill } from "react-icons/ri"
@@ -27,8 +26,14 @@ export const Route = createFileRoute("/")({
 })
 
 function App() {
-  const [osSection, setOSSection] = useState<HTMLElement | null>(null)
-  const osSectionIntersection = useIntersectionObserverState(osSection, { threshold: 0.7 })
+  useIntersectionObserver(["#programming_languages", "#introduction", "#databases", "#operating-systems"], {
+    onAppear: ({ target }) => target.setAttribute("aria-hidden", "false"),
+    onLeave: ({ target }, { direction }) => {
+      target.setAttribute("data-direction", direction)
+      target.setAttribute("aria-hidden", "true")
+    },
+    threshold: 0.4,
+  })
 
   useEffect(() => {
     TerminalEvents.emit("execute", "wget https://chani.sh")
@@ -37,18 +42,21 @@ function App() {
   return (
     <div id="container" className="w-full h-screen min-h-screen">
       <ASCIIBackground />
-      <Terminal />
+      {/* <Terminal /> */}
       <Navbar />
 
       <section className="max-w-7xl mx-auto relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
-        <div className="mt-10 flex flex-1 items-center gap-14 px-2 font-jaro max-xl:flex-col lg:px-20">
+        <div
+          id="introduction"
+          className="mt-10 flex flex-1 appearable items-center gap-14 px-2 font-jaro max-xl:flex-col lg:px-20 "
+        >
           <Summary />
           <ProfileCard />
         </div>
       </section>
 
-      <section id="plang" aria-label="Programming Languages" className="max-w-7xl mx-auto flex h-screen items-center">
-        <div className="grid grid-cols-3 max-md:grid-cols-1">
+      <section aria-label="Programming Languages" className="max-w-7xl mx-auto flex h-screen items-center">
+        <div id="programming_languages" className="appearable grid grid-cols-3 max-md:grid-cols-1">
           <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
             <ProgrammingLangsCard />
           </div>
@@ -67,18 +75,14 @@ function App() {
         </div>
       </section>
 
-      <section
-        ref={setOSSection}
-        aria-label="Opearing Systems"
-        className="max-w-7xl mx-auto flex h-screen items-center"
-      >
-        <div className="grid grid-cols-3 max-md:grid-cols-1">
+      <section aria-label="Opearing Systems" className="max-w-7xl mx-auto flex h-screen items-center">
+        <div id="operating-systems" className="appearable grid grid-cols-3 max-md:grid-cols-1">
           <div className="flex size-full h-full flex-col items-end justify-end p-4">
             <FaDesktop className="size-6 fill-white" />
             <h1 className=" text-end text-3xl font-extrabold uppercase text-gradient-highlight">
-              <EncryptedText iterations={20} text={"Operating"} isVisible={osSectionIntersection.isVisible} />
+              <EncryptedText iterations={20} text={"Operating"} />
               <br />
-              <EncryptedText text="Systems" iterations={18} isVisible={osSectionIntersection.isVisible} />
+              <EncryptedText text="Systems" iterations={18} />
             </h1>
 
             <Paragraph className="text-end text-sm">
@@ -87,14 +91,14 @@ function App() {
           </div>
           <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
             <Suspense fallback={<h1>LOADING</h1>}>
-              <OperatingSystemCard intersection={osSectionIntersection} />
+              <OperatingSystemCard />
             </Suspense>
           </div>
         </div>
       </section>
 
       <section aria-label="Databases" className="max-w-7xl mx-auto flex h-screen items-center">
-        <div className="grid grid-cols-3 max-md:grid-cols-1">
+        <div id="databases" className="grid grid-cols-3 max-md:grid-cols-1 appearable">
           <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
             <DatabasesCard />
           </div>

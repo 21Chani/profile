@@ -1,7 +1,6 @@
 import { Card } from "@/modules/global/components/Card"
 import { ProgressCountBar } from "@/modules/global/components/ProgressCountBar"
 import { StatInfo } from "@/modules/global/components/StatInfo"
-import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { AsciiTransition } from "@/modules/threejs/components/AsciiTransition"
 import { Canvas } from "@react-three/fiber"
 import { useState } from "react"
@@ -19,10 +18,6 @@ const OS_STATS = [
   { name: "Macos", skill: 5, time: 5, icon: FaApple, src: "/assets/os/macos.png" },
 ] as const
 
-interface OperatingSystemCardProps {
-  intersection: ReturnType<typeof useIntersectionObserverState>
-}
-
 /**
  * Operating System Card Component.
  *
@@ -34,7 +29,7 @@ interface OperatingSystemCardProps {
  * The animation is made by using css animation and listening to the `onAnimationEnd` event
  * This way we can avoid the use extra renders and make the animation smoother
  */
-export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) {
+export function OperatingSystemCard() {
   // Disallow switch to different target when transitioning
   const [activeOS, setActiveOS] = useState(0)
 
@@ -48,7 +43,7 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
         activeIndex={normalizedIndex}
         onCompleteCycle={setActiveOS}
         itemCount={OS_STATS.length}
-        aria-hidden={!intersection.isVisible}
+        // aria-hidden={!intersection.isVisible}
         className="absolute z-[40] top-0 left-0 w-fit h-full"
         onSelectItem={(index) => setActiveOS(index)}
       />
@@ -56,10 +51,10 @@ export function OperatingSystemCard({ intersection }: OperatingSystemCardProps) 
       <div className="flex absolute right-4 bottom-4 gap-3 z-40 ">
         {OS_STATS.map(({ icon: Icon }, index) => (
           <button
+            onClick={() => setActiveOS(index)}
+            key={`os_legened_icon_${index}`}
             className="cursor-pointer"
             role="option"
-            key={`os_legened_icon_${index}`}
-            onClick={() => setActiveOS(index)}
           >
             <Icon
               aria-selected={normalizedIndex == index}

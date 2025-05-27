@@ -45,6 +45,10 @@
   @apply bg-gradient-to-br from-white to-foreground bg-clip-text text-transparent;
 }
 
+@utility appearable {
+  @apply transition data-[direction="up"]:aria-hidden:translate-y-20 data-[direction="down"]:aria-hidden:-translate-y-20 duration-1000 ease-out aria-hidden:opacity-0;
+}
+
 .bg-dotted {
   opacity: 0.7;
   /* background-image: radial-gradient(var(--color-border-primary) 1px, transparent 0);
