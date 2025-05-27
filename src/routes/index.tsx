@@ -24,11 +24,6 @@ import { TbMailFilled } from "react-icons/tb"
 gsap.registerPlugin(ScrollToPlugin)
 export const Route = createFileRoute("/")({
   component: App,
-  head(c) {
-    return {
-      meta: [{ title: "Chani._" }],
-    }
-  },
 })
 
 function App() {

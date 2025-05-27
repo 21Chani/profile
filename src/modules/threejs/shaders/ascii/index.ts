@@ -13,6 +13,7 @@ export class ASCIIShaderMaterial extends asciiShader {
     u_SpriteCount?: Uniform<number>
     u_Texture?: IUniform<Texture>
     u_Time: IUniform<number>
+    u_Progress: IUniform<number>
   }
 
   constructor(params: ShaderMaterialParameters = {}) {
@@ -22,6 +23,7 @@ export class ASCIIShaderMaterial extends asciiShader {
 
     this.uniforms = {
       u_Time: { value: 0 },
+      u_Progress: { value: 0 },
     }
   }
 
