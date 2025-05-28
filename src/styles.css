@@ -46,7 +46,7 @@
 }
 
 @utility appearable {
-  @apply transition data-[direction="up"]:aria-hidden:translate-y-20 data-[direction="down"]:aria-hidden:-translate-y-20 duration-1000 ease-out aria-hidden:opacity-0;
+  @apply transition-[translate] data-[direction="up"]:aria-hidden:translate-y-20 data-[direction="down"]:aria-hidden:-translate-y-20 duration-1000 ease-out aria-hidden:opacity-0;
 }
 
 .bg-dotted {
@@ -55,6 +55,16 @@
   background-size: 15px 15px;
   background-color: var(--color-background); */
   /* background-position: -19px -19px; */
+}
+
+/**
+  * PAUSABLE ANIMATIONS
+  * 
+  * Use this class to pause animations when the element is not visible.
+  * This is useful for performance optimization.
+*/
+[aria-hidden="true"] .pausable {
+  animation-play-state: paused;
 }
 
 /* 

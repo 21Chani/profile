@@ -31,6 +31,7 @@ function App() {
     onLeave: ({ target }, { direction }) => {
       target.setAttribute("data-direction", direction)
       target.setAttribute("aria-hidden", "true")
+      // target.classList.add("truet")
     },
     threshold: 0.4,
   })
@@ -48,15 +49,15 @@ function App() {
       <section className="max-w-7xl mx-auto relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
         <div
           id="introduction"
-          className="mt-10 flex flex-1 appearable items-center gap-14 px-2 font-jaro max-xl:flex-col lg:px-20 "
+          className="group mt-10 flex flex-1 appearable items-center gap-14 px-2 font-jaro max-xl:flex-col lg:px-20 "
         >
           <Summary />
           <ProfileCard />
         </div>
       </section>
 
-      <section aria-label="Programming Languages" className="max-w-7xl mx-auto flex h-screen items-center">
-        <div id="programming_languages" className="appearable grid grid-cols-3 max-md:grid-cols-1">
+      <section aria-label="Programming Languages" className="max-w-7xl mx-auto flex h-screen items-center ">
+        <div id="programming_languages" className="group appearable grid grid-cols-3 max-md:grid-cols-1 testing">
           <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
             <ProgrammingLangsCard />
           </div>
@@ -76,7 +77,7 @@ function App() {
       </section>
 
       <section aria-label="Opearing Systems" className="max-w-7xl mx-auto flex h-screen items-center">
-        <div id="operating-systems" className="appearable grid grid-cols-3 max-md:grid-cols-1">
+        <div id="operating-systems" className="group appearable grid grid-cols-3 max-md:grid-cols-1">
           <div className="flex size-full h-full flex-col items-end justify-end p-4">
             <FaDesktop className="size-6 fill-white" />
             <h1 className=" text-end text-3xl font-extrabold uppercase text-gradient-highlight">
@@ -98,7 +99,7 @@ function App() {
       </section>
 
       <section aria-label="Databases" className="max-w-7xl mx-auto flex h-screen items-center">
-        <div id="databases" className="grid grid-cols-3 max-md:grid-cols-1 appearable">
+        <div id="databases" className="grid grid-cols-3 max-md:grid-cols-1 appearable group">
           <div className="col-span-2 aspect-video size-full h-full min-h-[440px] ">
             <DatabasesCard />
           </div>

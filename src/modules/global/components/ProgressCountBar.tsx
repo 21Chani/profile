@@ -30,12 +30,13 @@ export function ProgressCountBar({
         <button
           role="option"
           key={`operating_system_selector_${index}`}
-          className="w-1.5 h-full bg-foreground-alt/30 aria-hidden:opacity-0 transition-all ease-out duration-1000  cursor-pointer relative  rounded-2xl overflow-hidden"
+          className="w-1.5 h-full bg-foreground-alt/30 aria-hidden:opacity-0 transition-all ease-out duration-1000  cursor-pointer relative  rounded-2xl overflow-hidden group"
           onClick={() => onSelectItem?.(index)}
+          aria-hidden="false"
         >
           <div
             data-active={activeIndex === index && !disabled}
-            className="w-full absolute data-[active=false]:scale-0 top-0 data-[active=true]:animate-expand-from-top-to-bottom-4000 h-full bg-gradient-to-b from-white to-gray-600 rounded-full"
+            className="w-full absolute data-[active=false]:scale-0 top-0 data-[active=true]:animate-expand-from-top-to-bottom-4000 h-full bg-gradient-to-b from-white to-gray-600 rounded-full pausable"
             onAnimationEnd={() => onCompleteCycle?.(index + 1)}
           />
         </button>
