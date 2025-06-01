@@ -2,9 +2,11 @@
 // ##########################################
 // ---------------- Uniforms ----------------
 // ##########################################
+uniform vec2        u_Resolution;    
 uniform sampler2D   u_Texture;
-uniform float       u_Time;
 uniform float       u_Progress;
+uniform float       u_Time;
+uniform float       u_Size;
 
 // ##########################################
 // ---------------- Varyings ----------------
@@ -23,7 +25,7 @@ attribute float a_Random;
 // ##########################################
 #include "../include/appearance.glsl"
 
-void main() {
+void main() { 
     
     // Animated position based on the progress.
     float randomFactor = a_Random * 10.0;
@@ -50,7 +52,7 @@ void main() {
     v_RandomNess = a_Random;
 
     // Final rendering position
-    gl_PointSize =  9.0;
+    gl_PointSize = u_Size * u_Resolution.y / (1.0 - viewPosition.z);
     gl_Position = modelProjection;
 
 }

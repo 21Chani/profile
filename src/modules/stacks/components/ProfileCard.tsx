@@ -3,9 +3,9 @@ import { useIntersectionObserver } from "@/modules/global/hooks/useIntersectionO
 import { randomizeAttributes } from "@/modules/threejs/lib/randomizeAttributes"
 import { ASCIIShaderMaterial } from "@/modules/threejs/shaders/ascii"
 import { useTexture } from "@react-three/drei"
-import { Canvas, useFrame } from "@react-three/fiber"
+import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import gsap from "gsap"
-import { Suspense, useRef } from "react"
+import { Suspense, useEffect, useRef } from "react"
 import { BiChevronRight } from "react-icons/bi"
 import { Clock, PlaneGeometry, Points } from "three"
 
@@ -13,7 +13,8 @@ import { Clock, PlaneGeometry, Points } from "three"
 // ------------- Threejs state -------------
 // #########################################
 const clock = new Clock()
-const shaderMaterial = new ASCIIShaderMaterial({ transparent: true, depthWrite: false })
+const shaderMaterial = new ASCIIShaderMaterial({})
+shaderMaterial.uniforms.u_Size.value = 14.0
 
 // Particles geometry
 const planeGeometry = new PlaneGeometry(10, 10, 60, 60)
@@ -77,8 +78,9 @@ export function ProfileCard() {
 function AsciiImage() {
   // Reference variables.
   const points = useRef<Points>(null)
-
+  const { height, width } = useThree((s) => ({ width: s.viewport.width, height: s.viewport.height }))
   // Load necessary textures.
+  useTexture("/sprites/numeric.png", (texture) => shaderMaterial.setSpriteSheet(texture))
   useTexture("/assets/profile.png", (txt) => {
     // Update the mesh scale on Y to match the aspect ratio of the image.
     const { width, height } = txt.image
@@ -89,7 +91,10 @@ function AsciiImage() {
     shaderMaterial.setTexture(txt)
   })
 
-  useTexture("/sprites/numeric.png", (texture) => shaderMaterial.setSpriteSheet(texture))
+  useEffect(() => {
+    shaderMaterial.uniforms.u_Resolution.value.x = width
+    shaderMaterial.uniforms.u_Resolution.value.y = height
+  }, [width, height])
 
   // Time updater
   useFrame(() => {

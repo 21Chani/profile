@@ -1,5 +1,5 @@
 import { shaderMaterial } from "@react-three/drei"
-import { Uniform, type IUniform, type ShaderMaterialParameters, type Texture } from "three"
+import { Uniform, Vector2, type IUniform, type ShaderMaterialParameters, type Texture } from "three"
 
 // Shader imports
 import fragment from "./ascii.frag"
@@ -9,21 +9,33 @@ const asciiShader = shaderMaterial({}, vertex, fragment)
 
 export class ASCIIShaderMaterial extends asciiShader {
   public uniforms: {
+    // Textures
     u_SpriteSheet?: IUniform<Texture>
-    u_SpriteCount?: Uniform<number>
     u_Texture?: IUniform<Texture>
-    u_Time: IUniform<number>
+
+    // Float/number uniforms
+    u_SpriteCount?: Uniform<number>
     u_Progress: IUniform<number>
+    u_Time: IUniform<number>
+    u_Size: IUniform<number>
+
+    // Vector uniforms
+    u_Resolution: IUniform<Vector2>
   }
 
   constructor(params: ShaderMaterialParameters = {}) {
     super({
+      transparent: true,
+      depthWrite: false,
+
       ...params,
     } as ShaderMaterialParameters)
 
     this.uniforms = {
-      u_Time: { value: 0 },
       u_Progress: { value: 0 },
+      u_Size: { value: 9.0 },
+      u_Time: { value: 0 },
+      u_Resolution: new Uniform(new Vector2(0, 0)),
     }
   }
 
