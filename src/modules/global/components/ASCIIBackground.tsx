@@ -24,7 +24,7 @@ export function ASCIIBackground() {
   )
 }
 
-const asciiMaterial = new ASCIIWaveShaderMaterial({ transparent: true, depthWrite: false })
+const asciiMaterial = new ASCIIWaveShaderMaterial({})
 
 function ASCIIWaves() {
   // Load necessary textures

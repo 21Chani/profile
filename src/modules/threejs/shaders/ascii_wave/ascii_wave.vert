@@ -6,6 +6,7 @@ uniform sampler2D   u_Texture;
 uniform vec2        u_Resolution;
 uniform float       u_Scroll;
 uniform float       u_Time;
+uniform float       u_Size;
 
 // ##########################################
 // ---------------- Varyings ----------------
@@ -33,9 +34,8 @@ void main() {
     v_Uv = uv; 
     v_RandomNess = a_Random; 
 
-    // Particle Size
-    float size = 10.0;
-    float perspective = size * u_Resolution.y;
+    // Particle Size 
+    float perspective = u_Size * u_Resolution.y;
     gl_PointSize = perspective * (1.0 / -viewPosition.z);
 
     gl_Position = modelProjection;
