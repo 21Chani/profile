@@ -33,7 +33,7 @@ export class ASCIIShaderMaterial extends asciiShader {
 
     this.uniforms = {
       u_Progress: { value: 0 },
-      u_Size: { value: 9.0 },
+      u_Size: { value: 0.09 },
       u_Time: { value: 0 },
       u_Resolution: new Uniform(new Vector2(0, 0)),
     }

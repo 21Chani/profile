@@ -52,7 +52,7 @@ void main() {
     v_RandomNess = a_Random;
 
     // Final rendering position
-    gl_PointSize = u_Size * u_Resolution.y / (1.0 - viewPosition.z);
+    gl_PointSize = (u_Size * u_Resolution.y) * (1.0 / -viewPosition.z);
     gl_Position = modelProjection;
 
 }

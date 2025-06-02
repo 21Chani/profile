@@ -1,11 +1,13 @@
 import { Card } from "@/modules/global/components/Card"
 import { useIntersectionObserver } from "@/modules/global/hooks/useIntersectionObserver"
+import { useResizeObserver } from "@/modules/global/hooks/useResizeObserver"
 import { randomizeAttributes } from "@/modules/threejs/lib/randomizeAttributes"
 import { ASCIIShaderMaterial } from "@/modules/threejs/shaders/ascii"
 import { useTexture } from "@react-three/drei"
-import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import { Canvas, useFrame } from "@react-three/fiber"
+
 import gsap from "gsap"
-import { Suspense, useEffect, useRef } from "react"
+import { Suspense, useRef } from "react"
 import { BiChevronRight } from "react-icons/bi"
 import { Clock, PlaneGeometry, Points } from "three"
 
@@ -14,7 +16,6 @@ import { Clock, PlaneGeometry, Points } from "three"
 // #########################################
 const clock = new Clock()
 const shaderMaterial = new ASCIIShaderMaterial({})
-shaderMaterial.uniforms.u_Size.value = 14.0
 
 // Particles geometry
 const planeGeometry = new PlaneGeometry(10, 10, 60, 60)
@@ -63,7 +64,7 @@ export function ProfileCard() {
           </div>
         </div>
 
-        <div className="absolute w-[90%] bottom-0 aspect-[687/530] z-40 ">
+        <div className="absolute w-[90%] bottom-0 aspect-[687/530] z-40 " id="canvas-wrapper">
           <Suspense fallback="LOADING">
             <Canvas className="">
               <AsciiImage />
@@ -78,7 +79,7 @@ export function ProfileCard() {
 function AsciiImage() {
   // Reference variables.
   const points = useRef<Points>(null)
-  const { height, width } = useThree((s) => ({ width: s.viewport.width, height: s.viewport.height }))
+
   // Load necessary textures.
   useTexture("/sprites/numeric.png", (texture) => shaderMaterial.setSpriteSheet(texture))
   useTexture("/assets/profile.png", (txt) => {
@@ -91,10 +92,12 @@ function AsciiImage() {
     shaderMaterial.setTexture(txt)
   })
 
-  useEffect(() => {
-    shaderMaterial.uniforms.u_Resolution.value.x = width
-    shaderMaterial.uniforms.u_Resolution.value.y = height
-  }, [width, height])
+  useResizeObserver(["#canvas-wrapper"], {
+    onResize: (e) => {
+      shaderMaterial.uniforms.u_Resolution.value.y = e.contentRect.height * window.devicePixelRatio
+      shaderMaterial.uniforms.u_Resolution.value.x = e.contentRect.width * window.devicePixelRatio
+    },
+  })
 
   // Time updater
   useFrame(() => {

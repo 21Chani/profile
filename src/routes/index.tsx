@@ -49,7 +49,7 @@ function App() {
       <section className="max-w-7xl mx-auto relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
         <div
           id="introduction"
-          className="group mt-10 flex flex-1 appearable items-center gap-14 px-2 font-jaro max-xl:flex-col lg:px-20 "
+          className="group mt-10 flex flex-1  items-center gap-14 px-2 font-jaro max-xl:flex-col lg:px-20 "
         >
           <Summary />
           <ProfileCard />
