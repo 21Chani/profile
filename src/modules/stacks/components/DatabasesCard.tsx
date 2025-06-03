@@ -72,12 +72,13 @@ export function DatabasesCard() {
         ))}
       </div>
 
-      <Canvas>
+      <Canvas id="ascii-databases">
         <Suspense fallback={null}>
           <AsciiTransition
-            activeIndex={normalizedIndex}
-            geometry={ASCII_PLANE_GEOMETRY}
             images={DB_STATS.map((lang) => lang.src)}
+            watchContainer="#ascii-databases"
+            geometry={ASCII_PLANE_GEOMETRY}
+            activeIndex={normalizedIndex}
           />
         </Suspense>
       </Canvas>

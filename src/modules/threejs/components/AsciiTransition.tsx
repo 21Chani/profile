@@ -1,4 +1,5 @@
 import { usePrevious } from "@/modules/global/hooks/usePrevious"
+import { useResizeObserver } from "@/modules/global/hooks/useResizeObserver"
 import { useTexture } from "@react-three/drei"
 import gsap from "gsap"
 import { useEffect, useRef } from "react"
@@ -12,6 +13,11 @@ interface AsciiTransitionProps {
   activeIndex?: number
   onTransitionEnd?: () => void
   onTransitionStart?: () => void
+
+  /**
+   * Container to watch and update particles with right resolution and aspect ratio
+   */
+  watchContainer?: string
 }
 /**
  * ASCII Transition Component
@@ -33,6 +39,7 @@ export function AsciiTransition({
   activeIndex,
   onTransitionEnd,
   onTransitionStart,
+  watchContainer,
 }: AsciiTransitionProps) {
   const loaded = useRef(false)
   // Threejs related hooks
@@ -43,6 +50,13 @@ export function AsciiTransition({
 
     shaders.current.setTexture(t[0])
     shaders.current.setTextureTarget(t[1])
+  })
+
+  useResizeObserver(watchContainer ? [watchContainer] : [], {
+    onResize(entry) {
+      shaders.current.uniforms.u_Resolution.value.y = entry.contentRect.height * window.devicePixelRatio
+      shaders.current.uniforms.u_Resolution.value.x = entry.contentRect.width * window.devicePixelRatio
+    },
   })
 
   // Reference variables

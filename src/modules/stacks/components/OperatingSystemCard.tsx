@@ -75,11 +75,12 @@ export function OperatingSystemCard() {
         ]}
       />
 
-      <Canvas>
+      <Canvas id="operating_sys_card">
         <AsciiTransition
-          activeIndex={normalizedIndex}
           images={OS_STATS.map((os) => os.src)}
+          watchContainer="#operating_sys_card"
           geometry={ASCII_PLANE_GEOMETRY}
+          activeIndex={normalizedIndex}
         />
       </Canvas>
     </Card>

@@ -76,8 +76,9 @@ export function ProgrammingLangsCard() {
       </div>
 
       <Suspense fallback={<h1>LOADING</h1>}>
-        <Canvas>
+        <Canvas id="ascii-program-langs">
           <AsciiTransition
+            watchContainer="#ascii-program-langs"
             activeIndex={normalizedIndex}
             geometry={ASCII_PLANE_GEOMETRY}
             images={LANG_STATS.map((lang) => lang.src)}
