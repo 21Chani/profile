@@ -22,8 +22,8 @@ uniform float     u_Time;
 
 void main() {
     // Get Sprite Texture
-    float spriteX = u_Time * 0.2 + (v_RandomNess) * 10.0;
-    vec4 spriteShape = sprite(gl_PointCoord, spriteX, u_SpriteSheet, 10.0);
+    float spriteX = u_Time * 0.2 + (v_RandomNess) * u_SpriteCount;
+    vec4 spriteShape = sprite(gl_PointCoord, spriteX, u_SpriteSheet, u_SpriteCount);
 
     vec4 color = vec4(v_Color * spriteShape);
     color.a = smoothstep(0.2, 1.0, color.a); 
