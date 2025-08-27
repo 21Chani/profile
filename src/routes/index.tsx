@@ -150,7 +150,7 @@ function App() {
             </a>
             <a
               className="text-foreground-alt hover:text-foreground hover:underline transition-colors flex items-center gap-2 "
-              href="mailto: "
+              href="https://www.linkedin.com/in/diogo-mendon%C3%A7a-a50184234/"
               target="_blank"
             >
               <RiLinkedinBoxFill className="text-white size-5" />

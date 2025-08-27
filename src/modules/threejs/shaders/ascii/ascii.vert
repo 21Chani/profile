@@ -48,14 +48,14 @@ void main() {
     intensity.a *= u_Progress; // Smoothly add opacity based on the progress
 
     v_Uv = uv;
-    intensity.a = smoothstep(vec3(0.01), intensity.rgb, vec3(1.0)).r * intensity.a;
+    intensity.a = smoothstep(vec3(0.005), intensity.rgb, vec3(1.0)).r * intensity.a;
     v_Color = vec4(intensity);
 
     // v_Color = clamp(0.0, v_Color.a, 1.0 );
     v_RandomNess = a_Random;
 
     // Final rendering position
-    gl_PointSize = (u_Size * u_Resolution.y) * (1.0 / -viewPosition.z);
+    gl_PointSize = (u_Size  * u_Resolution.y) * (1.0 / -viewPosition.z);
     gl_Position = modelProjection;
 
 }
