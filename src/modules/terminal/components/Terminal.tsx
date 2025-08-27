@@ -25,10 +25,10 @@ export function Terminal({ className, defaultCommand, title = "chani@Portfolio-P
     const updateOpen = () => setIsOpen(true)
     const updateClose = () => setIsOpen(false)
     const runCommand = (command: string) => {
-      if (command) execCommand(command).then(({ shouldClose }) => setIsOpen(!shouldClose))
+      if (command) execCommand(command)
       else {
         command = input.current?.value ?? ""
-        execCommand(command).then(({ shouldClose }) => setIsOpen(!shouldClose))
+        execCommand(command)
       }
     }
 
@@ -48,7 +48,7 @@ export function Terminal({ className, defaultCommand, title = "chani@Portfolio-P
       <Dialog.Portal>
         <Dialog.Content
           className={twMerge(
-            "fixed data-[state=open]:animate-scale-appear data-[state=closed]:animate-scale-disappear origin-bottom-right duration-300 ease-out transition-all inset-0 bg-black/50 w-screen flex flex-col h-screen z-40 backdrop-blur overflow-hidden",
+            "fixed data-[state=open]:animate-scale-appear data-[state=closed]:animate-scale-disappear origin-top-right inset-0 bg-black/50 w-screen flex flex-col h-screen z-40 backdrop-blur overflow-hidden",
             className
           )}
           {...props}
@@ -102,9 +102,7 @@ export function Terminal({ className, defaultCommand, title = "chani@Portfolio-P
                     else if (event.ctrlKey && event.key === "u") {
                       event.target.value = ""
                     } else if (event.key === "Enter") {
-                      execCommand((event.target as HTMLInputElement).value).then(({ shouldClose }) =>
-                        setIsOpen(!shouldClose)
-                      )
+                      execCommand((event.target as HTMLInputElement).value)
                       if (!input.current) return
                       ;(event.target as HTMLInputElement).value = "" // Clear the input
                     }

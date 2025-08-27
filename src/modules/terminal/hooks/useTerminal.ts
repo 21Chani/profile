@@ -37,7 +37,7 @@ export function useTerminal({ initialMessages = [] }: UseTerminalParams = {}) {
    * @param message - Input message containing the command and arguments
    * @returns - void
    */
-  async function execCommand(message?: string): Promise<{ shouldClose?: boolean }> {
+  async function execCommand(message?: string) {
     // Essential variables
     const command = message?.split(" ")[0]
     const args = message?.split(" ").slice(1)
@@ -67,9 +67,9 @@ export function useTerminal({ initialMessages = [] }: UseTerminalParams = {}) {
               return _messages
             })
           }
-          return { shouldClose: true }
+          return
         } catch {
-          return { shouldClose: false }
+          return
         } finally {
           setTimeout(() => input.current?.focus(), 200)
           setIsExecuting(false)
@@ -77,11 +77,11 @@ export function useTerminal({ initialMessages = [] }: UseTerminalParams = {}) {
 
       case "clear":
         setMessages(() => [])
-        return { shouldClose: false }
+        return
 
       default:
         setMessages((p) => [...p, commandNotFound(command || "zsh")])
-        return { shouldClose: false }
+        return
     }
   }
 

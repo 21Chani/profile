@@ -15,7 +15,7 @@ import { Clock, PlaneGeometry, Uniform } from "three"
 export function ASCIIBackground() {
   return (
     <div className="w-screen h-screen fixed inset-0 -z-10 ">
-      <Canvas>
+      <Canvas gl={{ antialias: false }}>
         <Suspense fallback={null}>
           <ASCIIWaves />
         </Suspense>
@@ -52,5 +52,5 @@ function ASCIIWaves() {
     asciiMaterial.uniforms.u_Time.value = clock.current.getElapsedTime()
   })
 
-  return <points scale={[Math.max(aspect, 1.0), 1, 1]} geometry={geometry.current} material={asciiMaterial} />
+  return <points scale={[Math.max(aspect, 1.6), 1, 1]} geometry={geometry.current} material={asciiMaterial} />
 }

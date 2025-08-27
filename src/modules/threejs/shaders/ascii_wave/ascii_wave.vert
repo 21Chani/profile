@@ -7,6 +7,9 @@ uniform vec2        u_Resolution;
 uniform float       u_Scroll;
 uniform float       u_Time;
 uniform float       u_Size;
+uniform float       u_Speed;
+uniform float       u_WaveSpread;
+uniform float       u_WaveLength;
 
 // ##########################################
 // ---------------- Varyings ----------------
@@ -23,7 +26,7 @@ attribute float a_Random;
 void main() {   
     // Z axis wave effect
     vec3 mPos = position;  
-    mPos.z += cos(( position.y + u_Time / 2.0) + a_Random * 4.0) * 0.4;
+    mPos.z += cos(( position.y + u_Time * u_Speed) + a_Random * u_WaveSpread) * u_WaveLength;
 
     // Apply model matrix
     vec4 modelPosition = modelMatrix * vec4(mPos, 1.0);

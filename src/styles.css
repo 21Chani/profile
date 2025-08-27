@@ -28,7 +28,7 @@
   --animate-scale-appear-x: scale-appear-x 1s ease-out forwards;
   --animate-scale-disappear-x: scale-disappear-x 1s ease-out forwards;
   --animate-scale-appear: scale-appear var(--duration, 200ms) ease-out forwards;
-  --animate-scale-disappear: scale-disappear var(--duration, 200ms) ease-out forwards;
+  --animate-scale-disappear: scale-disappear var(--duration, 300ms) ease-out forwards;
 }
 
 @layer base {

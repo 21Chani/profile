@@ -66,7 +66,7 @@ export function ProfileCard() {
 
         <div className="absolute w-[90%] bottom-0 aspect-[687/530] z-40 " id="canvas-wrapper">
           <Suspense fallback="LOADING">
-            <Canvas className="">
+            <Canvas className="" gl={{ antialias: false }}>
               <AsciiImage />
             </Canvas>
           </Suspense>

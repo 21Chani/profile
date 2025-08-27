@@ -8,6 +8,7 @@ import { OperatingSystemCard } from "@/modules/stacks/components/OperatingSystem
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
 import { ProgrammingLangsCard } from "@/modules/stacks/components/ProgrammingLangsCard"
 import { Summary } from "@/modules/stacks/components/Summary"
+import { Terminal } from "@/modules/terminal/components/Terminal"
 import { TerminalRow } from "@/modules/terminal/components/TerminalRow"
 import { TerminalEvents } from "@/modules/terminal/events"
 import { createFileRoute } from "@tanstack/react-router"
@@ -37,13 +38,13 @@ function App() {
   })
 
   useEffect(() => {
-    TerminalEvents.emit("execute", "wget https://chani.sh")
+    TerminalEvents.emit("execute", "wget https://chani.sh ")
   }, [])
 
   return (
     <div id="container" className="w-full h-screen min-h-screen">
       <ASCIIBackground />
-      {/* <Terminal /> */}
+      <Terminal />
       <Navbar />
 
       <section className="max-w-7xl mx-auto relative flex min-h-screen w-full snap-start flex-col overflow-hidden  ">
