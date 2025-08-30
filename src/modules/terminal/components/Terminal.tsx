@@ -57,9 +57,9 @@ export function Terminal({ className, defaultCommand, title = "chani@Portfolio-P
             aria-label="Title-Bar"
             className="h-10 w-full border bg-background-alt flex items-center gap-2 relative px-2"
           >
-            <button className="size-3.5 rounded-full bg-red-500" />
-            <button className="size-3.5 rounded-full bg-yellow-500" onClick={() => setIsOpen(false)} />
-            <button className="size-3.5 rounded-full bg-green-500" />
+            <button className="size-3.5 cursor-pointer rounded-full bg-red-500" />
+            <button className="size-3.5 cursor-pointer rounded-full bg-yellow-500" onClick={() => setIsOpen(false)} />
+            <button className="size-3.5 cursor-pointer rounded-full bg-green-500" />
             <div className="absolute items-center max-md:right-6 md:left-2/4  flex gap-2 md:-translate-x-2/4">
               <BiFolder className="size-6 fill-foreground" />
               <Dialog.Title className="text-foreground" asChild>

@@ -30,22 +30,22 @@ export class ASCIIWaveShaderMaterial extends asciiShader {
     /**
      * Factor that defines how fast waves will move.
      */
-    u_Speed?: IUniform<number>
+    u_Speed: IUniform<number>
     /**
      * Factor that define if the effect will look very like a wave vertically (flag effect), or just a caos.
      */
-    u_WaveSpread?: IUniform<number>
+    u_WaveSpread: IUniform<number>
     /**
      * Factor that define how long will be the
      */
-    u_WaveLength?: IUniform<number>
+    u_WaveLength: IUniform<number>
 
     // Vectors
     u_Resolution: IUniform<Vector2>
 
     // Float/Numbers
     u_SpriteCount?: IUniform<number>
-    u_Size?: IUniform<number>
+    u_Size: IUniform<number>
     u_Time: IUniform<number>
   }
 

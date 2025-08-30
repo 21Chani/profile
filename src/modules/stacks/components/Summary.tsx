@@ -7,7 +7,7 @@ import { Paragraph } from "@/modules/global/components/Paragraph"
  */
 export function Summary() {
   return (
-    <div className=" flex items-start gap-2 max-md:flex-col ">
+    <div className=" flex items-start gap-2 max-md:flex-col  max-w-xl">
       {/* Details */}
 
       <div className="text-foreground ">

@@ -4,7 +4,7 @@ import { EncryptedText } from "./EncryptedText"
 
 export function Navbar() {
   return (
-    <nav className="flex flex-1 justify-between p-4 ">
+    <nav className="flex flex-1 sticky top-0 justify-between p-4 ">
       <div className="flex items-center gap-2">
         <img src="/logo.png" className="size-12 rounded-full" />
         <h6 className="font-extrabold text-foreground uppercase">
