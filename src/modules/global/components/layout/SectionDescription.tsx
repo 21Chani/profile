@@ -39,12 +39,8 @@ export function SectionDescription(props: SectionDescriptionProps) {
 
       <h1 className="text-3xl font-extrabold uppercase text-gradient-highlight">
         {titleSplit.map((titlePart, index) => (
-          <Fragment>
-            <EncryptedText
-              key={`title_part_${index}_${titlePart}`}
-              iterations={titlePart.length * 2}
-              text={titlePart}
-            />
+          <Fragment key={`title_part_${index}_${titlePart}`}>
+            <EncryptedText iterations={titlePart.length * 2} text={titlePart} />
             {index + 1 < titleSplit.length && <br />}
           </Fragment>
         ))}

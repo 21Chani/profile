@@ -4,13 +4,14 @@ import { ScrollSmoother } from "gsap/ScrollSmoother"
 import { useEffect, useRef } from "react"
 import { clamp, lerp } from "three/src/math/MathUtils.js"
 
-export function usebackgroundInteraction() {
+export function usebackgroundInteraction(disabled?: boolean) {
   const currentWaveLength = useRef(ASCIIWaveShaderMaterial.DEFAULT_WAVE_LENGTH)
   const currentWaveSpread = useRef(ASCIIWaveShaderMaterial.DEFAULT_WAVE_SPREAD)
   const waveRef = useRef<ASCIIWaveShaderMaterial>(null)
   const speedRef = useRef(1)
 
   useEffect(() => {
+    if (disabled) return
     const trigger = ScrollSmoother.create({
       smooth: 1.5,
       effects: true,
@@ -45,7 +46,7 @@ export function usebackgroundInteraction() {
       },
     })
     return trigger.kill
-  }, [])
+  }, [disabled])
 
   return {
     waveRef,

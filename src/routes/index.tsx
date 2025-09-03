@@ -6,18 +6,19 @@ import { AsciiTransitionCard } from "@/modules/stacks/components/AsciiTransition
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
 import { Summary } from "@/modules/stacks/components/Summary"
 import { DATABASE_STATS, OPERATING_SYSTEM_STATS, PROGRAMMING_LANGUAGE_STATS } from "@/modules/stacks/constants/stats"
+import { Terminal } from "@/modules/terminal/components/Terminal"
 import { TerminalRow } from "@/modules/terminal/components/TerminalRow"
-import { TerminalEvents } from "@/modules/terminal/events"
 import { createFileRoute } from "@tanstack/react-router"
 
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import { ScrollSmoother, ScrollTrigger } from "gsap/all"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { BiChevronRight } from "react-icons/bi"
 import { FaDatabase, FaDesktop, FaTerminal } from "react-icons/fa"
 import { RiGithubFill, RiLinkedinBoxFill } from "react-icons/ri"
 import { TbMailFilled } from "react-icons/tb"
+import { twMerge } from "tailwind-merge"
 
 gsap.registerPlugin(ScrollToPlugin, ScrollTrigger, ScrollSmoother)
 export const Route = createFileRoute("/")({
@@ -25,9 +26,8 @@ export const Route = createFileRoute("/")({
 })
 
 function App() {
-  useEffect(() => void TerminalEvents.emit("execute", "wget https://chani.sh "), [])
-
-  const { waveRef, speedRef } = usebackgroundInteraction()
+  const [terminalOpen, setTermOpen] = useState(true)
+  const { waveRef, speedRef } = usebackgroundInteraction(terminalOpen)
 
   useEffect(() => {
     const trigger = ScrollTrigger.create({ trigger: "#programming-lang", start: "top top", end: "+=2000", pin: true })
@@ -35,7 +35,12 @@ function App() {
   }, [])
 
   return (
-    <main className="relative">
+    <main className={twMerge("relative", terminalOpen ? "overflow-hidden max-h-screen" : "")}>
+      <Terminal
+        isOpen={terminalOpen}
+        onOpenChange={setTermOpen}
+        autoExecute={{ command: "wget https://chani.sh", shouldClose: true }}
+      />
       <ASCIIBackground
         speedRef={speedRef}
         material={waveRef}
@@ -123,6 +128,11 @@ function App() {
             </div>
           </footer>
         </div>
+        <div
+          data-hidden={!terminalOpen}
+          onTransitionEnd={() => console.log("End")}
+          className="absolute inset-0 data-[hidden=true]:opacity-0 opacity-100 duration-[1.2s] ease-out transition-all h-screen bg-black backdrop-blur-2xl w-full z-40"
+        ></div>
       </div>
     </main>
   )

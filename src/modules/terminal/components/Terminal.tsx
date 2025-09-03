@@ -1,5 +1,7 @@
+import { useControllableState } from "@/modules/global/hooks/useControllableState"
+
 import { Dialog } from "radix-ui"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { BiChevronRight, BiFolder } from "react-icons/bi"
 import { twMerge } from "tailwind-merge"
 import { TerminalEvents } from "../events"
@@ -7,8 +9,23 @@ import { useTerminal } from "../hooks/useTerminal"
 import { TerminalRow } from "./TerminalRow"
 
 interface TerminalProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  defaultCommand?: string
   title?: string
+
+  /**
+   * Auto execute command
+   * if shouldClose is provided terminal will be closed right after.
+   */
+  autoExecute?: { command: string; shouldClose?: boolean }
+  /**
+   * Default input command.
+   * It will not be auto executed.
+   */
+  defaultCommand?: string
+
+  // State
+  isOpen?: boolean
+  defaultOpen?: boolean
+  onOpenChange?: (val: boolean) => void
 }
 
 /**
@@ -17,13 +34,32 @@ interface TerminalProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTM
  * @param - defaultCommand - Default command to be executed when the terminal is opened.
  * @param - title - Title of the terminal.
  */
-export function Terminal({ className, defaultCommand, title = "chani@Portfolio-Pro", ...props }: TerminalProps) {
-  const [isOpen, setIsOpen] = useState(true)
+export function Terminal({
+  className,
+  autoExecute,
+  defaultCommand,
+  title = "chani@Portfolio-Pro",
+  isOpen,
+  defaultOpen,
+  onOpenChange,
+  ...props
+}: TerminalProps) {
+  const [_isOpen, _setIsOpen] = useControllableState({
+    defaultProp: defaultOpen,
+    onChange: onOpenChange,
+    prop: isOpen,
+  })
   const { execCommand, input, isExecuting, messages } = useTerminal()
 
   useEffect(() => {
-    const updateOpen = () => setIsOpen(true)
-    const updateClose = () => setIsOpen(false)
+    if (!autoExecute) return
+    execCommand(autoExecute.command).then(() => _setIsOpen(!autoExecute.shouldClose))
+  }, [autoExecute])
+
+  // Event listener.
+  useEffect(() => {
+    const updateOpen = () => _setIsOpen(true)
+    const updateClose = () => _setIsOpen(false)
     const runCommand = (command: string) => {
       if (command) execCommand(command)
       else {
@@ -44,13 +80,14 @@ export function Terminal({ className, defaultCommand, title = "chani@Portfolio-P
   }, [])
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog.Root open={_isOpen} onOpenChange={_setIsOpen}>
       <Dialog.Portal>
         <Dialog.Content
           className={twMerge(
             "fixed data-[state=open]:animate-scale-appear data-[state=closed]:animate-scale-disappear origin-top-right inset-0 bg-black/50 w-screen flex flex-col h-screen z-40 backdrop-blur overflow-hidden",
             className
           )}
+          onEscapeKeyDown={(e) => e.preventDefault()}
           {...props}
         >
           <div
@@ -58,7 +95,7 @@ export function Terminal({ className, defaultCommand, title = "chani@Portfolio-P
             className="h-10 w-full border bg-background-alt flex items-center gap-2 relative px-2"
           >
             <button className="size-3.5 cursor-pointer rounded-full bg-red-500" />
-            <button className="size-3.5 cursor-pointer rounded-full bg-yellow-500" onClick={() => setIsOpen(false)} />
+            <button className="size-3.5 cursor-pointer rounded-full bg-yellow-500" onClick={() => _setIsOpen(false)} />
             <button className="size-3.5 cursor-pointer rounded-full bg-green-500" />
             <div className="absolute items-center max-md:right-6 md:left-2/4  flex gap-2 md:-translate-x-2/4">
               <BiFolder className="size-6 fill-foreground" />

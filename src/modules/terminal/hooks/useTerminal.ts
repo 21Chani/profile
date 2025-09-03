@@ -47,13 +47,12 @@ export function useTerminal({ initialMessages = [] }: UseTerminalParams = {}) {
       case "":
         // Add an empty message to the terminal.
         setMessages((p) => [...p, { date: new Date(), lines: [""], path: PROFILE_PATH }])
-
-        return { shouldClose: false }
+        return
       case "wget":
         // If there is no argument, show the usage of the command.
         if (!args?.length || args[0] === "") {
           setMessages((p) => [...p, wgetCommandUsage()])
-          return { shouldClose: false }
+          return
         }
 
         try {

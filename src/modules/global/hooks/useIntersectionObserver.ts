@@ -3,6 +3,10 @@ import { useEffect, useRef } from "react"
 interface IntersectionObserverOptions extends IntersectionObserverInit {
   onAppear?: (element: IntersectionObserverEntry, options: { direction: "up" | "down" }) => void
   onLeave?: (element: IntersectionObserverEntry, options: { direction: "up" | "down" }) => void
+  /**
+   * Rather enable or not intersection observer.
+   */
+  disabled?: boolean
 }
 
 /**
@@ -14,10 +18,12 @@ interface IntersectionObserverOptions extends IntersectionObserverInit {
  */
 export function useIntersectionObserver(
   elements: (string | HTMLElement)[] | (string | HTMLElement),
-  { onAppear, onLeave, ...options }: IntersectionObserverOptions
+  { onAppear, onLeave, disabled, ...options }: IntersectionObserverOptions
 ) {
   const previousY = useRef(0)
   useEffect(() => {
+    if (disabled) return
+
     // Verify if elements is an array and has elements, or if it's a single element
     if (elements instanceof Array && !elements.length) return
     else if (!elements) return
@@ -45,5 +51,5 @@ export function useIntersectionObserver(
     })
 
     return () => observer.disconnect()
-  }, [elements, onAppear, onLeave])
+  }, [elements, onAppear, onLeave, disabled])
 }

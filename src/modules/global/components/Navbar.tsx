@@ -1,5 +1,3 @@
-import { TerminalEvents } from "@/modules/terminal/events"
-import { BiTerminal } from "react-icons/bi"
 import { EncryptedText } from "./EncryptedText"
 
 export function Navbar() {
@@ -12,9 +10,9 @@ export function Navbar() {
         </h6>
       </div>
 
-      <button onClick={() => TerminalEvents.emit("open")}>
+      {/* <button onClick={() => TerminalEvents.emit("open")}>
         <BiTerminal className="size-10 fill-foreground-alt" />
-      </button>
+      </button> */}
     </nav>
   )
 }
