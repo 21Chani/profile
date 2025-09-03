@@ -52,7 +52,7 @@ function ASCIIWaves({ material: outerMaterial, patternSrc, spriteSrc, speedRef }
   const { height, width, aspect } = useThree(({ viewport: { width, aspect, height } }) => ({ width, aspect, height }))
 
   useEffect(() => mat.current.setResolution(width, height), [height, width])
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     mat.current.uniforms.u_Time.value += delta * speedRef.current
   })
 
