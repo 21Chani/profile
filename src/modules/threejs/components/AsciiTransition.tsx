@@ -19,6 +19,7 @@ interface AsciiTransitionProps {
    */
   watchContainer?: string
 }
+
 /**
  * ASCII Transition Component
  *
@@ -86,13 +87,6 @@ export function AsciiTransition({
 
   // ###################################
   // EFFECTS
-
-  // Initialize the shaders textures
-  // useEffect(() => {
-  //   shaders.current.setTexture(textures[0])
-  //   shaders.current.setTextureTarget(textures[1])
-  //   // if (textures.length < 2) throw new Error("Please provide at least 2 images to create ascii transition")
-  // }, [textures])
 
   /**
    * Use effect responsible for detecting updates on the active index

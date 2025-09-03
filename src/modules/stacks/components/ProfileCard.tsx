@@ -9,12 +9,11 @@ import { Canvas, useFrame } from "@react-three/fiber"
 import gsap from "gsap"
 import { Suspense, useRef } from "react"
 import { BiChevronRight } from "react-icons/bi"
-import { Clock, PlaneGeometry, Points } from "three"
+import { PlaneGeometry, Points } from "three"
 
 // #########################################
 // ------------- Threejs state -------------
 // #########################################
-const clock = new Clock()
 const shaderMaterial = new ASCIIShaderMaterial({})
 
 // Particles geometry
@@ -100,8 +99,8 @@ function AsciiImage() {
   })
 
   // Time updater
-  useFrame(() => {
-    const time = clock.getElapsedTime()
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime()
     shaderMaterial.uniforms.u_Time.value = time
   })
 
