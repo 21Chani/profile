@@ -2,7 +2,7 @@ import { ASCIIBackground } from "@/modules/global/components/ASCIIBackground"
 import { Navbar } from "@/modules/global/components/Navbar"
 import { SectionDescription } from "@/modules/global/components/layout/SectionDescription"
 import { usebackgroundInteraction } from "@/modules/global/hooks/useBackgroundInteraction"
-import { AsciiTransitionCard } from "@/modules/stacks/components/AsciiTransitionCard"
+import { AsciiTransitionCard } from "@/modules/stacks/components/AsciiCarouselCard"
 import { ProfileCard } from "@/modules/stacks/components/ProfileCard"
 import { Summary } from "@/modules/stacks/components/Summary"
 import { DATABASE_STATS, OPERATING_SYSTEM_STATS, PROGRAMMING_LANGUAGE_STATS } from "@/modules/stacks/constants/stats"
@@ -13,7 +13,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import { ScrollSmoother, ScrollTrigger } from "gsap/all"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { BiChevronRight } from "react-icons/bi"
 import { FaDatabase, FaDesktop, FaTerminal } from "react-icons/fa"
 import { RiGithubFill, RiLinkedinBoxFill } from "react-icons/ri"
@@ -27,10 +27,23 @@ export const Route = createFileRoute("/")({
 
 function App() {
   const [terminalOpen, setTermOpen] = useState(true)
+  const [fadeFinish, setFadeFinish] = useState(false)
   const { waveRef, speedRef } = usebackgroundInteraction(terminalOpen)
 
+  const plRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    const trigger = ScrollTrigger.create({ trigger: "#programming-lang", start: "top top", end: "+=2000", pin: true })
+    const trigger = ScrollTrigger.create({
+      trigger: "#programming-lang",
+      start: "top top",
+      end: "+=2000",
+      pin: true,
+      onUpdate(self) {
+        if (!plRef.current) return
+
+        plRef.current.style.setProperty("--progress", `${self.progress}`)
+      },
+    })
     return trigger.kill
   }, [])
 
@@ -57,7 +70,7 @@ function App() {
 
           <section id="programming-lang" className="max-w-6xl mx-auto min-h-screen flex items-center">
             <article className="grid grid-cols-2 max-h-[min(100vh,384px)] h-full">
-              <AsciiTransitionCard stats={PROGRAMMING_LANGUAGE_STATS} className="aspect-video" />
+              <AsciiTransitionCard ref={plRef} stats={PROGRAMMING_LANGUAGE_STATS} className="aspect-video" />
               <SectionDescription
                 title="Programming Languages"
                 icon={FaTerminal}
@@ -66,7 +79,7 @@ function App() {
             </article>
           </section>
           <section className="max-w-6xl mx-auto min-h-screen flex items-center">
-            <article className="grid grid-cols-2 max-h-[min(100vh,384px)] h-full">
+            <article className="grid md:grid-cols-2 max-h-[min(100vh,384px)] h-full">
               <SectionDescription
                 description="Through my career, I have worked with a variety of operating systems, including Linux, Windows, and macOS."
                 title="Operating Systems"
@@ -128,11 +141,13 @@ function App() {
             </div>
           </footer>
         </div>
-        <div
-          data-hidden={!terminalOpen}
-          onTransitionEnd={() => console.log("End")}
-          className="absolute inset-0 data-[hidden=true]:opacity-0 opacity-100 duration-[1.2s] ease-out transition-all h-screen bg-black backdrop-blur-2xl w-full z-40"
-        ></div>
+        {!fadeFinish && (
+          <div
+            data-hidden={!terminalOpen}
+            onTransitionEnd={() => setFadeFinish(true)}
+            className="absolute inset-0 data-[hidden=true]:opacity-0 opacity-100 duration-[1.2s] ease-out transition-all h-screen bg-black backdrop-blur-2xl w-full z-40"
+          />
+        )}
       </div>
     </main>
   )

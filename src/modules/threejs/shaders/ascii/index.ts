@@ -24,16 +24,16 @@ export class ASCIIShaderMaterial extends asciiShader {
     u_Resolution: IUniform<Vector2>
   }
 
-  constructor(params: ShaderMaterialParameters = {}) {
+  constructor(init: { size?: number; progress: number }, params: ShaderMaterialParameters = {}) {
     super({ transparent: true, depthWrite: false, ...params } as ShaderMaterialParameters)
 
     // Update uniforms.
     this.uniforms = {
-      u_Progress: { value: 0 },
+      u_Progress: { value: init.progress },
       u_Time: { value: 0 },
       u_Resolution: new Uniform(new Vector2(0, 0)),
 
-      u_Size: new Uniform(ASCIIShaderMaterial.DEFAULT_PARTICLE_SIZE),
+      u_Size: new Uniform(init.size ?? ASCIIShaderMaterial.DEFAULT_PARTICLE_SIZE),
     }
   }
 

@@ -1,48 +1,46 @@
 import { Card } from "@/modules/global/components/Card"
 import { useIntersectionObserver } from "@/modules/global/hooks/useIntersectionObserver"
-import { useResizeObserver } from "@/modules/global/hooks/useResizeObserver"
+import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
+import { AsciiImage } from "@/modules/threejs/components/AsciiImage"
 import { randomizeAttributes } from "@/modules/threejs/lib/randomizeAttributes"
 import { ASCIIShaderMaterial } from "@/modules/threejs/shaders/ascii"
-import { useTexture } from "@react-three/drei"
-import { Canvas, useFrame } from "@react-three/fiber"
+import { Canvas } from "@react-three/fiber"
 
 import gsap from "gsap"
 import { Suspense, useRef } from "react"
 import { BiChevronRight } from "react-icons/bi"
-import { PlaneGeometry, Points } from "three"
+import { PlaneGeometry } from "three"
 
 // #########################################
 // ------------- Threejs state -------------
 // #########################################
-const shaderMaterial = new ASCIIShaderMaterial({})
-
 // Particles geometry
 const planeGeometry = new PlaneGeometry(10, 10, 60, 60)
-planeGeometry.setIndex(null) // Disable index to avoid duplicated vertices
+planeGeometry.setIndex(null)
 
 // Add `a_Random` attribute to the geometry with random values from 0 to 1
 randomizeAttributes(planeGeometry, "a_Random")
 
 // Controller for `u_Progress` uniform on shader material
-const imageAppearTween = gsap.to(shaderMaterial.uniforms.u_Progress, {
-  ease: "power4.out",
-  duration: 1.2,
-  paused: true,
-  value: 1,
-})
 
 // ########################################
 // ----------- React Components -----------
 // ########################################
 export function ProfileCard() {
+  const matRef = useRef<ASCIIShaderMaterial>(null)
+  const imageAppearTween = matRef.current
+    ? gsap.to(matRef.current.uniforms.u_Progress, { ease: "power4.out", duration: 1.2, paused: true, value: 1 })
+    : undefined
+
   // ############################
   // Component States
   useIntersectionObserver(["#profile-wrapper"], {
     threshold: 0.5,
-    onAppear: () => imageAppearTween.restart(),
-    onLeave: () => imageAppearTween.reverse(),
+    onAppear: () => imageAppearTween?.restart(),
+    onLeave: () => imageAppearTween?.reverse(),
   })
 
+  const intersection = useIntersectionObserverState([`#profile-wrapper`], {})
   return (
     <div id="profile-wrapper" className="max-md:w-full">
       <Card variant={"glassy"} className="aspect-video w-[550px] justify-center max-md:w-full ">
@@ -65,46 +63,19 @@ export function ProfileCard() {
 
         <div className="absolute w-[90%] bottom-0 aspect-[687/530] z-40 " id="canvas-wrapper">
           <Suspense fallback="LOADING">
-            <Canvas className="" gl={{ antialias: false }}>
-              <AsciiImage />
+            <Canvas frameloop={intersection.isVisible ? "always" : "never"} gl={{ antialias: false }}>
+              <AsciiImage
+                defaultProgress={0}
+                materialRef={matRef}
+                spriteSrc="/sprites/numeric.png"
+                shapeSrc="/assets/profile.png"
+                geometry={planeGeometry}
+                container="#profile-wrapper"
+              />
             </Canvas>
           </Suspense>
         </div>
       </Card>
     </div>
-  )
-}
-
-function AsciiImage() {
-  // Reference variables.
-  const points = useRef<Points>(null)
-
-  // Load necessary textures.
-  useTexture("/sprites/numeric.png", (texture) => shaderMaterial.setSpriteSheet(texture))
-  useTexture("/assets/profile.png", (txt) => {
-    // Update the mesh scale on Y to match the aspect ratio of the image.
-    const { width, height } = txt.image
-    const aspectRatio = height / width
-    points.current?.scale.setY(aspectRatio)
-
-    // Set the texture to the shader material
-    shaderMaterial.setTexture(txt)
-  })
-
-  useResizeObserver(["#canvas-wrapper"], {
-    onResize: (e) => {
-      shaderMaterial.uniforms.u_Resolution.value.y = e.contentRect.height * window.devicePixelRatio
-      shaderMaterial.uniforms.u_Resolution.value.x = e.contentRect.width * window.devicePixelRatio
-    },
-  })
-
-  // Time updater
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime()
-    shaderMaterial.uniforms.u_Time.value = time
-  })
-
-  return (
-    <points ref={points} position={[0, 0, 0]} rotation={[0, 0, 0]} geometry={planeGeometry} material={shaderMaterial} />
   )
 }
