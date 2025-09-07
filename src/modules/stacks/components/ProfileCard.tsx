@@ -7,7 +7,7 @@ import { ASCIIShaderMaterial } from "@/modules/threejs/shaders/ascii"
 import { Canvas } from "@react-three/fiber"
 
 import gsap from "gsap"
-import { Suspense, useRef } from "react"
+import { Suspense, useMemo, useState } from "react"
 import { BiChevronRight } from "react-icons/bi"
 import { PlaneGeometry } from "three"
 
@@ -27,10 +27,11 @@ randomizeAttributes(planeGeometry, "a_Random")
 // ----------- React Components -----------
 // ########################################
 export function ProfileCard() {
-  const matRef = useRef<ASCIIShaderMaterial>(null)
-  const imageAppearTween = matRef.current
-    ? gsap.to(matRef.current.uniforms.u_Progress, { ease: "power4.out", duration: 1.2, paused: true, value: 1 })
-    : undefined
+  const [matRef, setMatRef] = useState<ASCIIShaderMaterial | null>()
+  const imageAppearTween = useMemo(() => {
+    if (!matRef) return
+    return gsap.to(matRef.uniforms.u_Progress, { ease: "power4.out", duration: 1.2, paused: true, value: 1 })
+  }, [matRef])
 
   // ############################
   // Component States
@@ -66,7 +67,7 @@ export function ProfileCard() {
             <Canvas frameloop={intersection.isVisible ? "always" : "never"} gl={{ antialias: false }}>
               <AsciiImage
                 defaultProgress={0}
-                materialRef={matRef}
+                materialRef={setMatRef}
                 spriteSrc="/sprites/numeric.png"
                 shapeSrc="/assets/profile.png"
                 geometry={planeGeometry}

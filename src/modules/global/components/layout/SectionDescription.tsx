@@ -19,6 +19,8 @@ interface SectionDescriptionProps {
    * @default "lr"
    */
   direction?: "rl" | "lr"
+
+  className?: string
 }
 
 /**
@@ -31,8 +33,9 @@ export function SectionDescription(props: SectionDescriptionProps) {
   return (
     <div
       className={twMerge(
-        "flex size-full h-full flex-col p-4 max-md:-order-1",
-        props.direction === "rl" ? "text-end items-end" : ""
+        "flex size-full lg:max-w-xl h-fit flex-col p-4",
+        props.direction === "rl" ? "text-end items-end" : "",
+        props.className
       )}
     >
       <props.icon className="size-12 mt-auto fill-white w-fit" />

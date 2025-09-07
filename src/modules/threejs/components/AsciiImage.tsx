@@ -27,7 +27,7 @@ interface AsciiImageProps extends Omit<PointsInstancesProps, "material"> {
   /**
    * Shaders Material Reference
    */
-  materialRef?: Ref<ASCIIShaderMaterial>
+  materialRef?: Ref<ASCIIShaderMaterial> | ((instance: ASCIIShaderMaterial | null) => void)
   /**
    * Object reference
    */

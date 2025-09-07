@@ -92,7 +92,7 @@ export function StatProgress({
             key={`stat_level_${level}`}
             aria-label={`Stat Level ${level}`}
             style={{ background: `var(--color-gray-${MAX_SEGMENTS - level + 2}00)` }}
-            className={"h-2 w-8 data-[status=closed]:w-0 ease-in-out rounded-full transition-all "}
+            className={"h-1 w-4 data-[status=closed]:w-0 ease-in-out rounded-full transition-all "}
           />
         ))}
       {icon}

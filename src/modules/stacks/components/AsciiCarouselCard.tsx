@@ -1,5 +1,4 @@
 import { Card } from "@/modules/global/components/Card"
-import { Canvas } from "@react-three/fiber"
 import { Suspense, useEffect, useId, useRef, useState, type ComponentPropsWithRef } from "react"
 
 import { StatInfo } from "@/modules/global/components/StatInfo"
@@ -8,13 +7,14 @@ import { useDebounce } from "@/modules/global/hooks/useDebounce"
 import { useIntersectionObserverState } from "@/modules/global/hooks/useIntersectionObserverState"
 import { mergeRefs } from "@/modules/global/lib/mergeRefs"
 import { AsciiImageCarouselGroup } from "@/modules/threejs/components/AsciiImageCarouselGroup"
+import { Canvas } from "@react-three/fiber"
 import { BsFillLightningFill } from "react-icons/bs"
 import { RiTimeFill } from "react-icons/ri"
 import { twMerge } from "tailwind-merge"
 import { Group } from "three"
 import type { AsciiStats } from "../types"
 
-interface AsciiTransitionCardProps {
+interface AsciiCarouselCardProps {
   className?: string
   /**
    * Stats of your ascii transition
@@ -22,11 +22,11 @@ interface AsciiTransitionCardProps {
   stats: Array<AsciiStats>
 }
 
-export function AsciiTransitionCard({
+export function AsciiCarouselCard({
   className,
   stats,
   ...props
-}: AsciiTransitionCardProps & ComponentPropsWithRef<"div">) {
+}: AsciiCarouselCardProps & ComponentPropsWithRef<"div">) {
   const [activeAscii, setActiveAscii] = useState(0)
   const id = useId()
   const finalId = props.id ?? id
@@ -38,17 +38,18 @@ export function AsciiTransitionCard({
   const divRef = useRef<HTMLDivElement>(null)
 
   const groupsRef = useRef<Group>(null)
+  const [rotation, setRotation] = useState(0)
   useEffect(() => {
     const el = divRef.current
     if (!el) return
     const observer = new MutationObserver(() => {
       const p = parseFloat(getComputedStyle(el).getPropertyValue("--progress")) || 0
-      setActiveAscii(Math.min(parseInt(`${p * stats.length}`), stats.length - 1))
+      const currentItem = Math.min(parseInt(`${p * stats.length}`), stats.length - 1)
+      setActiveAscii(currentItem)
       if (groupsRef.current) {
-        // Full rotation = 2π radians
-        const maxProgress = (1 / stats.length) * (stats.length - 1)
         // 360deg rotation.
-        groupsRef.current.rotation.y = Math.min(p, maxProgress) * Math.PI * 2
+        // groupsRef.current.rotation.y = (currentItem / stats.length) * Math.PI * 2
+        setRotation((currentItem / stats.length) * Math.PI * 2)
       }
     })
 
@@ -62,6 +63,7 @@ export function AsciiTransitionCard({
     <Card
       style={{ "--progress": 0 } as React.CSSProperties}
       variant={"glassy"}
+      data-carousel={true}
       className={twMerge("size-full flex-wrap max-md:flex-col", className)}
       {...props}
       ref={mergeRefs(divRef, props.ref)}
@@ -77,14 +79,14 @@ export function AsciiTransitionCard({
         direction={"rl"}
         text={current.name}
         iterations={current.name.length * 2}
-        className="top-4 right-10 absolute z-40"
+        className="-top-2 right-4 absolute z-40"
         bars={[
-          { level: current.skill, icon: <BsFillLightningFill className="size-5 text-gray-500" /> },
-          { level: current.time, icon: <RiTimeFill className="size-5 text-gray-500" /> },
+          { level: current.skill, icon: <BsFillLightningFill className="size-4 text-gray-500" /> },
+          { level: current.time, icon: <RiTimeFill className="size-4 text-gray-500" /> },
         ]}
       />
 
-      <div className="flex absolute left-4 bottom-4 gap-3 z-40 ">
+      <div className="flex absolute left-4 bottom-2 md:bottom-4 gap-1 md:gap-3 z-40 ">
         {stats.map(({ icon: Icon, name }, index) => (
           <button
             key={`ascii_legened_icon_${index}_${name}`}
@@ -94,7 +96,7 @@ export function AsciiTransitionCard({
           >
             <Icon
               aria-selected={debouncedAscii == index}
-              className="size-7 aria-selected:text-white duration-300 ease-out transition text-gray-500"
+              className="size-7 max-md:size-5 aria-selected:text-white duration-300 ease-out transition text-gray-500"
             />
           </button>
         ))}
@@ -104,10 +106,10 @@ export function AsciiTransitionCard({
         <Canvas
           frameloop={intersection.isVisible ? "always" : "never"}
           id="ascii-program-langs"
-          camera={{ far: 12 }}
+          camera={{ far: 14, fov: 65, frustumCulled: true }}
           gl={{ powerPreference: "low-power" }}
         >
-          <AsciiImageCarouselGroup stats={stats} container={`#${finalId}`} ref={groupsRef} />
+          <AsciiImageCarouselGroup rotation={rotation} stats={stats} container={`#${finalId}`} ref={groupsRef} />
         </Canvas>
       </Suspense>
     </Card>

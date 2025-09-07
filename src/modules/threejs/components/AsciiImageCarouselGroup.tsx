@@ -1,8 +1,10 @@
 import { mergeRefs } from "@/modules/global/lib/mergeRefs"
 import { ASCII_PLANE_GEOMETRY } from "@/modules/stacks/constants/geometries"
 import type { AsciiStats } from "@/modules/stacks/types"
+import { useFrame } from "@react-three/fiber"
 import { useMemo, useRef, type Ref } from "react"
 import { Vector3, type Group } from "three"
+import { clamp, lerp } from "three/src/math/MathUtils.js"
 import { AsciiImage } from "./AsciiImage"
 
 interface AsciiImageCarouselGroupProps {
@@ -17,9 +19,17 @@ interface AsciiImageCarouselGroupProps {
 
   ref?: Ref<Group>
   container: string
+
+  rotation: number
 }
 
-export function AsciiImageCarouselGroup({ ref, container, radius = 15, stats }: AsciiImageCarouselGroupProps) {
+export function AsciiImageCarouselGroup({
+  rotation,
+  ref,
+  container,
+  radius = 15,
+  stats,
+}: AsciiImageCarouselGroupProps) {
   const groupsRef = useRef<Group>(null)
 
   const positions = useMemo(() => {
@@ -34,8 +44,17 @@ export function AsciiImageCarouselGroup({ ref, container, radius = 15, stats }: 
     })
   }, [stats, radius])
 
+  useFrame((_, delta) => {
+    if (!groupsRef.current) return
+
+    if (groupsRef.current.rotation.y.toFixed(2) == rotation.toFixed(2)) {
+      return
+    }
+    groupsRef.current.rotation.y = clamp(lerp(groupsRef.current.rotation.y, rotation, delta * 2), 0, Math.PI * 2)
+  })
+
   return (
-    <group ref={mergeRefs(groupsRef, ref)} position={[0, 0, -18]}>
+    <group ref={mergeRefs(groupsRef, ref)} position={[0, 0, -22]}>
       {positions.map((stat, i) => (
         <AsciiImage
           container={container}
@@ -46,7 +65,7 @@ export function AsciiImageCarouselGroup({ ref, container, radius = 15, stats }: 
           rotation={[0, Math.atan2(stat.pos.x, stat.pos.z), 0]} // Face outward
           geometry={ASCII_PLANE_GEOMETRY}
           frustumCulled={true}
-          size={0.15}
+          size={0.2}
         />
       ))}
     </group>
