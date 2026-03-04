@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-terminal-bg: #050505;
+  --color-terminal-bg-elevated: #0a0a0a;
+  --color-terminal-bg-panel: #0f0f0f;
+  --color-terminal-border: #1a1a1a;
+  --color-terminal-border-mid: #282828;
+  --color-terminal-border-bright: #3a3a3a;
+  --color-terminal-text-muted: #404040;
+  --color-terminal-text-dim: #6e6e6e;
+  --color-terminal-text: #d4d4d4;
+  --color-terminal-text-bright: #f5f5f5;
+  --color-terminal-white: #ffffff;
+
+  /* Fonts */
+  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Major Mono Display", monospace;
+
+  /* Font sizes */
+  --text-xxs: 9px;
+  --text-xxs--line-height: 1.4;
+  --text-xxs--letter-spacing: 0.2em;
+  --text-xs: 10px;
+  --text-xs--line-height: 1.5;
+  --text-xs--letter-spacing: 0.15em;
+  --text-sm: 11.5px;
+  --text-sm--line-height: 1.7;
+  --text-base: 13px;
+  --text-base--line-height: 1.7;
+  --text-lg: 15px;
+  --text-lg--line-height: 1.5;
+  --text-xl: 20px;
+  --text-xl--line-height: 1.2;
+  --text-2xl: 32px;
+  --text-2xl--line-height: 1.05;
+  --text-3xl: 44px;
+  --text-3xl--line-height: 1.05;
+
+  /* Letter spacing */
+  --tracking-terminal: 0.15em;
+  --tracking-wide-terminal: 0.3em;
+  --tracking-hud: 0.2em;
+
+  /* Animations */
+  --animate-cursor-blink: cursor-blink 1.2s step-end infinite;
+  --animate-dot-pulse: dot-pulse 2s ease infinite;
+  --animate-scan-down: scan-down 5s linear infinite;
+  --animate-glitch: glitch 7s ease infinite;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes scan-down {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+@keyframes glitch {
+  0%, 93%, 100% { opacity: 0; transform: translateX(0); }
+  94% { opacity: 0.7; transform: translateX(-4px); }
+  95% { opacity: 0.5; transform: translateX(4px); }
+  96% { opacity: 0; }
+}
+
+/* ═══ BASE GLOBAL STYLES ═══ */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-terminal-bg);
+    color: var(--color-terminal-text);
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  ::selection {
+    background: var(--color-terminal-white);
+    color: var(--color-terminal-bg);
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-terminal-border-mid);
+  }
+
+  /* Scanlines overlay — fixed on top of everything */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.06) 1px,
+      rgba(0, 0, 0, 0.06) 2px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+}
