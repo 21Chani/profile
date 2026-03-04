@@ -1,0 +1,46 @@
+
+// ##########################################
+// ---------------- Uniforms ----------------
+// ##########################################
+uniform sampler2D   u_Texture;
+uniform vec2        u_Resolution;
+uniform float       u_Scroll;
+uniform float       u_Time;
+uniform float       u_Size;
+uniform float       u_Speed;
+uniform float       u_WaveSpread;
+uniform float       u_WaveLength;
+
+// ##########################################
+// ---------------- Varyings ----------------
+// ##########################################
+varying float   v_RandomNess; 
+varying vec4    v_Color;
+varying vec2    v_Uv;
+
+// ##########################################
+// --------------- Attributes ---------------
+// ##########################################
+attribute float a_Random;
+
+void main() {   
+    // Z axis wave effect
+    vec3 mPos = position;  
+    mPos.z += cos(( position.y + u_Time * u_Speed) + a_Random * u_WaveSpread) * u_WaveLength;
+
+    // Apply model matrix
+    vec4 modelPosition = modelMatrix * vec4(mPos, 1.0);
+    vec4 viewPosition = viewMatrix * modelPosition;
+    vec4 modelProjection = projectionMatrix * viewPosition;
+ 
+    // Apply varyings
+    v_Uv = uv; 
+    v_RandomNess = a_Random; 
+
+    // Particle Size 
+    float perspective = u_Size * u_Resolution.y;
+    gl_PointSize = perspective * (1.0 / -viewPosition.z);
+
+    gl_Position = modelProjection;
+
+}
