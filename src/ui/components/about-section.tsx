@@ -6,7 +6,6 @@ const terminalLines = [
 	{ key: "location", value: "Brazil" },
 	{ key: "exp", value: "5+ years" },
 	{ key: "focus", value: "Web3 · Frontend" },
-	{ key: "status", value: "open to work" },
 ] as const;
 
 export function AboutSection() {
@@ -54,12 +53,7 @@ export function AboutSection() {
 						<span className="text-terminal-text-muted inline-block w-[100px]">
 							{key}
 						</span>
-						<span className="text-terminal-text">
-							{value}
-							{key === "status" && (
-								<span className="inline-block w-[7px] h-[13px] bg-terminal-text-dim animate-cursor-blink align-middle ml-1" />
-							)}
-						</span>
+						<span className="text-terminal-text">{value}</span>
 					</div>
 				))}
 			</TerminalCard>
