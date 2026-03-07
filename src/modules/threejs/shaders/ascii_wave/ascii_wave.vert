@@ -26,7 +26,7 @@ attribute float a_Random;
 void main() {   
     // Z axis wave effect
     vec3 mPos = position;  
-    mPos.z += cos(( position.y + u_Time * u_Speed) + a_Random * u_WaveSpread) * u_WaveLength;
+    // mPos.z += cos(( position.y + u_Time * u_Speed) + a_Random * u_WaveSpread) * u_WaveLength;
 
     // Apply model matrix
     vec4 modelPosition = modelMatrix * vec4(mPos, 1.0);

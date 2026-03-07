@@ -57,7 +57,7 @@ export function AboutSection() {
       </div>
 
       {/* Right: About text */}
-      <div className="max-w-120">
+      <div className="w-fit">
         <SectionLabel label="INIT SEQUENCE" className="mb-4" />
 
         <h1 className="font-display text-3xl text-terminal-white leading-[1.05] mb-1.5 relative max-[860px]:text-2xl">

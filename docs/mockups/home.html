@@ -39,7 +39,19 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border-mid); }
 
-  /* ═══ SCANLINES OVERLAY ═══ */
+  /* ═══ BACKGROUND GRID ═══ */
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 70%);
+  }
+
+  /* ═══ SCANLINES ═══ */
   body::after {
     content: '';
     position: fixed; top: 0; left: 0;
@@ -48,90 +60,57 @@
     pointer-events: none; z-index: 9999;
   }
 
-  /* ═══ THREE.JS CANVAS — fixed behind everything ═══ */
   #threeCanvas {
-    position: fixed;
-    top: 0; left: 0;
+    position: fixed; top: 0; left: 0;
     width: 100vw; height: 100vh;
-    z-index: 0;
-    pointer-events: none;
+    z-index: 0; pointer-events: none;
   }
 
-  /* ═══ PAGE WRAPPER — sits above canvas ═══ */
   .page { position: relative; z-index: 1; }
 
-  /* ═══ SECTION LABEL (reusable) ═══ */
   .section-label {
-    font-size: 9px;
-    letter-spacing: 5px;
-    color: var(--text-muted);
-    margin-bottom: 48px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    font-size: 9px; letter-spacing: 5px; color: var(--text-muted);
+    margin-bottom: 48px; display: flex; align-items: center; gap: 12px;
   }
   .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
+    content: ''; flex: 1; height: 1px;
     background: linear-gradient(90deg, var(--border-mid), transparent);
   }
 
   /* ═══ NAV ═══ */
   .nav {
-    position: fixed; top: 0; left: 0; right: 0;
-    z-index: 1000; padding: 16px 40px;
-    display: flex; justify-content: space-between; align-items: center;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 16px 40px; display: flex; justify-content: space-between; align-items: center;
     background: rgba(5,5,5,0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
   }
   .nav-logo {
     font-family: 'Major Mono Display', monospace;
-    font-size: 15px; color: var(--white);
-    letter-spacing: 3px; text-decoration: none;
+    font-size: 15px; color: var(--white); letter-spacing: 3px; text-decoration: none;
   }
   .nav-links { display: flex; gap: 6px; }
   .nav-links a {
-    color: var(--text-dim); text-decoration: none;
-    font-size: 10px; letter-spacing: 2px;
-    padding: 6px 14px; border: 1px solid transparent;
-    transition: all 0.3s;
+    color: var(--text-dim); text-decoration: none; font-size: 10px;
+    letter-spacing: 2px; padding: 6px 14px; border: 1px solid transparent; transition: all 0.3s;
   }
-  .nav-links a:hover {
-    color: var(--text-bright);
-    border-color: var(--border-mid);
-  }
+  .nav-links a:hover { color: var(--text-bright); border-color: var(--border-mid); }
 
-  /* ═══════════════════════════════════════════════ */
-  /* HERO                                           */
-  /* ═══════════════════════════════════════════════ */
+  /* ═══ HERO ═══ */
   .hero {
-    min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
     padding: 80px 40px 40px;
   }
   .hero-inner {
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 72px;
-    align-items: center;
-    max-width: 1080px; width: 100%;
+    display: grid; grid-template-columns: 420px 1fr; gap: 72px;
+    align-items: center; max-width: 1080px; width: 100%;
   }
 
-  /* ─── 3D CARD ─── */
   .card-wrapper { perspective: 1200px; }
-  .card-3d {
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.08s ease-out;
-  }
+  .card-3d { position: relative; transform-style: preserve-3d; transition: transform 0.08s ease-out; }
 
-  /* HUD frame */
   .hud-frame {
-    position: relative;
-    background: var(--bg-elevated);
+    position: relative; background: var(--bg-elevated);
     border: 1px solid var(--border-mid);
     box-shadow: 0 0 0 1px var(--border), inset 0 0 60px rgba(0,0,0,0.8);
   }
@@ -161,88 +140,48 @@
   }
   .hud-header { border-bottom: 1px solid var(--border); }
   .hud-footer { padding: 8px 16px; border-top: 1px solid var(--border); }
-  .hud-header-left, .hud-footer-text {
-    font-size: 9px; letter-spacing: 3px; color: var(--text-muted);
-  }
+  .hud-header-left, .hud-footer-text { font-size: 9px; letter-spacing: 3px; color: var(--text-muted); }
   .hud-footer-text { font-size: 8px; letter-spacing: 2px; }
   .hud-header-right { display: flex; gap: 6px; align-items: center; }
-  .hud-dot {
-    width: 4px; height: 4px; border-radius: 50%;
-    background: var(--text-muted); opacity: 0.5;
-  }
+  .hud-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); opacity: 0.5; }
   .hud-dot.active { background: var(--text-dim); opacity: 1; animation: dotPulse 2s ease infinite; }
-  .hud-coords {
-    font-size: 8px; color: var(--text-muted);
-    font-variant-numeric: tabular-nums; letter-spacing: 1px;
-  }
+  .hud-coords { font-size: 8px; color: var(--text-muted); font-variant-numeric: tabular-nums; letter-spacing: 1px; }
 
-  /* ASCII viewport placeholder — Three.js renders here */
-  .hud-viewport {
-    position: relative; width: 100%;
-    aspect-ratio: 3/4; overflow: hidden;
-    background: #080808;
-  }
+  .hud-viewport { position: relative; width: 100%; aspect-ratio: 3/4; overflow: hidden; background: #080808; }
   .hud-viewport canvas { display: block; width: 100%; height: 100%; }
   .hud-scan {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 2px;
+    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-    animation: scanDown 5s linear infinite;
-    pointer-events: none; z-index: 5;
+    animation: scanDown 5s linear infinite; pointer-events: none; z-index: 5;
   }
 
-  /* ─── ABOUT TEXT (right side) ─── */
   .about { max-width: 480px; }
   .about-prefix {
     font-size: 9px; letter-spacing: 5px; color: var(--text-muted);
     margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
   }
-  .about-prefix::after {
-    content: ''; flex: 1; height: 1px;
-    background: linear-gradient(90deg, var(--border-mid), transparent);
-  }
+  .about-prefix::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-mid), transparent); }
   .about-name {
-    font-family: 'Major Mono Display', monospace;
-    font-size: 44px; color: var(--white); line-height: 1.05;
-    margin-bottom: 6px; position: relative;
+    font-family: 'Major Mono Display', monospace; font-size: 44px;
+    color: var(--white); line-height: 1.05; margin-bottom: 6px; position: relative;
   }
   .about-name .g {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    color: var(--white); opacity: 0; animation: glitch 7s ease infinite;
-    pointer-events: none;
+    color: var(--white); opacity: 0; animation: glitch 7s ease infinite; pointer-events: none;
   }
   .about-name .g:nth-child(2) { clip-path: inset(15% 0 65% 0); animation-delay: 0.1s; }
   .about-name .g:nth-child(3) { clip-path: inset(65% 0 10% 0); animation-delay: 0.25s; }
-  .about-title {
-    font-size: 12px; color: var(--text-dim);
-    letter-spacing: 6px; margin-bottom: 32px; font-weight: 300;
-  }
-  .about-bio {
-    color: var(--text-dim); font-size: 12.5px; line-height: 2; margin-bottom: 36px;
-  }
-  .about-bio em {
-    color: var(--text); font-style: normal;
-    border-bottom: 1px dashed var(--border-bright);
-  }
+  .about-title { font-size: 12px; color: var(--text-dim); letter-spacing: 6px; margin-bottom: 32px; font-weight: 300; }
+  .about-bio { color: var(--text-dim); font-size: 12.5px; line-height: 2; margin-bottom: 36px; }
+  .about-bio em { color: var(--text); font-style: normal; border-bottom: 1px dashed var(--border-bright); }
 
-  /* Terminal block */
-  .terminal {
-    border: 1px solid var(--border);
-    background: rgba(10,10,10,0.6); font-size: 11.5px;
-  }
+  .terminal { border: 1px solid var(--border); background: rgba(10,10,10,0.6); font-size: 11.5px; }
   .terminal-bar {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 14px; border-bottom: 1px solid var(--border);
-    background: rgba(15,15,15,0.8);
+    display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+    border-bottom: 1px solid var(--border); background: rgba(15,15,15,0.8);
   }
-  .term-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    border: 1px solid var(--border-mid);
-  }
-  .term-title {
-    font-size: 9px; letter-spacing: 2px;
-    color: var(--text-muted); margin-left: 6px;
-  }
+  .term-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--border-mid); }
+  .term-title { font-size: 9px; letter-spacing: 2px; color: var(--text-muted); margin-left: 6px; }
   .terminal-body { padding: 16px 18px; }
   .term-line { display: flex; padding: 3px 0; }
   .term-line .prompt { color: var(--text-muted); margin-right: 8px; user-select: none; }
@@ -255,162 +194,173 @@
   }
 
   /* ═══════════════════════════════════════════════ */
-  /* STACKS                                         */
+  /* STACKS — SIMPLE FILE LISTING                    */
   /* ═══════════════════════════════════════════════ */
-  .stacks {
-    padding: 120px 40px;
-    max-width: 1080px; margin: 0 auto;
+  .stacks { padding: 120px 40px; max-width: 1080px; margin: 0 auto; }
+  .stacks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+
+  .stack-terminal {
+    border: 1px solid var(--border); background: var(--bg-elevated);
+    position: relative; overflow: hidden; transition: border-color 0.4s;
   }
-  .stacks-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 40px;
+  .stack-terminal:hover { border-color: var(--border-bright); }
+  .stack-terminal:hover .st-scan { opacity: 1; }
+
+  .stack-terminal::before,
+  .stack-terminal::after {
+    content: ''; position: absolute; width: 16px; height: 16px;
+    border-color: var(--border-mid); border-style: solid; border-width: 0;
+    z-index: 5; transition: border-color 0.4s; pointer-events: none;
   }
-  .stack-group-title {
-    font-size: 10px; letter-spacing: 3px; color: var(--text-dim);
-    margin-bottom: 20px; padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
+  .stack-terminal::before { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .stack-terminal::after { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+  .stack-terminal:hover::before,
+  .stack-terminal:hover::after { border-color: var(--border-bright); }
+
+  .st-scan {
+    position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.03) 50%, transparent 95%);
+    animation: scanDown 6s linear infinite; pointer-events: none; z-index: 4;
+    opacity: 0; transition: opacity 0.4s;
   }
-  .stack-item {
+
+  .st-titlebar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 14px; border-bottom: 1px solid var(--border); background: rgba(12,12,12,0.9);
+  }
+  .st-dots { display: flex; gap: 5px; }
+  .st-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    border: 1px solid var(--border-mid); transition: border-color 0.3s;
+  }
+  .stack-terminal:hover .st-dot { border-color: var(--border-bright); }
+  .st-path { font-size: 9px; letter-spacing: 1px; color: var(--text-muted); margin-left: 4px; }
+
+  .st-prompt {
+    padding: 10px 14px 6px; font-size: 10px; color: var(--text-muted);
+    display: flex; align-items: center; user-select: none;
+  }
+  .st-prompt-user { color: var(--text-dim); }
+  .st-prompt-cmd { color: var(--text); margin-left: 6px; }
+  .st-prompt-flag { color: var(--text-muted); margin-left: 5px; }
+
+  .st-body { padding: 2px 0 8px; }
+
+  /* File row */
+  .st-row {
+    display: flex; align-items: center;
+    padding: 4px 14px;
+    position: relative; cursor: default;
+    font-size: 11.5px; line-height: 1.4;
+  }
+  .st-row:hover .st-row-bg { opacity: 1; }
+  .st-row:hover .st-fname { color: var(--text-bright); }
+  .st-row:hover .st-fext { color: var(--text-dim); }
+  .st-row:hover .st-ficon { color: var(--text-dim); }
+  .st-row:hover .st-prof { color: var(--text-dim); }
+  .st-row:hover .st-prof .f { color: var(--text-bright); }
+  .st-row:hover .st-prof .e { color: var(--border-bright); }
+
+  .st-row-bg {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.02);
+    opacity: 0; transition: opacity 0.15s; pointer-events: none;
+  }
+
+  .st-ficon {
+    width: 22px; flex-shrink: 0;
+    font-size: 12px; color: var(--text-muted);
+    position: relative; z-index: 1; transition: color 0.15s;
+    text-align: center;
+  }
+  .st-fname {
+    color: var(--text); transition: color 0.15s;
+    position: relative; z-index: 1; white-space: nowrap;
+  }
+  .st-fext {
+    color: var(--text-muted); transition: color 0.15s;
+    position: relative; z-index: 1;
+  }
+  .st-prof {
+    margin-left: auto;
+    font-size: 8px; letter-spacing: 2px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    position: relative; z-index: 1;
+    transition: color 0.15s;
+    white-space: nowrap;
+  }
+  .st-prof .f { color: var(--text-dim); }
+  .st-prof .e { color: var(--border-mid); }
+
+  .st-footer {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 6px 0;
+    padding: 7px 14px; border-top: 1px solid var(--border); background: rgba(12,12,12,0.6);
   }
-  .stack-item-name {
-    font-size: 12px; color: var(--text-dim);
-  }
-  .stack-bar-track {
-    width: 80px; height: 3px;
-    background: var(--border); position: relative;
-  }
-  .stack-bar-fill {
-    position: absolute; top: 0; left: 0;
-    height: 100%; background: var(--text-dim);
-    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .stack-bar-fill.loaded { /* JS adds this class on scroll */ }
-  .stack-item-level {
-    font-size: 9px; color: var(--text-muted);
-    width: 24px; text-align: right;
+  .st-footer-text {
+    font-size: 8px; letter-spacing: 1px; color: var(--text-muted);
     font-variant-numeric: tabular-nums;
   }
 
-  /* ═══════════════════════════════════════════════ */
-  /* WORK                                           */
-  /* ═══════════════════════════════════════════════ */
-  .work {
-    padding: 120px 40px;
-    max-width: 1080px; margin: 0 auto;
+  /* Row entrance */
+  .st-row {
+    opacity: 0; transform: translateY(3px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
-  .work-list { display: flex; flex-direction: column; gap: 2px; }
+  .st-row.visible { opacity: 1; transform: translateY(0); }
 
+  /* ═══ WORK ═══ */
+  .work { padding: 120px 40px; max-width: 1080px; margin: 0 auto; }
+  .work-list { display: flex; flex-direction: column; gap: 2px; }
   .work-item {
-    display: grid;
-    grid-template-columns: 140px 1fr auto;
-    gap: 32px;
-    align-items: baseline;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.3s;
-    cursor: default;
+    display: grid; grid-template-columns: 140px 1fr auto; gap: 32px;
+    align-items: baseline; padding: 20px 0;
+    border-bottom: 1px solid var(--border); transition: background 0.3s; cursor: default;
   }
   .work-item:first-child { border-top: 1px solid var(--border); }
   .work-item:hover { background: rgba(255,255,255,0.01); }
   .work-item:hover .work-company { color: var(--text-bright); }
   .work-item:hover .work-arrow { opacity: 1; transform: translateX(0); }
-
-  .work-period {
-    font-size: 10px; color: var(--text-muted);
-    letter-spacing: 1px; font-variant-numeric: tabular-nums;
-  }
+  .work-period { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; font-variant-numeric: tabular-nums; }
   .work-info { display: flex; flex-direction: column; gap: 6px; }
-  .work-company {
-    font-size: 14px; color: var(--text); font-weight: 500;
-    letter-spacing: 1px; transition: color 0.3s;
-  }
-  .work-role {
-    font-size: 10px; color: var(--text-dim);
-    letter-spacing: 2px; font-weight: 300;
-  }
-  .work-desc {
-    font-size: 11.5px; color: var(--text-dim);
-    line-height: 1.8; margin-top: 4px;
-  }
-  .work-tech {
-    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
-  }
+  .work-company { font-size: 14px; color: var(--text); font-weight: 500; letter-spacing: 1px; transition: color 0.3s; }
+  .work-role { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; font-weight: 300; }
+  .work-desc { font-size: 11.5px; color: var(--text-dim); line-height: 1.8; margin-top: 4px; }
+  .work-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .work-tag {
     font-size: 9px; letter-spacing: 1px; color: var(--text-muted);
-    padding: 3px 8px; border: 1px solid var(--border);
-    transition: all 0.3s;
+    padding: 3px 8px; border: 1px solid var(--border); transition: all 0.3s;
   }
   .work-item:hover .work-tag { border-color: var(--border-mid); color: var(--text-dim); }
-  .work-arrow {
-    font-size: 14px; color: var(--text-dim);
-    opacity: 0; transform: translateX(-8px);
-    transition: all 0.3s;
-  }
+  .work-arrow { font-size: 14px; color: var(--text-dim); opacity: 0; transform: translateX(-8px); transition: all 0.3s; }
 
-  /* ═══════════════════════════════════════════════ */
-  /* CONTACT                                        */
-  /* ═══════════════════════════════════════════════ */
-  .contact {
-    padding: 120px 40px;
-    max-width: 1080px; margin: 0 auto;
-  }
-  .contact-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 72px;
-    align-items: start;
-  }
-  .contact-heading {
-    font-family: 'Major Mono Display', monospace;
-    font-size: 36px; color: var(--white); line-height: 1.1;
-    margin-bottom: 20px;
-  }
-  .contact-sub {
-    font-size: 12.5px; color: var(--text-dim); line-height: 2;
-  }
-  .contact-links {
-    display: flex; flex-direction: column; gap: 2px;
-  }
+  /* ═══ CONTACT ═══ */
+  .contact { padding: 120px 40px; max-width: 1080px; margin: 0 auto; }
+  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
+  .contact-heading { font-family: 'Major Mono Display', monospace; font-size: 36px; color: var(--white); line-height: 1.1; margin-bottom: 20px; }
+  .contact-sub { font-size: 12.5px; color: var(--text-dim); line-height: 2; }
+  .contact-links { display: flex; flex-direction: column; gap: 2px; }
   .contact-link {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--border);
-    text-decoration: none; color: var(--text-dim);
-    transition: all 0.3s;
+    padding: 16px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: var(--text-dim); transition: all 0.3s;
   }
   .contact-link:first-child { border-top: 1px solid var(--border); }
   .contact-link:hover { color: var(--text-bright); }
   .contact-link:hover .contact-arrow { opacity: 1; transform: translateX(0); }
-  .contact-link-label {
-    font-size: 10px; letter-spacing: 2px;
-  }
-  .contact-link-value {
-    font-size: 12px;
-  }
-  .contact-arrow {
-    font-size: 14px; opacity: 0;
-    transform: translateX(-8px); transition: all 0.3s;
-  }
+  .contact-link-label { font-size: 10px; letter-spacing: 2px; }
+  .contact-link-value { font-size: 12px; }
+  .contact-arrow { font-size: 14px; opacity: 0; transform: translateX(-8px); transition: all 0.3s; }
 
-  /* ═══════════════════════════════════════════════ */
-  /* FOOTER                                         */
-  /* ═══════════════════════════════════════════════ */
+  /* ═══ FOOTER ═══ */
   .footer {
-    border-top: 1px solid var(--border);
-    padding: 20px 40px;
+    border-top: 1px solid var(--border); padding: 20px 40px;
     display: flex; justify-content: space-between; align-items: center;
     font-size: 10px; color: var(--text-muted);
   }
   .footer-status { display: flex; align-items: center; gap: 8px; }
-  .status-pip {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--text-dim); animation: dotPulse 3s ease infinite;
-  }
+  .status-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--text-dim); animation: dotPulse 3s ease infinite; }
 
-  /* ═══ KEYFRAMES ═══ */
   @keyframes cursorBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
   @keyframes dotPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
   @keyframes scanDown { 0% { top: 0; } 100% { top: 100%; } }
@@ -421,7 +371,6 @@
     96% { opacity: 0; }
   }
 
-  /* ═══ RESPONSIVE ═══ */
   @media (max-width: 860px) {
     .hero-inner { grid-template-columns: 1fr; gap: 48px; max-width: 420px; }
     .about-name { font-size: 32px; }
@@ -439,12 +388,10 @@
 </head>
 <body>
 
-<!-- Three.js renders here — background + card viewport -->
 <canvas id="threeCanvas"></canvas>
 
 <div class="page">
 
-  <!-- ═══ NAV ═══ -->
   <nav class="nav">
     <a href="#" class="nav-logo">chani.sh</a>
     <div class="nav-links">
@@ -455,39 +402,23 @@
     </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════════════ -->
-  <!-- HERO                                           -->
-  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ═══ HERO ═══ -->
   <section class="hero" id="about">
     <div class="hero-inner">
-
-      <!-- LEFT: 3D ASCII CARD -->
       <div class="card-wrapper">
         <div class="card-3d" id="card3d">
           <div class="hud-frame">
-            <div class="hud-corner tl"></div>
-            <div class="hud-corner tr"></div>
-            <div class="hud-corner bl"></div>
-            <div class="hud-corner br"></div>
-            <div class="hud-tick h top-m"></div>
-            <div class="hud-tick h bot-m"></div>
-            <div class="hud-tick v left-m"></div>
-            <div class="hud-tick v right-m"></div>
-
+            <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+            <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+            <div class="hud-tick h top-m"></div><div class="hud-tick h bot-m"></div>
+            <div class="hud-tick v left-m"></div><div class="hud-tick v right-m"></div>
             <div class="hud-header">
               <span class="hud-header-left">CHANI.IMG</span>
               <div class="hud-header-right">
-                <div class="hud-dot"></div>
-                <div class="hud-dot"></div>
-                <div class="hud-dot active"></div>
+                <div class="hud-dot"></div><div class="hud-dot"></div><div class="hud-dot active"></div>
               </div>
             </div>
-
-            <!-- Three.js ASCII viewport — placeholder -->
-            <div class="hud-viewport" id="asciiViewport">
-              <div class="hud-scan"></div>
-            </div>
-
+            <div class="hud-viewport" id="asciiViewport"><div class="hud-scan"></div></div>
             <div class="hud-footer">
               <span class="hud-footer-text">ASCII RENDER</span>
               <span class="hud-coords" id="hudCoords">0.00 / 0.00</span>
@@ -496,12 +427,10 @@
         </div>
       </div>
 
-      <!-- RIGHT: ABOUT -->
       <div class="about">
         <div class="about-prefix">INIT SEQUENCE</div>
         <h1 class="about-name">
-          diogo
-          <br>mendonça
+          diogo<br>mendonça
           <span class="g" aria-hidden="true">diogo<br>mendonça</span>
           <span class="g" aria-hidden="true">diogo<br>mendonça</span>
         </h1>
@@ -512,12 +441,9 @@
           leveraging hyperfocus and a relentless drive to deliver
           <em>elegant, high-performance</em> solutions.
         </p>
-
         <div class="terminal">
           <div class="terminal-bar">
-            <div class="term-dot"></div>
-            <div class="term-dot"></div>
-            <div class="term-dot"></div>
+            <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
             <span class="term-title">~/about</span>
           </div>
           <div class="terminal-body">
@@ -532,312 +458,232 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════ -->
-  <!-- STACKS                                         -->
-  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ═══ STACKS ═══ -->
   <section class="stacks" id="stacks">
     <div class="section-label">TECH STACKS</div>
 
     <div class="stacks-grid">
 
-      <!-- Languages -->
-      <div class="stack-group">
-        <div class="stack-group-title">LANGUAGES</div>
-        <div class="stack-item">
-          <span class="stack-item-name">TypeScript</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="100"></div></div>
-          <span class="stack-item-level">10</span>
+      <!-- FRONTEND -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/frontend</span>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">JavaScript</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="90"></div></div>
-          <span class="stack-item-level">9</span>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">CSS / HTML</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="90"></div></div>
-          <span class="stack-item-level">9</span>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚛</span><span class="st-fname">react</span><span class="st-fext">.tsx</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▲</span><span class="st-fname">next</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◇</span><span class="st-fname">typescript</span><span class="st-fext">.lang.ts</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">tailwind</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊡</span><span class="st-fname">tanstack</span><span class="st-fext">.query.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚡</span><span class="st-fname">vite</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◧</span><span class="st-fname">shadcn</span><span class="st-fext">.ui.tsx</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">zod</span><span class="st-fext">.schema.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◉</span><span class="st-fname">jotai</span><span class="st-fext">.store.ts</span><span class="st-prof">■■■■□</span></div>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Solidity</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="70"></div></div>
-          <span class="stack-item-level">7</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Go</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="50"></div></div>
-          <span class="stack-item-level">5</span>
-        </div>
+        <div class="st-footer"><span class="st-footer-text">9 files</span></div>
       </div>
 
-      <!-- Frameworks -->
-      <div class="stack-group">
-        <div class="stack-group-title">FRAMEWORKS</div>
-        <div class="stack-item">
-          <span class="stack-item-name">React</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="100"></div></div>
-          <span class="stack-item-level">10</span>
+      <!-- LANGUAGES -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/languages</span>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Next.js</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="90"></div></div>
-          <span class="stack-item-level">9</span>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Tailwind CSS</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="90"></div></div>
-          <span class="stack-item-level">9</span>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◇</span><span class="st-fname">typescript</span><span class="st-fext">.ts</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◆</span><span class="st-fname">javascript</span><span class="st-fext">.js</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">css</span><span class="st-fext">.module.css</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◁</span><span class="st-fname">html</span><span class="st-fext">.template.html</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">solidity</span><span class="st-fext">.sol</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊞</span><span class="st-fname">golang</span><span class="st-fext">.go</span><span class="st-prof">■■□□□</span></div>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Vite</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="80"></div></div>
-          <span class="stack-item-level">8</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-item-name">TanStack</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="80"></div></div>
-          <span class="stack-item-level">8</span>
-        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
       </div>
 
-      <!-- Web3 -->
-      <div class="stack-group">
-        <div class="stack-group-title">WEB3</div>
-        <div class="stack-item">
-          <span class="stack-item-name">Ethers / Viem</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="90"></div></div>
-          <span class="stack-item-level">9</span>
+      <!-- WEB3 -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/web3</span>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Wagmi</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="90"></div></div>
-          <span class="stack-item-level">9</span>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Solana / web3.js</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="80"></div></div>
-          <span class="stack-item-level">8</span>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◎</span><span class="st-fname">viem</span><span class="st-fext">.client.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊙</span><span class="st-fname">wagmi</span><span class="st-fext">.hooks.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">ethers</span><span class="st-fext">.provider.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">solana-web3</span><span class="st-fext">.connection.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▣</span><span class="st-fname">metaplex</span><span class="st-fext">.nft.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚓</span><span class="st-fname">anchor</span><span class="st-fext">.program.rs</span><span class="st-prof">■■■□□</span></div>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Metaplex</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="70"></div></div>
-          <span class="stack-item-level">7</span>
-        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
       </div>
 
-      <!-- Data / Infra -->
-      <div class="stack-group">
-        <div class="stack-group-title">DATA / INFRA</div>
-        <div class="stack-item">
-          <span class="stack-item-name">Prisma</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="80"></div></div>
-          <span class="stack-item-level">8</span>
+      <!-- BACKEND / INFRA -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/backend</span>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">PostgreSQL</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="70"></div></div>
-          <span class="stack-item-level">7</span>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">MongoDB</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="70"></div></div>
-          <span class="stack-item-level">7</span>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⇌</span><span class="st-fname">trpc</span><span class="st-fext">.router.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◫</span><span class="st-fname">prisma</span><span class="st-fext">.schema</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊟</span><span class="st-fname">postgresql</span><span class="st-fext">.sql</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◉</span><span class="st-fname">mongodb</span><span class="st-fext">.aggregate.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▦</span><span class="st-fname">docker</span><span class="st-fext">-compose.yml</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⇄</span><span class="st-fname">websocket</span><span class="st-fext">.gateway.ts</span><span class="st-prof">■■■■□</span></div>
         </div>
-        <div class="stack-item">
-          <span class="stack-item-name">tRPC</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="80"></div></div>
-          <span class="stack-item-level">8</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-item-name">Docker</span>
-          <div class="stack-bar-track"><div class="stack-bar-fill" style="width:0" data-level="60"></div></div>
-          <span class="stack-item-level">6</span>
-        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
       </div>
 
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════ -->
-  <!-- WORK                                           -->
-  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ═══ WORK ═══ -->
   <section class="work" id="work">
     <div class="section-label">EXPERIENCE</div>
-
     <div class="work-list">
-
       <div class="work-item">
         <span class="work-period">2023 — 2025</span>
         <div class="work-info">
           <span class="work-company">Fjord Foundry</span>
           <span class="work-role">FRONTEND DEVELOPER</span>
-          <p class="work-desc">
-            Built the Liquidity Bootstrapping Pool UI and token management
-            dashboards for one of DeFi's leading fair launch platforms.
-          </p>
+          <p class="work-desc">Built the Liquidity Bootstrapping Pool UI and token management dashboards for one of DeFi's leading fair launch platforms.</p>
           <div class="work-tech">
-            <span class="work-tag">TypeScript</span>
-            <span class="work-tag">React</span>
-            <span class="work-tag">Next.js</span>
-            <span class="work-tag">Tailwind</span>
-            <span class="work-tag">Ethers</span>
-            <span class="work-tag">Viem</span>
-            <span class="work-tag">Wagmi</span>
+            <span class="work-tag">TypeScript</span><span class="work-tag">React</span><span class="work-tag">Next.js</span>
+            <span class="work-tag">Tailwind</span><span class="work-tag">Ethers</span><span class="work-tag">Viem</span><span class="work-tag">Wagmi</span>
           </div>
         </div>
         <span class="work-arrow">→</span>
       </div>
-
       <div class="work-item">
         <span class="work-period">2024</span>
         <div class="work-info">
           <span class="work-company">Kayen</span>
           <span class="work-role">FRONTEND DEVELOPER</span>
-          <p class="work-desc">
-            DEX aggregator interfaces and Solana DeFi tooling.
-            Designed fast, responsive trading UIs for high-throughput environments.
-          </p>
+          <p class="work-desc">DEX aggregator interfaces and Solana DeFi tooling. Designed fast, responsive trading UIs for high-throughput environments.</p>
           <div class="work-tech">
-            <span class="work-tag">TypeScript</span>
-            <span class="work-tag">React</span>
-            <span class="work-tag">Next.js</span>
-            <span class="work-tag">Solana</span>
-            <span class="work-tag">Metaplex</span>
+            <span class="work-tag">TypeScript</span><span class="work-tag">React</span><span class="work-tag">Next.js</span>
+            <span class="work-tag">Solana</span><span class="work-tag">Metaplex</span>
           </div>
         </div>
         <span class="work-arrow">→</span>
       </div>
-
       <div class="work-item">
         <span class="work-period">2023 — 2024</span>
         <div class="work-info">
           <span class="work-company">Diablo Trade</span>
           <span class="work-role">FULLSTACK DEVELOPER</span>
-          <p class="work-desc">
-            Game item marketplace with real-time trading features,
-            search indexing, and live WebSocket price feeds.
-          </p>
+          <p class="work-desc">Game item marketplace with real-time trading features, search indexing, and live WebSocket price feeds.</p>
           <div class="work-tech">
-            <span class="work-tag">TypeScript</span>
-            <span class="work-tag">React</span>
-            <span class="work-tag">Next.js</span>
-            <span class="work-tag">tRPC</span>
-            <span class="work-tag">Prisma</span>
-            <span class="work-tag">PostgreSQL</span>
-            <span class="work-tag">WebSockets</span>
+            <span class="work-tag">TypeScript</span><span class="work-tag">React</span><span class="work-tag">Next.js</span>
+            <span class="work-tag">tRPC</span><span class="work-tag">Prisma</span><span class="work-tag">PostgreSQL</span><span class="work-tag">WebSockets</span>
           </div>
         </div>
         <span class="work-arrow">→</span>
       </div>
-
       <div class="work-item">
         <span class="work-period">2021 — 2023</span>
         <div class="work-info">
           <span class="work-company">Concave</span>
           <span class="work-role">FRONTEND DEVELOPER</span>
-          <p class="work-desc">
-            DeFi protocol dashboards — staking, bonding, and liquidity UIs.
-            Shipped production interfaces handling millions in TVL.
-          </p>
+          <p class="work-desc">DeFi protocol dashboards — staking, bonding, and liquidity UIs. Shipped production interfaces handling millions in TVL.</p>
           <div class="work-tech">
-            <span class="work-tag">TypeScript</span>
-            <span class="work-tag">React</span>
-            <span class="work-tag">Next.js</span>
-            <span class="work-tag">Ethers</span>
-            <span class="work-tag">Wagmi</span>
-            <span class="work-tag">Jotai</span>
+            <span class="work-tag">TypeScript</span><span class="work-tag">React</span><span class="work-tag">Next.js</span>
+            <span class="work-tag">Ethers</span><span class="work-tag">Wagmi</span><span class="work-tag">Jotai</span>
           </div>
         </div>
         <span class="work-arrow">→</span>
       </div>
-
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════ -->
-  <!-- CONTACT                                        -->
-  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ═══ CONTACT ═══ -->
   <section class="contact" id="contact">
     <div class="section-label">CONTACT</div>
-
     <div class="contact-inner">
       <div>
         <h2 class="contact-heading">let's<br>build</h2>
-        <p class="contact-sub">
-          Currently open to new frontend and Web3 roles.
-          Available for full-time, contract, or advisory work.
-        </p>
+        <p class="contact-sub">Currently open to new frontend and Web3 roles. Available for full-time, contract, or advisory work.</p>
       </div>
-
       <div class="contact-links">
         <a href="mailto:contact@chani.sh" class="contact-link">
-          <div>
-            <div class="contact-link-label">EMAIL</div>
-            <div class="contact-link-value">contact@chani.sh</div>
-          </div>
+          <div><div class="contact-link-label">EMAIL</div><div class="contact-link-value">contact@chani.sh</div></div>
           <span class="contact-arrow">→</span>
         </a>
         <a href="https://github.com/21Chani" target="_blank" rel="noopener" class="contact-link">
-          <div>
-            <div class="contact-link-label">GITHUB</div>
-            <div class="contact-link-value">github.com/21Chani</div>
-          </div>
+          <div><div class="contact-link-label">GITHUB</div><div class="contact-link-value">github.com/21Chani</div></div>
           <span class="contact-arrow">→</span>
         </a>
         <a href="https://chani.sh" class="contact-link">
-          <div>
-            <div class="contact-link-label">WEB</div>
-            <div class="contact-link-value">chani.sh</div>
-          </div>
+          <div><div class="contact-link-label">WEB</div><div class="contact-link-value">chani.sh</div></div>
           <span class="contact-arrow">→</span>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
-    <div class="footer-status">
-      <div class="status-pip"></div>
-      <span>AVAILABLE FOR HIRE</span>
-    </div>
+    <div class="footer-status"><div class="status-pip"></div><span>AVAILABLE FOR HIRE</span></div>
     <span>© 2025 — chani.sh</span>
   </footer>
 
-</div><!-- /.page -->
-
-<!-- ═══════════════════════════════════════════════ -->
-<!-- SCRIPTS                                        -->
-<!-- ═══════════════════════════════════════════════ -->
+</div>
 
 <script>
-// ─── Scroll-triggered skill bar animation ───
+// ─── Row reveal on scroll ───
 (function() {
-  var bars = document.querySelectorAll('.stack-bar-fill');
-  var observed = false;
-
-  function animateBars() {
-    bars.forEach(function(bar) {
-      bar.style.width = bar.dataset.level + '%';
-    });
-  }
-
+  var rows = document.querySelectorAll('.st-row');
+  var animated = false;
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
-      if (entry.isIntersecting && !observed) {
-        observed = true;
-        // Stagger the animations slightly
-        bars.forEach(function(bar, i) {
-          setTimeout(function() {
-            bar.style.width = bar.dataset.level + '%';
-          }, i * 40);
+      if (entry.isIntersecting && !animated) {
+        animated = true;
+        rows.forEach(function(row, i) {
+          setTimeout(function() { row.classList.add('visible'); }, i * 35);
         });
       }
     });
-  }, { threshold: 0.2 });
+  }, { threshold: 0.15 });
+  var s = document.getElementById('stacks');
+  if (s) observer.observe(s);
+})();
 
-  var stacksSection = document.getElementById('stacks');
-  if (stacksSection) observer.observe(stacksSection);
+// ─── Colorize proficiency blocks ───
+(function() {
+  document.querySelectorAll('.st-prof').forEach(function(el) {
+    var text = el.textContent;
+    var html = '';
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] === '■') html += '<span class="f">■</span>';
+      else if (text[i] === '□') html += '<span class="e">□</span>';
+      else html += text[i];
+    }
+    el.innerHTML = html;
+  });
 })();
 
 // ─── 3D Card tilt ───
@@ -846,17 +692,13 @@
   var wrapper = card ? card.closest('.card-wrapper') : null;
   var coords = document.getElementById('hudCoords');
   if (!card || !wrapper) return;
-
   wrapper.addEventListener('mousemove', function(e) {
     var rect = wrapper.getBoundingClientRect();
     var x = (e.clientX - rect.left) / rect.width;
     var y = (e.clientY - rect.top) / rect.height;
-    var rotY = (x - 0.5) * 18;
-    var rotX = (0.5 - y) * 12;
-    card.style.transform = 'rotateY(' + rotY + 'deg) rotateX(' + rotX + 'deg)';
+    card.style.transform = 'rotateY(' + ((x - 0.5) * 18) + 'deg) rotateX(' + ((0.5 - y) * 12) + 'deg)';
     if (coords) coords.textContent = (x - 0.5).toFixed(2) + ' / ' + (0.5 - y).toFixed(2);
   });
-
   wrapper.addEventListener('mouseleave', function() {
     card.style.transform = 'rotateY(0deg) rotateX(0deg)';
     card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';

@@ -1,5 +1,6 @@
 import { shaderMaterial } from "@react-three/drei"
-import { NearestFilter, Uniform, Vector2, type IUniform, type ShaderMaterialParameters, type Texture } from "three"
+import { extend, type ThreeElement } from "@react-three/fiber"
+import { DataTexture, NearestFilter, Uniform, Vector2, type IUniform, type ShaderMaterialParameters, type Texture } from "three"
 import fragment from "./ascii_wave.frag"
 import vertex from "./ascii_wave.vert"
 
@@ -44,7 +45,7 @@ export class ASCIIWaveShaderMaterial extends asciiShader {
     u_Resolution: IUniform<Vector2>
 
     // Float/Numbers
-    u_SpriteCount?: IUniform<number>
+    u_SpriteCount: IUniform<number>
     u_Size: IUniform<number>
     u_Time: IUniform<number>
   }
@@ -63,6 +64,8 @@ export class ASCIIWaveShaderMaterial extends asciiShader {
       u_Size: new Uniform(ASCIIWaveShaderMaterial.DEFAULT_PARTICLE_SIZE),
       u_WaveLength: new Uniform(ASCIIWaveShaderMaterial.DEFAULT_WAVE_LENGTH),
       u_WaveSpread: new Uniform(ASCIIWaveShaderMaterial.DEFAULT_WAVE_SPREAD),
+      u_SpriteCount: new Uniform(0),
+      u_Texture: new Uniform(new DataTexture(new Uint8Array(4), 1, 1)),
     }
   }
 
@@ -86,3 +89,13 @@ export class ASCIIWaveShaderMaterial extends asciiShader {
     this.uniforms.u_Resolution.value.set(width, height)
   }
 }
+
+// Register as JSX element
+extend({ ASCIIWaveShaderMaterial })
+
+declare module "@react-three/fiber" {
+  interface ThreeElements {
+    aSCIIWaveShaderMaterial: ThreeElement<typeof ASCIIWaveShaderMaterial>
+  }
+}
+
