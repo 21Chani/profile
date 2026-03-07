@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Background</title>
+<style>
+  * { margin: 0; padding: 0; }
+  body { background: #050505; overflow: hidden; }
+  canvas { display: block; position: fixed; top: 0; left: 0; }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<script>
+(function () {
+  const canvas = document.getElementById('bg');
+  const ctx = canvas.getContext('2d');
+
+  const COL_W = 14;
+  const BLOCK_H = 6;
+  const GAP = 12;
+  const FADE = 0.04;
+  const SPAWN_CHANCE = 0.008;
+
+  let W, H, totalCols;
+  let drops = [];
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+    totalCols = Math.ceil(W / COL_W);
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, W, H);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function spawnDrop(col) {
+    return {
+      col: col,
+      x: col * COL_W + Math.floor(COL_W * 0.4),
+      y: -(Math.random() * H * 0.3),
+      speed: 0.5 + Math.random() * 1.5,
+      length: 3 + Math.floor(Math.random() * 6),
+      grey: 18 + Math.floor(Math.random() * 22),
+    };
+  }
+
+  // Scatter some initial drops
+  for (let c = 0; c < Math.ceil(W / COL_W); c++) {
+    if (Math.random() < 0.25) {
+      const d = spawnDrop(c);
+      d.y = Math.random() * H;
+      drops.push(d);
+    }
+  }
+
+  let last = 0;
+
+  function draw(time) {
+    requestAnimationFrame(draw);
+    if (time - last < 33) return;
+    const dt = Math.min((time - last) / 16.67, 3);
+    last = time;
+
+    // Fade trail
+    ctx.fillStyle = `rgba(5, 5, 5, ${FADE * dt})`;
+    ctx.fillRect(0, 0, W, H);
+
+    // Spawn
+    for (let c = 0; c < totalCols; c++) {
+      if (Math.random() < SPAWN_CHANCE * dt) {
+        drops.push(spawnDrop(c));
+      }
+    }
+
+    // Draw and update
+    const alive = [];
+    for (let i = 0; i < drops.length; i++) {
+      const d = drops[i];
+      d.y += d.speed * dt;
+
+      const g = d.grey;
+      const step = BLOCK_H + GAP;
+
+      for (let j = 0; j < d.length; j++) {
+        const by = d.y - j * step;
+        if (by < -BLOCK_H || by > H + BLOCK_H) continue;
+
+        // Head is brightest, tail fades
+        const t = j / d.length;
+        const alpha = (1 - t * 0.8);
+        ctx.fillStyle = `rgba(${g},${g},${g},${alpha * 0.35})`;
+        ctx.fillRect(d.x, by, 6, BLOCK_H);
+      }
+
+      // Kill if tail is off screen
+      const tailY = d.y - d.length * (BLOCK_H + GAP);
+      if (tailY < H + 50) alive.push(d);
+    }
+    drops = alive;
+  }
+
+  draw(0);
+})();
+</script>
+</body>
+</html>
