@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react"
 import { BufferAttribute, BufferGeometry } from "three"
-import { randomizeAttributes } from "../lib/randomizeAttributes"
+import { randomizeAttributes } from "../lib/randomize-attributes"
 
 interface UseRandomizeAttributesProps {
   geometry?: BufferGeometry

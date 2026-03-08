@@ -48,6 +48,8 @@
   --animate-dot-pulse: dot-pulse 2s ease infinite;
   --animate-scan-down: scan-down 5s linear infinite;
   --animate-glitch: glitch 7s ease infinite;
+  --animate-matrix-fall: matrix-fall 30s linear infinite;
+  --animate-hex-scroll: hex-scroll 75s linear infinite;
 }
 
 @keyframes cursor-blink {
@@ -70,6 +72,16 @@
   94% { opacity: 0.7; transform: translateX(-4px); }
   95% { opacity: 0.5; transform: translateX(4px); }
   96% { opacity: 0; }
+}
+
+@keyframes matrix-fall {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes hex-scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
 }
 
 /* ═══ BASE GLOBAL STYLES ═══ */

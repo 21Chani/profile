@@ -2,8 +2,8 @@ import { shaderMaterial } from "@react-three/drei"
 import { Uniform, Vector2, type IUniform, type ShaderMaterialParameters, type Texture } from "three"
 
 // Shader imports
-import fragment from "./ascii_transition.frag"
-import vertex from "./ascii_transition.vert"
+import fragment from "./ascii-transition.frag"
+import vertex from "./ascii-transition.vert"
 
 const asciiShader = shaderMaterial({}, vertex, fragment)
 

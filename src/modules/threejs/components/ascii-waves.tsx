@@ -3,8 +3,8 @@ import { useFrame, useThree } from "@react-three/fiber"
 import { useEffect, useRef, type RefObject } from "react"
 import type { PlaneGeometry } from "three"
 import { useMatrixTexture } from "../hooks/use-matrix-texture"
-import { randomizeAttributes } from "../lib/randomizeAttributes"
-import { ASCIIWaveShaderMaterial } from "../shaders/ascii_wave"
+import { randomizeAttributes } from "../lib/randomize-attributes"
+import { ASCIIWaveShaderMaterial } from "../shaders/ascii-wave"
 
 // Ensure extend() side effect runs before the component mounts
 void ASCIIWaveShaderMaterial

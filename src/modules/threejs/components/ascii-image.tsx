@@ -1,9 +1,9 @@
-import { useResizeObserver } from "@/modules/global/hooks/useResizeObserver"
+import { useResizeObserver } from "@/modules/global/hooks/use-resize-observer"
 import { useTexture, type PointsInstancesProps } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useCallback, useMemo, useRef, useState } from "react"
 import { BufferGeometry, PerspectiveCamera } from "three"
-import { useRandomizeAttributes } from "../hooks/useRandomizeAttributes"
+import { useRandomizeAttributes } from "../hooks/use-randomize-attributes"
 import { processSpriteSheet } from "../lib/process-sprite-sheet"
 import { AsciiMaterial, DEFAULT_PARTICLE_SIZE, type AsciiMaterialType } from "../shaders/ascii"
 
