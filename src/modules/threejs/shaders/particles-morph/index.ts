@@ -1,6 +1,6 @@
 import { AdditiveBlending, Uniform, type ShaderMaterialParameters } from "three"
-import fragmentShader from "./particles_morph.frag"
-import vertexShader from "./particles_morph.vert"
+import fragmentShader from "./particles-morph.frag"
+import vertexShader from "./particles-morph.vert"
 
 import { shaderMaterial } from "@react-three/drei"
 

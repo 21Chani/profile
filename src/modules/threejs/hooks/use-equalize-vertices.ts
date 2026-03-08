@@ -1,4 +1,4 @@
-import { rangeRandom } from "@/modules/global/lib/rangeRandom"
+import { rangeRandom } from "@/modules/global/lib/range-random"
 import { useEffect, useState } from "react"
 import { BufferAttribute, BufferGeometry } from "three"
 

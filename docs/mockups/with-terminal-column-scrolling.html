@@ -39,9 +39,9 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border-mid); }
 
-  /* ═══ MATRIX RAIN BACKGROUND ═══ */
+  /* ═══ MATRIX RAIN BACKGROUND (hero only) ═══ */
   .matrix-rain {
-    position: fixed; top: 0; left: 0;
+    position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
     pointer-events: none; z-index: 0;
     overflow: hidden;
@@ -94,6 +94,7 @@
   .section-label {
     font-size: 9px; letter-spacing: 5px; color: var(--text-muted);
     margin-bottom: 48px; display: flex; align-items: center; gap: 12px;
+    position: relative; z-index: 1;
   }
   .section-label::after {
     content: ''; flex: 1; height: 1px;
@@ -123,10 +124,12 @@
   .hero {
     min-height: 100vh; display: flex; align-items: center; justify-content: center;
     padding: 80px 40px 40px;
+    position: relative; overflow: hidden;
   }
   .hero-inner {
     display: grid; grid-template-columns: 420px 1fr; gap: 72px;
     align-items: center; max-width: 1080px; width: 100%;
+    position: relative; z-index: 1;
   }
 
   .card-wrapper { perspective: 1200px; }
@@ -217,8 +220,66 @@
   }
 
   /* ═══ STACKS ═══ */
-  .stacks { padding: 120px 40px; max-width: 1080px; margin: 0 auto; }
-  .stacks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .stacks { padding: 120px 40px; max-width: 1080px; margin: 0 auto; position: relative; }
+  .stacks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; position: relative; z-index: 1; }
+
+  /* ═══ HEX DUMP BACKGROUND (stacks) ═══ */
+  .hex-dump {
+    position: absolute; top: -40px; left: -20%; right: -20%; bottom: -40px;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+    mask-image:
+      linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
+  .hex-dump-cols {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 5%;
+  }
+  .hex-dump-inner {
+    display: flex; flex-direction: column;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 22px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.035);
+    user-select: none;
+    white-space: nowrap;
+    animation: hexScroll linear infinite;
+    will-change: transform;
+    flex-shrink: 0;
+  }
+  .hex-row {
+    padding: 0 10px;
+  }
+  .hex-row.gap { height: 44px; } /* empty gap rows */
+  .hex-addr { color: rgba(255,255,255,0.05); }
+
+  /* Terminal event lines */
+  .hex-row.evt-warn {
+    color: rgba(255,255,255,0.06);
+    letter-spacing: 1px;
+  }
+  .hex-row.evt-err {
+    color: rgba(255,255,255,0.07);
+    letter-spacing: 1px;
+  }
+  .hex-row.evt-sys {
+    color: rgba(255,255,255,0.045);
+    letter-spacing: 1px;
+  }
+  .evt-tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  @keyframes hexScroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
 
   .stack-terminal {
     border: 1px solid var(--border); background: var(--bg-elevated);
@@ -402,14 +463,11 @@
     .contact-inner { grid-template-columns: 1fr; gap: 48px; }
     .contact-heading { font-size: 28px; }
     .stacks-grid { grid-template-columns: 1fr; }
-    .matrix-rain { display: none; }
+    .matrix-rain, .hex-dump { display: none; }
   }
 </style>
 </head>
 <body>
-
-<!-- ═══ MATRIX RAIN ═══ -->
-<div class="matrix-rain" id="matrixRain"></div>
 
 <canvas id="threeCanvas"></canvas>
 
@@ -427,6 +485,7 @@
 
   <!-- ═══ HERO ═══ -->
   <section class="hero" id="about">
+    <div class="matrix-rain" id="matrixRain"></div>
     <div class="hero-inner">
       <div class="card-wrapper">
         <div class="card-3d" id="card3d">
@@ -483,6 +542,7 @@
 
   <!-- ═══ STACKS ═══ -->
   <section class="stacks" id="stacks">
+    <div class="hex-dump" id="hexDump"><div class="hex-dump-cols" id="hexDumpCols"></div></div>
     <div class="section-label">TECH STACKS</div>
 
     <div class="stacks-grid">
@@ -710,6 +770,93 @@
 
     container.appendChild(col);
   }
+})();
+
+// ─── Hex Dump Generator ───
+(function() {
+  var colsContainer = document.getElementById('hexDumpCols');
+  if (!colsContainer) return;
+
+  var hex = '0123456789ABCDEF';
+  function rHex(n) {
+    var s = '';
+    for (var i = 0; i < n; i++) s += hex[Math.floor(Math.random() * 16)];
+    return s;
+  }
+
+  // Terminal event templates
+  var events = [
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> memory allocation failed at 0x' },
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> buffer overflow detected 0x' },
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> heap fragmentation at 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  stack overflow at 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  segfault in thread 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  null pointer deref 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  process 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  allocated 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  gc sweep cycle 0x' },
+  ];
+
+  var colConfigs = [
+    { speed: 75 },
+    { speed: 85 }
+  ];
+
+  colConfigs.forEach(function(cfg) {
+    var inner = document.createElement('div');
+    inner.className = 'hex-dump-inner';
+    inner.style.animationDuration = cfg.speed + 's';
+    inner.style.animationDelay = -(Math.random() * cfg.speed) + 's';
+
+    var fragment = document.createDocumentFragment();
+    var totalRows = 50;
+
+    for (var pass = 0; pass < 2; pass++) {
+      var i = 0;
+      while (i < totalRows) {
+        // Random chance for a gap (30%)
+        if (Math.random() < 0.3) {
+          var gap = document.createElement('div');
+          gap.className = 'hex-row gap';
+          fragment.appendChild(gap);
+          i++;
+          continue;
+        }
+
+        // Random chance for a terminal event (15%)
+        if (Math.random() < 0.15) {
+          var evt = events[Math.floor(Math.random() * events.length)];
+          var evtRow = document.createElement('div');
+          evtRow.className = 'hex-row ' + evt.cls;
+          evtRow.innerHTML = evt.text + rHex(4);
+          fragment.appendChild(evtRow);
+          // Add a small gap after events
+          var gapAfter = document.createElement('div');
+          gapAfter.className = 'hex-row gap';
+          fragment.appendChild(gapAfter);
+          i += 2;
+          continue;
+        }
+
+        // Normal hex row
+        var row = document.createElement('div');
+        row.className = 'hex-row';
+        var addr = '0x' + (((i % totalRows) * 16).toString(16)).toUpperCase().padStart(6, '0');
+        var hexPairs = '';
+        var ascii = '';
+        for (var j = 0; j < 8; j++) {
+          hexPairs += ' ' + rHex(2);
+          ascii += String.fromCharCode(33 + Math.floor(Math.random() * 93));
+        }
+        row.innerHTML = '<span class="hex-addr">' + addr + '</span>' + hexPairs + '  |' + ascii + '|';
+        fragment.appendChild(row);
+        i++;
+      }
+    }
+
+    inner.appendChild(fragment);
+    colsContainer.appendChild(inner);
+  });
 })();
 
 // ─── Row reveal on scroll ───

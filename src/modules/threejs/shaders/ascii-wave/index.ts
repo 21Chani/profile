@@ -1,8 +1,8 @@
 import { shaderMaterial } from "@react-three/drei"
 import { extend, type ThreeElement } from "@react-three/fiber"
 import { DataTexture, NearestFilter, Uniform, Vector2, type IUniform, type ShaderMaterialParameters, type Texture } from "three"
-import fragment from "./ascii_wave.frag"
-import vertex from "./ascii_wave.vert"
+import fragment from "./ascii-wave.frag"
+import vertex from "./ascii-wave.vert"
 
 // Load the shader material
 const asciiShader = shaderMaterial({}, vertex, fragment)
