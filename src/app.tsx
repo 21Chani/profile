@@ -7,6 +7,7 @@ import * as THREE from "three"
 import "./app.css"
 
 import type { AsciiMaterialType } from "@/modules/threejs/shaders/ascii"
+import { AsciiRenderer } from "./modules/global/components/ascii-renderer"
 import { GlitchText } from "./modules/global/components/glitch-text"
 import { HudCard } from "./modules/global/components/hud-card"
 import { MatrixRain } from "./modules/global/components/matrix-rain"
@@ -14,8 +15,11 @@ import { Navbar } from "./modules/global/components/navbar"
 import { SectionLabel } from "./modules/global/components/section-label"
 import { AsciiImage } from "./modules/threejs/components/ascii-image"
 import { CommandLine } from "./modules/ui/components/command-line"
+import { FjoBondingCurve } from "./modules/ui/components/fjo-bonding-curve"
 import { HexDump } from "./modules/ui/components/hex-dump"
+import { MetaRow } from "./modules/ui/components/meta-row"
 import { StackRow } from "./modules/ui/components/stack-row"
+import { TechTags } from "./modules/ui/components/tech-tags"
 import { TerminalCard } from "./modules/ui/components/terminal-card"
 import { TerminalEntry } from "./modules/ui/components/terminal-entry"
 import { STACK_DATA } from "./modules/ui/lib/stack-data"
@@ -114,6 +118,94 @@ function App() {
           ))}
         </div>
       </section>
+
+      {/* Experience */}
+      <SectionLabel label="EXPERIENCE" className="max-w-270 mx-auto px-10" />
+      <section className="group relative overflow-hidden py-30 mx-auto">
+        {/* Fjord Foundry */}
+        <FjoBondingCurve className="max-h[90%]" />
+        <div className="relative flex gap-4 max-w-270 px-10 mx-auto">
+          <div className="relative z-1">
+            <GlitchText as="h2" className="font-display text-[38px] text-terminal-white leading-[1.1] mb-2">
+              fjord foundry
+            </GlitchText>
+            <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
+            <MetaRow
+              items={[
+                { label: "period", value: "2023 — 2025" },
+                { label: "status", value: "COMPLETED" },
+              ]}
+              className="mb-6"
+            />
+            <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
+              Built the Liquidity Bootstrapping Pool UI and token management dashboards for one of DeFi's leading fair
+              launch platforms.
+            </p>
+            <TechTags tags={["TypeScript", "React", "Next.js", "Tailwind", "Ethers", "Viem", "Wagmi"]} />
+          </div>
+          <TerminalCard
+            fitContent
+            prompt={<CommandLine command="wget" args={["-X", "https://fjordfoundry.com"]} />}
+            title="Ghostty"
+          >
+            <AsciiRenderer
+              className="w-fit px-3"
+              fontSize={8}
+              cols={100}
+              colorMode="mono"
+              src="/assets/fjord.webp"
+            ></AsciiRenderer>
+          </TerminalCard>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
+
+      {/* Kayen */}
+      <section className="group relative overflow-hidden py-30 px-10">
+        <div
+          className="pointer-events-none absolute z-0"
+          style={{
+            backgroundImage: [
+              "radial-gradient(circle, transparent 80px, rgba(255,255,255,0.02) 81px, transparent 82px)",
+              "radial-gradient(circle, transparent 160px, rgba(255,255,255,0.015) 161px, transparent 162px)",
+              "radial-gradient(circle, transparent 240px, rgba(255,255,255,0.012) 241px, transparent 242px)",
+              "radial-gradient(circle, transparent 320px, rgba(255,255,255,0.01) 321px, transparent 322px)",
+            ].join(", "),
+            top: "50%",
+            left: "70%",
+            width: "800px",
+            height: "800px",
+            transform: "translate(-50%, -50%)",
+            opacity: 0.8,
+          }}
+        />
+
+        <div className="relative z-1 mx-auto max-w-270">
+          <GlitchText as="h2" className="font-display text-[38px] text-terminal-white leading-[1.1] mb-2">
+            kayen
+          </GlitchText>
+
+          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
+
+          <MetaRow
+            items={[
+              { label: "period", value: "2024" },
+              { label: "status", value: "COMPLETED" },
+            ]}
+            className="mb-6"
+          />
+
+          <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
+            DEX aggregator interfaces and Solana DeFi tooling. Designed fast, responsive trading UIs for high-throughput
+            environments.
+          </p>
+
+          <TechTags tags={["TypeScript", "React", "Next.js", "Solana", "Metaplex"]} />
+        </div>
+      </section>
+      {/* </section> */}
 
       {/* Single shared Canvas — renders all View portals */}
       <Canvas
