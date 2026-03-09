@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>chani.sh</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Major+Mono+Display&display=swap');
+
+  :root {
+    --bg: #050505;
+    --bg-elevated: #0a0a0a;
+    --bg-panel: #0f0f0f;
+    --border: #1a1a1a;
+    --border-mid: #282828;
+    --border-bright: #3a3a3a;
+    --text-muted: #404040;
+    --text-dim: #6e6e6e;
+    --text: #d4d4d4;
+    --text-bright: #f5f5f5;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  ::selection { background: var(--white); color: var(--bg); }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-mid); }
+
+  /* ═══ MATRIX RAIN BACKGROUND (hero only) ═══ */
+  .matrix-rain {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+    mask-image: radial-gradient(ellipse 85% 65% at 50% 40%, black 25%, transparent 72%);
+    -webkit-mask-image: radial-gradient(ellipse 85% 65% at 50% 40%, black 25%, transparent 72%);
+  }
+  .matrix-col {
+    position: absolute; top: 0;
+    display: flex; flex-direction: column;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 22px;
+    color: rgba(255,255,255,0.045);
+    user-select: none;
+    pointer-events: none;
+    animation: matrixFall linear infinite;
+    will-change: transform;
+  }
+  .matrix-col span {
+    display: block;
+    text-align: center;
+    width: 14px;
+  }
+  /* Brightness variations */
+  .matrix-col.bright { color: rgba(255,255,255,0.07); }
+  .matrix-col.dim { color: rgba(255,255,255,0.025); }
+
+  @keyframes matrixFall {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+
+  /* ═══ SCANLINES (kept) ═══ */
+  body::after {
+    content: '';
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.06) 1px, rgba(0,0,0,0.06) 2px);
+    pointer-events: none; z-index: 9999;
+  }
+
+  #threeCanvas {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 0; pointer-events: none;
+  }
+
+  .page { position: relative; z-index: 1; }
+
+  .section-label {
+    font-size: 9px; letter-spacing: 5px; color: var(--text-muted);
+    margin-bottom: 48px; display: flex; align-items: center; gap: 12px;
+    position: relative; z-index: 1;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border-mid), transparent);
+  }
+
+  /* ═══ NAV ═══ */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 16px 40px; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(5,5,5,0.75);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 15px; color: var(--white); letter-spacing: 3px; text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 10px;
+    letter-spacing: 2px; padding: 6px 14px; border: 1px solid transparent; transition: all 0.3s;
+  }
+  .nav-links a:hover { color: var(--text-bright); border-color: var(--border-mid); }
+
+  /* ═══ HERO ═══ */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 80px 40px 40px;
+    position: relative; overflow: hidden;
+  }
+  .hero-inner {
+    display: grid; grid-template-columns: 420px 1fr; gap: 72px;
+    align-items: center; max-width: 1080px; width: 100%;
+    position: relative; z-index: 1;
+  }
+
+  .card-wrapper { perspective: 1200px; }
+  .card-3d { position: relative; transform-style: preserve-3d; transition: transform 0.08s ease-out; }
+
+  .hud-frame {
+    position: relative; background: var(--bg-elevated);
+    border: 1px solid var(--border-mid);
+    box-shadow: 0 0 0 1px var(--border), inset 0 0 60px rgba(0,0,0,0.8);
+  }
+  .hud-corner {
+    position: absolute; width: 24px; height: 24px;
+    border-color: var(--border-bright); border-style: solid; border-width: 0;
+    z-index: 10; transition: border-color 0.4s;
+  }
+  .hud-corner.tl { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .hud-corner.tr { top: -1px; right: -1px; border-top-width: 1px; border-right-width: 1px; }
+  .hud-corner.bl { bottom: -1px; left: -1px; border-bottom-width: 1px; border-left-width: 1px; }
+  .hud-corner.br { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+  .card-3d:hover .hud-corner { border-color: #555; }
+
+  .hud-tick { position: absolute; background: var(--border-mid); z-index: 10; transition: background 0.4s; }
+  .hud-tick.h { width: 20px; height: 1px; }
+  .hud-tick.v { width: 1px; height: 20px; }
+  .hud-tick.top-m { top: -1px; left: 50%; transform: translateX(-50%); }
+  .hud-tick.bot-m { bottom: -1px; left: 50%; transform: translateX(-50%); }
+  .hud-tick.left-m { left: -1px; top: 50%; transform: translateY(-50%); }
+  .hud-tick.right-m { right: -1px; top: 50%; transform: translateY(-50%); }
+  .card-3d:hover .hud-tick { background: #444; }
+
+  .hud-header, .hud-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 16px; background: rgba(15,15,15,0.9);
+  }
+  .hud-header { border-bottom: 1px solid var(--border); }
+  .hud-footer { padding: 8px 16px; border-top: 1px solid var(--border); }
+  .hud-header-left, .hud-footer-text { font-size: 9px; letter-spacing: 3px; color: var(--text-muted); }
+  .hud-footer-text { font-size: 8px; letter-spacing: 2px; }
+  .hud-header-right { display: flex; gap: 6px; align-items: center; }
+  .hud-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); opacity: 0.5; }
+  .hud-dot.active { background: var(--text-dim); opacity: 1; animation: dotPulse 2s ease infinite; }
+  .hud-coords { font-size: 8px; color: var(--text-muted); font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+
+  .hud-viewport { position: relative; width: 100%; aspect-ratio: 3/4; overflow: hidden; background: #080808; }
+  .hud-viewport canvas { display: block; width: 100%; height: 100%; }
+  .hud-scan {
+    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    animation: scanDown 5s linear infinite; pointer-events: none; z-index: 5;
+  }
+
+  .about { max-width: 480px; }
+  .about-prefix {
+    font-size: 9px; letter-spacing: 5px; color: var(--text-muted);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .about-prefix::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-mid), transparent); }
+  .about-name {
+    font-family: 'Major Mono Display', monospace; font-size: 44px;
+    color: var(--white); line-height: 1.05; margin-bottom: 6px; position: relative;
+  }
+  .about-name .g {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    color: var(--white); opacity: 0; animation: glitch 7s ease infinite; pointer-events: none;
+  }
+  .about-name .g:nth-child(2) { clip-path: inset(15% 0 65% 0); animation-delay: 0.1s; }
+  .about-name .g:nth-child(3) { clip-path: inset(65% 0 10% 0); animation-delay: 0.25s; }
+  .about-title { font-size: 12px; color: var(--text-dim); letter-spacing: 6px; margin-bottom: 32px; font-weight: 300; }
+  .about-bio { color: var(--text-dim); font-size: 12.5px; line-height: 2; margin-bottom: 36px; }
+  .about-bio em { color: var(--text); font-style: normal; border-bottom: 1px dashed var(--border-bright); }
+
+  .terminal { border: 1px solid var(--border); background: rgba(10,10,10,0.6); font-size: 11.5px; }
+  .terminal-bar {
+    display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+    border-bottom: 1px solid var(--border); background: rgba(15,15,15,0.8);
+  }
+  .term-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--border-mid); }
+  .term-title { font-size: 9px; letter-spacing: 2px; color: var(--text-muted); margin-left: 6px; }
+  .terminal-body { padding: 16px 18px; }
+  .term-line { display: flex; padding: 3px 0; }
+  .term-line .prompt { color: var(--text-muted); margin-right: 8px; user-select: none; }
+  .term-line .key { color: var(--text-muted); display: inline-block; width: 100px; }
+  .term-line .val { color: var(--text); }
+  .cursor-blink {
+    display: inline-block; width: 7px; height: 13px;
+    background: var(--text-dim); animation: cursorBlink 1.2s step-end infinite;
+    vertical-align: middle; margin-left: 4px;
+  }
+
+  /* ═══ STACKS ═══ */
+  .stacks { padding: 120px 40px; max-width: 1080px; margin: 0 auto; position: relative; }
+  .stacks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; position: relative; z-index: 1; }
+
+  /* ═══ HEX DUMP BACKGROUND (stacks) ═══ */
+  .hex-dump {
+    position: absolute; top: -40px; left: -20%; right: -20%; bottom: -40px;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+    mask-image:
+      linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
+  .hex-dump-cols {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 5%;
+  }
+  .hex-dump-inner {
+    display: flex; flex-direction: column;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 22px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.035);
+    user-select: none;
+    white-space: nowrap;
+    animation: hexScroll linear infinite;
+    will-change: transform;
+    flex-shrink: 0;
+  }
+  .hex-row {
+    padding: 0 10px;
+  }
+  .hex-row.gap { height: 44px; } /* empty gap rows */
+  .hex-addr { color: rgba(255,255,255,0.05); }
+
+  /* Terminal event lines */
+  .hex-row.evt-warn {
+    color: rgba(255,255,255,0.06);
+    letter-spacing: 1px;
+  }
+  .hex-row.evt-err {
+    color: rgba(255,255,255,0.07);
+    letter-spacing: 1px;
+  }
+  .hex-row.evt-sys {
+    color: rgba(255,255,255,0.045);
+    letter-spacing: 1px;
+  }
+  .evt-tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  @keyframes hexScroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+
+  .stack-terminal {
+    border: 1px solid var(--border); background: var(--bg-elevated);
+    position: relative; overflow: hidden; transition: border-color 0.4s;
+  }
+  .stack-terminal:hover { border-color: var(--border-bright); }
+  .stack-terminal:hover .st-scan { opacity: 1; }
+
+  .stack-terminal::before,
+  .stack-terminal::after {
+    content: ''; position: absolute; width: 16px; height: 16px;
+    border-color: var(--border-mid); border-style: solid; border-width: 0;
+    z-index: 5; transition: border-color 0.4s; pointer-events: none;
+  }
+  .stack-terminal::before { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .stack-terminal::after { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+  .stack-terminal:hover::before,
+  .stack-terminal:hover::after { border-color: var(--border-bright); }
+
+  .st-scan {
+    position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.03) 50%, transparent 95%);
+    animation: scanDown 6s linear infinite; pointer-events: none; z-index: 4;
+    opacity: 0; transition: opacity 0.4s;
+  }
+
+  .st-titlebar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 14px; border-bottom: 1px solid var(--border); background: rgba(12,12,12,0.9);
+  }
+  .st-dots { display: flex; gap: 5px; }
+  .st-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    border: 1px solid var(--border-mid); transition: border-color 0.3s;
+  }
+  .stack-terminal:hover .st-dot { border-color: var(--border-bright); }
+  .st-path { font-size: 9px; letter-spacing: 1px; color: var(--text-muted); margin-left: 4px; }
+
+  .st-prompt {
+    padding: 10px 14px 6px; font-size: 10px; color: var(--text-muted);
+    display: flex; align-items: center; user-select: none;
+  }
+  .st-prompt-user { color: var(--text-dim); }
+  .st-prompt-cmd { color: var(--text); margin-left: 6px; }
+  .st-prompt-flag { color: var(--text-muted); margin-left: 5px; }
+
+  .st-body { padding: 2px 0 8px; }
+
+  .st-row {
+    display: flex; align-items: center;
+    padding: 4px 14px;
+    position: relative; cursor: default;
+    font-size: 11.5px; line-height: 1.4;
+  }
+  .st-row:hover .st-row-bg { opacity: 1; }
+  .st-row:hover .st-fname { color: var(--text-bright); }
+  .st-row:hover .st-fext { color: var(--text-dim); }
+  .st-row:hover .st-ficon { color: var(--text-dim); }
+  .st-row:hover .st-prof { color: var(--text-dim); }
+  .st-row:hover .st-prof .f { color: var(--text-bright); }
+  .st-row:hover .st-prof .e { color: var(--border-bright); }
+
+  .st-row-bg {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.02);
+    opacity: 0; transition: opacity 0.15s; pointer-events: none;
+  }
+
+  .st-ficon {
+    width: 22px; flex-shrink: 0;
+    font-size: 12px; color: var(--text-muted);
+    position: relative; z-index: 1; transition: color 0.15s;
+    text-align: center;
+  }
+  .st-fname {
+    color: var(--text); transition: color 0.15s;
+    position: relative; z-index: 1; white-space: nowrap;
+  }
+  .st-fext {
+    color: var(--text-muted); transition: color 0.15s;
+    position: relative; z-index: 1;
+  }
+  .st-prof {
+    margin-left: auto;
+    font-size: 8px; letter-spacing: 2px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    position: relative; z-index: 1;
+    transition: color 0.15s;
+    white-space: nowrap;
+  }
+  .st-prof .f { color: var(--text-dim); }
+  .st-prof .e { color: var(--border-mid); }
+
+  .st-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 14px; border-top: 1px solid var(--border); background: rgba(12,12,12,0.6);
+  }
+  .st-footer-text {
+    font-size: 8px; letter-spacing: 1px; color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .st-row {
+    opacity: 0; transform: translateY(3px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .st-row.visible { opacity: 1; transform: translateY(0); }
+
+  /* ═══ EXPERIENCE SECTIONS ═══ */
+  .exp-section {
+    padding: 120px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .exp-inner {
+    max-width: 1080px; margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+
+  /* Company name — glitch effect, JetBrains Mono extra-bold */
+  .exp-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 48px; color: var(--white);
+    line-height: 1.1; margin-bottom: 10px;
+    position: relative;
+    letter-spacing: -1px;
+  }
+  .exp-name .g {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    color: var(--white); opacity: 0; pointer-events: none;
+  }
+  .exp-name .g:nth-child(2) {
+    clip-path: inset(20% 0 60% 0);
+    animation: glitch 8s ease infinite 0.15s;
+  }
+  .exp-name .g:nth-child(3) {
+    clip-path: inset(60% 0 15% 0);
+    animation: glitch 8s ease infinite 0.3s;
+  }
+
+  .exp-role {
+    font-size: 10px; color: var(--text-muted);
+    letter-spacing: 4px; margin-bottom: 36px;
+  }
+
+  /* Layout — info left, terminal preview right */
+  .exp-layout {
+    display: grid; grid-template-columns: 1fr 280px;
+    gap: 48px; align-items: start;
+  }
+
+  /* Meta block */
+  .exp-meta {
+    display: flex; gap: 24px; margin-bottom: 24px;
+    font-size: 10px;
+  }
+  .exp-meta-item { display: flex; gap: 6px; }
+  .exp-meta-key { color: var(--text-muted); letter-spacing: 1px; }
+  .exp-meta-val { color: var(--text); font-variant-numeric: tabular-nums; }
+
+  .exp-desc {
+    font-size: 12.5px; color: var(--text-dim);
+    line-height: 2; margin-bottom: 24px;
+  }
+
+  .exp-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+  .exp-tag {
+    font-size: 9px; letter-spacing: 1px; color: var(--text-muted);
+    padding: 3px 10px; border: 1px solid var(--border); transition: all 0.3s;
+  }
+  .exp-section:hover .exp-tag { border-color: var(--border-mid); color: var(--text-dim); }
+
+  /* Terminal preview for ASCII image */
+  .exp-preview {
+    border: 1px solid var(--border); background: var(--bg-elevated);
+    position: relative; overflow: hidden;
+    transition: border-color 0.4s;
+  }
+  .exp-section:hover .exp-preview { border-color: var(--border-bright); }
+
+  /* HUD corners on preview */
+  .exp-preview-corner {
+    position: absolute; width: 16px; height: 16px;
+    border-color: var(--border-mid); border-style: solid; border-width: 0;
+    z-index: 5; transition: border-color 0.4s; pointer-events: none;
+  }
+  .exp-preview-corner.tl { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .exp-preview-corner.tr { top: -1px; right: -1px; border-top-width: 1px; border-right-width: 1px; }
+  .exp-preview-corner.bl { bottom: -1px; left: -1px; border-bottom-width: 1px; border-left-width: 1px; }
+  .exp-preview-corner.br { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+  .exp-section:hover .exp-preview-corner { border-color: var(--border-bright); }
+
+  .exp-preview-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+    background: rgba(12,12,12,0.9);
+  }
+  .exp-preview-dots { display: flex; gap: 5px; }
+  .exp-preview-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    border: 1px solid var(--border-mid); transition: border-color 0.3s;
+  }
+  .exp-section:hover .exp-preview-dot { border-color: var(--border-bright); }
+  .exp-preview-title { font-size: 8px; letter-spacing: 2px; color: var(--text-muted); margin-left: 4px; }
+
+  .exp-preview-body {
+    padding: 12px;
+    background: rgba(8,8,8,0.6);
+  }
+  .exp-preview-body pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; line-height: 1.4;
+    color: var(--text-dim); margin: 0;
+    white-space: pre; overflow: hidden;
+  }
+
+  .exp-preview-footer {
+    display: flex; justify-content: space-between;
+    padding: 6px 12px; border-top: 1px solid var(--border);
+    background: rgba(12,12,12,0.6);
+  }
+  .exp-preview-footer span {
+    font-size: 8px; letter-spacing: 1px; color: var(--text-muted);
+  }
+
+  .exp-preview-scan {
+    position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.03) 50%, transparent 95%);
+    animation: scanDown 5s linear infinite; pointer-events: none; z-index: 4;
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .exp-section:hover .exp-preview-scan { opacity: 1; }
+
+  /* Divider between experience sections */
+  .exp-divider {
+    max-width: 1080px; margin: 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-mid) 20%, var(--border-mid) 80%, transparent);
+  }
+
+  /* ── Per-section backgrounds ── */
+
+  /* Fjord: LBP bonding curve */
+  .exp-section.exp-fjord .fjord-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .fjord-bg canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    mask-image:
+      radial-gradient(ellipse 90% 70% at 50% 50%, black 15%, transparent 70%);
+    -webkit-mask-image:
+      radial-gradient(ellipse 90% 70% at 50% 50%, black 15%, transparent 70%);
+  }
+
+  /* Kayen: swap route diagram */
+  .exp-section.exp-kayen .kayen-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .kayen-bg canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    mask-image:
+      linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  }
+
+  /* Diablo Trade: inventory grid */
+  .exp-section.exp-diablo .diablo-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .diablo-bg canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    mask-image:
+      linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);
+  }
+
+  /* ═══ CONTACT ═══ */
+  .contact { padding: 120px 40px; max-width: 1080px; margin: 0 auto; }
+  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
+  .contact-heading { font-family: 'Major Mono Display', monospace; font-size: 36px; color: var(--white); line-height: 1.1; margin-bottom: 20px; }
+  .contact-sub { font-size: 12.5px; color: var(--text-dim); line-height: 2; }
+  .contact-links { display: flex; flex-direction: column; gap: 2px; }
+  .contact-link {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: var(--text-dim); transition: all 0.3s;
+  }
+  .contact-link:first-child { border-top: 1px solid var(--border); }
+  .contact-link:hover { color: var(--text-bright); }
+  .contact-link:hover .contact-arrow { opacity: 1; transform: translateX(0); }
+  .contact-link-label { font-size: 10px; letter-spacing: 2px; }
+  .contact-link-value { font-size: 12px; }
+  .contact-arrow { font-size: 14px; opacity: 0; transform: translateX(-8px); transition: all 0.3s; }
+
+  /* ═══ FOOTER ═══ */
+  .footer {
+    border-top: 1px solid var(--border); padding: 20px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: var(--text-muted);
+  }
+  .footer-status { display: flex; align-items: center; gap: 8px; }
+  .status-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--text-dim); animation: dotPulse 3s ease infinite; }
+
+  @keyframes cursorBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes dotPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  @keyframes scanDown { 0% { top: 0; } 100% { top: 100%; } }
+  @keyframes glitch {
+    0%,93%,100% { opacity: 0; transform: translateX(0); }
+    94% { opacity: 0.7; transform: translateX(-4px); }
+    95% { opacity: 0.5; transform: translateX(4px); }
+    96% { opacity: 0; }
+  }
+
+  @media (max-width: 860px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 48px; max-width: 420px; }
+    .about-name { font-size: 32px; }
+    .nav { padding: 14px 20px; }
+    .hero, .stacks, .work, .contact { padding-left: 20px; padding-right: 20px; }
+    .nav-links a { font-size: 9px; padding: 5px 10px; letter-spacing: 1px; }
+    .exp-layout { grid-template-columns: 1fr; gap: 32px; }
+    .exp-preview { max-width: 280px; }
+    .exp-name { font-size: 32px; }
+    .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    .contact-heading { font-size: 28px; }
+    .stacks-grid { grid-template-columns: 1fr; }
+    .matrix-rain, .hex-dump { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="threeCanvas"></canvas>
+
+<div class="page">
+
+  <nav class="nav">
+    <a href="#" class="nav-logo">chani.sh</a>
+    <div class="nav-links">
+      <a href="#about">ABOUT</a>
+      <a href="#stacks">STACKS</a>
+      <a href="#work">WORK</a>
+      <a href="#contact">CONTACT</a>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="about">
+    <div class="matrix-rain" id="matrixRain"></div>
+    <div class="hero-inner">
+      <div class="card-wrapper">
+        <div class="card-3d" id="card3d">
+          <div class="hud-frame">
+            <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+            <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+            <div class="hud-tick h top-m"></div><div class="hud-tick h bot-m"></div>
+            <div class="hud-tick v left-m"></div><div class="hud-tick v right-m"></div>
+            <div class="hud-header">
+              <span class="hud-header-left">CHANI.IMG</span>
+              <div class="hud-header-right">
+                <div class="hud-dot"></div><div class="hud-dot"></div><div class="hud-dot active"></div>
+              </div>
+            </div>
+            <div class="hud-viewport" id="asciiViewport"><div class="hud-scan"></div></div>
+            <div class="hud-footer">
+              <span class="hud-footer-text">ASCII RENDER</span>
+              <span class="hud-coords" id="hudCoords">0.00 / 0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about">
+        <div class="about-prefix">INIT SEQUENCE</div>
+        <h1 class="about-name">
+          diogo<br>mendonça
+          <span class="g" aria-hidden="true">diogo<br>mendonça</span>
+          <span class="g" aria-hidden="true">diogo<br>mendonça</span>
+        </h1>
+        <div class="about-title">SR. FRONTEND ENGINEER</div>
+        <p class="about-bio">
+          Senior Frontend Engineer with <em>5+ years</em> of experience,
+          specializing in <em>TypeScript</em> and <em>React</em>. Known for
+          leveraging hyperfocus and a relentless drive to deliver
+          <em>elegant, high-performance</em> solutions.
+        </p>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
+            <span class="term-title">~/about</span>
+          </div>
+          <div class="terminal-body">
+            <div class="term-line"><span class="prompt">▸</span><span class="key">alias</span><span class="val">Chani</span></div>
+            <div class="term-line"><span class="prompt">▸</span><span class="key">location</span><span class="val">Brazil</span></div>
+            <div class="term-line"><span class="prompt">▸</span><span class="key">exp</span><span class="val">5+ years</span></div>
+            <div class="term-line"><span class="prompt">▸</span><span class="key">focus</span><span class="val">Web3 · Frontend</span></div>
+            <div class="term-line"><span class="prompt">▸</span><span class="key">status</span><span class="val">open to work <span class="cursor-blink"></span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STACKS ═══ -->
+  <section class="stacks" id="stacks">
+    <div class="hex-dump" id="hexDump"><div class="hex-dump-cols" id="hexDumpCols"></div></div>
+    <div class="section-label">TECH STACKS</div>
+
+    <div class="stacks-grid">
+
+      <!-- FRONTEND -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/frontend</span>
+        </div>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
+        </div>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚛</span><span class="st-fname">react</span><span class="st-fext">.tsx</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▲</span><span class="st-fname">next</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◇</span><span class="st-fname">typescript</span><span class="st-fext">.lang.ts</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">tailwind</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊡</span><span class="st-fname">tanstack</span><span class="st-fext">.query.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚡</span><span class="st-fname">vite</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◧</span><span class="st-fname">shadcn</span><span class="st-fext">.ui.tsx</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">zod</span><span class="st-fext">.schema.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◉</span><span class="st-fname">jotai</span><span class="st-fext">.store.ts</span><span class="st-prof">■■■■□</span></div>
+        </div>
+        <div class="st-footer"><span class="st-footer-text">9 files</span></div>
+      </div>
+
+      <!-- LANGUAGES -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/languages</span>
+        </div>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
+        </div>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◇</span><span class="st-fname">typescript</span><span class="st-fext">.ts</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◆</span><span class="st-fname">javascript</span><span class="st-fext">.js</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">css</span><span class="st-fext">.module.css</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◁</span><span class="st-fname">html</span><span class="st-fext">.template.html</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">solidity</span><span class="st-fext">.sol</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊞</span><span class="st-fname">golang</span><span class="st-fext">.go</span><span class="st-prof">■■■□□</span></div>
+        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
+      </div>
+
+      <!-- WEB3 -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/web3</span>
+        </div>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
+        </div>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◎</span><span class="st-fname">viem</span><span class="st-fext">.client.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊙</span><span class="st-fname">wagmi</span><span class="st-fext">.hooks.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">ethers</span><span class="st-fext">.provider.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">solana-web3</span><span class="st-fext">.connection.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▣</span><span class="st-fname">metaplex</span><span class="st-fext">.nft.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚓</span><span class="st-fname">anchor</span><span class="st-fext">.program.rs</span><span class="st-prof">■■■□□</span></div>
+        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
+      </div>
+
+      <!-- BACKEND / INFRA -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/backend</span>
+        </div>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
+        </div>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⇌</span><span class="st-fname">trpc</span><span class="st-fext">.router.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◫</span><span class="st-fname">prisma</span><span class="st-fext">.schema</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊟</span><span class="st-fname">postgresql</span><span class="st-fext">.sql</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◉</span><span class="st-fname">mongodb</span><span class="st-fext">.aggregate.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▦</span><span class="st-fname">docker</span><span class="st-fext">-compose.yml</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⇄</span><span class="st-fname">websocket</span><span class="st-fext">.gateway.ts</span><span class="st-prof">■■■■□</span></div>
+        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ EXPERIENCE ═══ -->
+  <div id="work">
+    <div style="max-width:1080px;margin:0 auto;padding:0 40px;">
+      <div class="section-label">EXPERIENCE</div>
+    </div>
+
+    <!-- ── Fjord Foundry ── -->
+    <section class="exp-section exp-fjord">
+      <div class="fjord-bg">
+        <canvas id="fjordCurve"></canvas>
+      </div>
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          fjord foundry
+          <span class="g" aria-hidden="true">fjord foundry</span>
+          <span class="g" aria-hidden="true">fjord foundry</span>
+        </h2>
+        <div class="exp-role">FRONTEND DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2023 — 2025</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">COMPLETED</span></div>
+            </div>
+            <p class="exp-desc">Built the Liquidity Bootstrapping Pool UI and token management dashboards for one of DeFi's leading fair launch platforms.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">Tailwind</span><span class="exp-tag">Ethers</span><span class="exp-tag">Viem</span><span class="exp-tag">Wagmi</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║   ┌──────┐  ▓▓▓▓▓▓▓     ║
+  ║   │ LBP  │  ░░░░░░░     ║
+  ║   │CHART │  ▓▓▓▓░░░     ║
+  ║   │      │  ░░░░░░░     ║
+  ║   └──┬───┘  ▓▓░░░░░     ║
+  ║      │     ┌─────────┐   ║
+  ║   ───┘     │  TOKEN  │   ║
+  ║            │  LAUNCH  │   ║
+  ║            └─────────┘   ║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>fjord-ui.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="exp-divider"></div>
+
+    <!-- ── Kayen ── -->
+    <section class="exp-section exp-kayen">
+      <div class="kayen-bg">
+        <canvas id="kayenRoute"></canvas>
+      </div>
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          kayen
+          <span class="g" aria-hidden="true">kayen</span>
+          <span class="g" aria-hidden="true">kayen</span>
+        </h2>
+        <div class="exp-role">FRONTEND DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2024</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">COMPLETED</span></div>
+            </div>
+            <p class="exp-desc">DEX aggregator interfaces and Solana DeFi tooling. Designed fast, responsive trading UIs for high-throughput environments.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">Solana</span><span class="exp-tag">Metaplex</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║  SOL ━━▶ USDC            ║
+  ║  ┌───────────────────┐   ║
+  ║  │  ◈ SWAP            │   ║
+  ║  │    0.42 ━━▶ 12.80  │   ║
+  ║  │    slippage: 0.5%  │   ║
+  ║  └───────────────────┘   ║
+  ║                           ║
+  ║  ▸ route: JUP → RAY      ║
+  ║  ▸ hops: 3  ● latency 4ms║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>kayen-dex.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="exp-divider"></div>
+
+    <!-- ── Diablo Trade ── -->
+    <section class="exp-section exp-diablo">
+      <div class="diablo-bg">
+        <canvas id="diabloGrid"></canvas>
+      </div>
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          diablo trade
+          <span class="g" aria-hidden="true">diablo trade</span>
+          <span class="g" aria-hidden="true">diablo trade</span>
+        </h2>
+        <div class="exp-role">FULLSTACK DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2023 — 2024</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">COMPLETED</span></div>
+            </div>
+            <p class="exp-desc">Game item marketplace with real-time trading features, search indexing, and live WebSocket price feeds.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">tRPC</span><span class="exp-tag">Prisma</span><span class="exp-tag">PostgreSQL</span><span class="exp-tag">WebSockets</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║  ⚔ ITEM MARKETPLACE      ║
+  ║  ┌────┐ ┌────┐ ┌────┐   ║
+  ║  │ ⚔  │ │ ◈  │ │ ⛊  │   ║
+  ║  │$420│ │$180│ │$95 │   ║
+  ║  └────┘ └────┘ └────┘   ║
+  ║                           ║
+  ║  ▸ ws://live ● CONNECTED ║
+  ║  ▸ indexed: 14.2K items  ║
+  ║  ▸ latency: 12ms         ║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>diablo-market.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="exp-divider"></div>
+
+    <!-- ── Concave ── -->
+    <section class="exp-section exp-concave">
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          concave
+          <span class="g" aria-hidden="true">concave</span>
+          <span class="g" aria-hidden="true">concave</span>
+        </h2>
+        <div class="exp-role">FRONTEND DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2021 — 2023</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">COMPLETED</span></div>
+            </div>
+            <p class="exp-desc">DeFi protocol dashboards — staking, bonding, and liquidity UIs. Shipped production interfaces handling millions in TVL.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">Ethers</span><span class="exp-tag">Wagmi</span><span class="exp-tag">Jotai</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║  TVL: $4.2M               ║
+  ║  ┌──────────────────┐    ║
+  ║  │ ▓▓▓▓▓▓▓░░░ STAKE │    ║
+  ║  │ ▓▓▓▓░░░░░  BOND  │    ║
+  ║  │ ▓▓▓▓▓░░░░  LP    │    ║
+  ║  └──────────────────┘    ║
+  ║                           ║
+  ║  ▸ APY: 142.8%            ║
+  ║  ▸ bonding: 5d 12h left  ║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>concave-defi.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ CONTACT ═══ -->
+  <section class="contact" id="contact">
+    <div class="section-label">CONTACT</div>
+    <div class="contact-inner">
+      <div>
+        <h2 class="contact-heading">let's<br>build</h2>
+        <p class="contact-sub">Currently open to new frontend and Web3 roles. Available for full-time, contract, or advisory work.</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:contact@chani.sh" class="contact-link">
+          <div><div class="contact-link-label">EMAIL</div><div class="contact-link-value">contact@chani.sh</div></div>
+          <span class="contact-arrow">→</span>
+        </a>
+        <a href="https://github.com/21Chani" target="_blank" rel="noopener" class="contact-link">
+          <div><div class="contact-link-label">GITHUB</div><div class="contact-link-value">github.com/21Chani</div></div>
+          <span class="contact-arrow">→</span>
+        </a>
+        <a href="https://chani.sh" class="contact-link">
+          <div><div class="contact-link-label">WEB</div><div class="contact-link-value">chani.sh</div></div>
+          <span class="contact-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-status"><div class="status-pip"></div><span>AVAILABLE FOR HIRE</span></div>
+    <span>© 2025 — chani.sh</span>
+  </footer>
+
+</div>
+
+<script>
+// ─── Matrix Rain Generator ───
+(function() {
+  var container = document.getElementById('matrixRain');
+  if (!container) return;
+
+  var chars = '.·:;|{}()<>=/\\~+-_[]$#@!?*^%&0123456789abcdef';
+  var colCount = Math.floor(window.innerWidth / 40);
+  var brightnesses = ['', 'bright', 'dim'];
+
+  for (var i = 0; i < colCount; i++) {
+    var col = document.createElement('div');
+    col.className = 'matrix-col ' + brightnesses[Math.floor(Math.random() * 3)];
+
+    // Random horizontal position with some jitter
+    var left = (i / colCount) * 100 + (Math.random() - 0.5) * 4;
+    col.style.left = left + '%';
+
+    // Each column has 8-20 characters
+    var charCount = 8 + Math.floor(Math.random() * 13);
+    for (var j = 0; j < charCount; j++) {
+      var span = document.createElement('span');
+      span.textContent = chars[Math.floor(Math.random() * chars.length)];
+      col.appendChild(span);
+    }
+
+    // Very slow fall: 25-60 seconds, staggered start
+    var duration = 25 + Math.random() * 35;
+    var delay = -(Math.random() * duration);
+    col.style.animationDuration = duration + 's';
+    col.style.animationDelay = delay + 's';
+
+    container.appendChild(col);
+  }
+})();
+
+// ─── Hex Dump Generator ───
+(function() {
+  var colsContainer = document.getElementById('hexDumpCols');
+  if (!colsContainer) return;
+
+  var hex = '0123456789ABCDEF';
+  function rHex(n) {
+    var s = '';
+    for (var i = 0; i < n; i++) s += hex[Math.floor(Math.random() * 16)];
+    return s;
+  }
+
+  // Terminal event templates
+  var events = [
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> memory allocation failed at 0x' },
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> buffer overflow detected 0x' },
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> heap fragmentation at 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  stack overflow at 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  segfault in thread 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  null pointer deref 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  process 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  allocated 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  gc sweep cycle 0x' },
+  ];
+
+  var colConfigs = [
+    { speed: 75 },
+    { speed: 85 }
+  ];
+
+  colConfigs.forEach(function(cfg) {
+    var inner = document.createElement('div');
+    inner.className = 'hex-dump-inner';
+    inner.style.animationDuration = cfg.speed + 's';
+    inner.style.animationDelay = -(Math.random() * cfg.speed) + 's';
+
+    var fragment = document.createDocumentFragment();
+    var totalRows = 50;
+
+    for (var pass = 0; pass < 2; pass++) {
+      var i = 0;
+      while (i < totalRows) {
+        // Random chance for a gap (30%)
+        if (Math.random() < 0.3) {
+          var gap = document.createElement('div');
+          gap.className = 'hex-row gap';
+          fragment.appendChild(gap);
+          i++;
+          continue;
+        }
+
+        // Random chance for a terminal event (15%)
+        if (Math.random() < 0.15) {
+          var evt = events[Math.floor(Math.random() * events.length)];
+          var evtRow = document.createElement('div');
+          evtRow.className = 'hex-row ' + evt.cls;
+          evtRow.innerHTML = evt.text + rHex(4);
+          fragment.appendChild(evtRow);
+          // Add a small gap after events
+          var gapAfter = document.createElement('div');
+          gapAfter.className = 'hex-row gap';
+          fragment.appendChild(gapAfter);
+          i += 2;
+          continue;
+        }
+
+        // Normal hex row
+        var row = document.createElement('div');
+        row.className = 'hex-row';
+        var addr = '0x' + (((i % totalRows) * 16).toString(16)).toUpperCase().padStart(6, '0');
+        var hexPairs = '';
+        var ascii = '';
+        for (var j = 0; j < 8; j++) {
+          hexPairs += ' ' + rHex(2);
+          ascii += String.fromCharCode(33 + Math.floor(Math.random() * 93));
+        }
+        row.innerHTML = '<span class="hex-addr">' + addr + '</span>' + hexPairs + '  |' + ascii + '|';
+        fragment.appendChild(row);
+        i++;
+      }
+    }
+
+    inner.appendChild(fragment);
+    colsContainer.appendChild(inner);
+  });
+})();
+
+// ─── Fjord LBP Bonding Curve ───
+(function() {
+  var canvas = document.getElementById('fjordCurve');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var w, h;
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  var padT = 0.18;
+  var padB = 0.15;
+
+  function curveY(xNorm) {
+    var decay = Math.exp(-3.2 * xNorm);
+    var noise = Math.sin(xNorm * 42) * 0.008 + Math.sin(xNorm * 97) * 0.004;
+    return decay + noise;
+  }
+
+  // Pre-generate volume bar data (deterministic)
+  var volBars = [];
+  for (var v = 0; v < 36; v++) {
+    // Higher volume at start (launch hype), tapering off
+    var base = Math.exp(-2 * (v / 36)) * 0.8;
+    // Random-looking spikes using sin
+    var spike = Math.abs(Math.sin(v * 7.3 + 2.1)) * 0.4 + Math.abs(Math.sin(v * 13.7)) * 0.2;
+    volBars.push(Math.min(1, base + spike * base));
+  }
+
+  // Tracer state
+  var tracerT = 0;
+  var tracerSpeed = 0.0012;
+  var trail = []; // stores last N positions
+  var trailMax = 40;
+
+  var frame = 0;
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    var chartL = w * 0.08;
+    var chartR = w * 0.92;
+    var chartT = h * padT;
+    var chartB = h * (1 - padB);
+    var chartW = chartR - chartL;
+    var chartH = chartB - chartT;
+
+    // ══════════════════════════════════
+    // BASE CHART (untouched structure)
+    // ══════════════════════════════════
+
+    // ── Axis lines ──
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.moveTo(chartL, chartT - 10);
+    ctx.lineTo(chartL, chartB);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(chartL, chartB);
+    ctx.lineTo(chartR + 10, chartB);
+    ctx.stroke();
+
+    // ── Y-axis tick marks + price labels ──
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+
+    var prices = [1.0, 0.75, 0.5, 0.25, 0.0];
+    for (var p = 0; p < prices.length; p++) {
+      var ty = chartB - prices[p] * chartH;
+      ctx.beginPath();
+      ctx.moveTo(chartL - 4, ty);
+      ctx.lineTo(chartL, ty);
+      ctx.stroke();
+      if (prices[p] > 0 && prices[p] < 1) {
+        ctx.setLineDash([2, 6]);
+        ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+        ctx.beginPath();
+        ctx.moveTo(chartL + 1, ty);
+        ctx.lineTo(chartR, ty);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      }
+      ctx.fillText(prices[p].toFixed(2), chartL - 8, ty);
+    }
+
+    // ── X-axis time labels ──
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    var times = ['0h', '24h', '48h', '72h'];
+    for (var ti = 0; ti < times.length; ti++) {
+      var tx = chartL + (ti / (times.length - 1)) * chartW;
+      ctx.beginPath();
+      ctx.moveTo(tx, chartB);
+      ctx.lineTo(tx, chartB + 4);
+      ctx.stroke();
+      ctx.fillText(times[ti], tx, chartB + 8);
+    }
+
+    // ── Axis labels ──
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('TIME', chartL + chartW / 2, chartB + 22);
+
+    ctx.save();
+    ctx.translate(chartL - 28, chartT + chartH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('PRICE', 0, 0);
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // VOLUME BARS (new)
+    // ══════════════════════════════════
+    var barCount = volBars.length;
+    var barW = (chartW / barCount) * 0.6;
+    var barGap = chartW / barCount;
+    var maxBarH = chartH * 0.18;
+
+    for (var b = 0; b < barCount; b++) {
+      var bx = chartL + b * barGap + barGap * 0.2;
+      var bh = volBars[b] * maxBarH;
+      var by = chartB - bh;
+
+      // Bars are brighter where the tracer currently is
+      var barDist = Math.abs((b / barCount) - tracerT);
+      var barHighlight = barDist < 0.06 ? 0.03 : 0;
+
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.025 + barHighlight).toFixed(4) + ')';
+      ctx.fillRect(bx, by, barW, bh);
+    }
+
+    // ══════════════════════════════════
+    // THE CURVE
+    // ══════════════════════════════════
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1.5;
+
+    var steps = 200;
+    for (var i = 0; i <= steps; i++) {
+      var xNorm = i / steps;
+      var px = chartL + xNorm * chartW;
+      var py = chartB - curveY(xNorm) * chartH;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // ── Fill under curve ──
+    ctx.lineTo(chartR, chartB);
+    ctx.lineTo(chartL, chartB);
+    ctx.closePath();
+    var grad = ctx.createLinearGradient(0, chartT, 0, chartB);
+    grad.addColorStop(0, 'rgba(255,255,255,0.02)');
+    grad.addColorStop(1, 'rgba(255,255,255,0.0)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // ── Small dot at curve start ──
+    var startY = chartB - curveY(0) * chartH;
+    ctx.beginPath();
+    ctx.arc(chartL, startY, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fill();
+
+    // ── Label on curve ──
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    ctx.textAlign = 'left';
+    ctx.fillText('LBP DECAY', chartL + 12, startY - 10);
+
+    // ══════════════════════════════════
+    // ANIMATED TRACER DOT (new)
+    // ══════════════════════════════════
+    tracerT += tracerSpeed;
+    if (tracerT > 1) {
+      tracerT = 0;
+      trail = [];
+    }
+
+    var dotX = chartL + tracerT * chartW;
+    var dotY = chartB - curveY(tracerT) * chartH;
+
+    // Store trail position
+    trail.push({ x: dotX, y: dotY });
+    if (trail.length > trailMax) trail.shift();
+
+    // Draw trail
+    for (var tr = 0; tr < trail.length; tr++) {
+      var trAlpha = (tr / trail.length) * 0.06;
+      var trSize = (tr / trail.length) * 1.5;
+      ctx.beginPath();
+      ctx.arc(trail[tr].x, trail[tr].y, trSize, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + trAlpha.toFixed(4) + ')';
+      ctx.fill();
+    }
+
+    // Draw main dot
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fill();
+
+    // Glow ring
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 6, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Horizontal + vertical crosshair from dot to axes
+    ctx.setLineDash([2, 4]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    // To Y axis
+    ctx.beginPath();
+    ctx.moveTo(dotX, dotY);
+    ctx.lineTo(chartL, dotY);
+    ctx.stroke();
+    // To X axis
+    ctx.beginPath();
+    ctx.moveTo(dotX, dotY);
+    ctx.lineTo(dotX, chartB);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Price label at Y axis
+    var curPrice = curveY(tracerT);
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.fillText(curPrice.toFixed(3), chartL - 8, dotY);
+
+    // ══════════════════════════════════
+    // ETH/TKN PAIR LABEL (new)
+    // ══════════════════════════════════
+    var lblX = chartR - 8;
+    var lblY = chartT - 2;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+
+    // Blinking dot
+    var blink = Math.sin(frame * 0.05) > 0;
+    if (blink) {
+      ctx.beginPath();
+      ctx.arc(lblX + 4, lblY - 5, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.fill();
+    }
+
+    ctx.font = '9px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.fillText('◆ ETH / TKN', lblX, lblY);
+
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('FJORD LBP', lblX, lblY + 12);
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+// ─── Kayen Swap Route Diagram ───
+(function() {
+  var canvas = document.getElementById('kayenRoute');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var w, h;
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  // Route graph — nodes and connections
+  // Positions defined as fractions of w/h
+  var nodes = [
+    // Source token (left)
+    { id: 'CHZ',    xf: 0.08, yf: 0.45, label: 'CHZ',    r: 18, type: 'source' },
+    // Pool layer 1
+    { id: 'POOL_A', xf: 0.28, yf: 0.25, label: 'POOL A', r: 12, type: 'pool' },
+    { id: 'POOL_B', xf: 0.28, yf: 0.50, label: 'POOL B', r: 12, type: 'pool' },
+    { id: 'POOL_C', xf: 0.28, yf: 0.75, label: 'POOL C', r: 12, type: 'pool' },
+    // Intermediate tokens
+    { id: 'PEPPER', xf: 0.48, yf: 0.30, label: 'PEPPER', r: 14, type: 'token' },
+    { id: 'FAN',    xf: 0.48, yf: 0.65, label: 'FAN',    r: 14, type: 'token' },
+    // Pool layer 2
+    { id: 'POOL_D', xf: 0.68, yf: 0.35, label: 'POOL D', r: 12, type: 'pool' },
+    { id: 'POOL_E', xf: 0.68, yf: 0.55, label: 'POOL E', r: 12, type: 'pool' },
+    // Destination (right)
+    { id: 'USDT',   xf: 0.90, yf: 0.45, label: 'USDT',   r: 18, type: 'dest' },
+  ];
+
+  // Edges: [from_index, to_index, weight (0-1 for line brightness)]
+  var edges = [
+    // CHZ → pools
+    [0, 1, 0.6],
+    [0, 2, 1.0],  // best route
+    [0, 3, 0.4],
+    // Pools → intermediate tokens
+    [1, 4, 0.6],
+    [2, 4, 0.8],
+    [2, 5, 0.7],
+    [3, 5, 0.4],
+    // Intermediate → pools layer 2
+    [4, 6, 0.9],
+    [4, 7, 0.3],
+    [5, 7, 0.6],
+    // Pools → USDT
+    [6, 8, 0.9],
+    [7, 8, 0.5],
+  ];
+
+  // Best route path for the tracer: CHZ → POOL_B → PEPPER → POOL_D → USDT
+  var bestRoute = [0, 2, 4, 6, 8];
+
+  // Tracer state
+  var tracerProgress = 0;
+  var tracerSpeed = 0.003;
+  var tracerSegment = 0;
+
+  // Token pair ticker data
+  var tickerPairs = [
+    'CHZ/USDT 0.0871 ▲', 'PEPPER/CHZ 0.0012 ▼', 'FAN/USDT 0.342 ▲',
+    'BAR/CHZ 4.21 ▲', 'JUV/USDT 1.87 ▼', 'PSG/CHZ 6.04 ▲',
+    'ACM/USDT 2.14 ▼', 'ATM/CHZ 3.76 ▲', 'GAL/USDT 1.52 ▲',
+    'CHZ/USDT 0.0871 ▲', 'PEPPER/CHZ 0.0012 ▼', 'FAN/USDT 0.342 ▲',
+  ];
+  var tickerText = tickerPairs.join('   │   ');
+  var tickerOffset = 0;
+
+  // Block hash data
+  var blockHashes = [];
+  var hexChars = '0123456789abcdef';
+  for (var bh = 0; bh < 20; bh++) {
+    var hash = '0x';
+    for (var hc = 0; hc < 8; hc++) hash += hexChars[Math.floor(Math.sin(bh * 13.7 + hc * 3.1) * 8 + 8)];
+    blockHashes.push('#' + (48200000 + bh * 137) + ' ' + hash);
+  }
+  var blockText = blockHashes.join('    ');
+  var blockOffset = 0;
+
+  var frame = 0;
+
+  function getNodePos(n) {
+    return { x: n.xf * w, y: n.yf * h };
+  }
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    // ══════════════════════════════════
+    // EDGES
+    // ══════════════════════════════════
+    for (var e = 0; e < edges.length; e++) {
+      var fromNode = nodes[edges[e][0]];
+      var toNode = nodes[edges[e][1]];
+      var weight = edges[e][2];
+      var from = getNodePos(fromNode);
+      var to = getNodePos(toNode);
+
+      var alpha = 0.02 + weight * 0.03;
+
+      // Draw path with a slight curve
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,255,255,' + alpha.toFixed(4) + ')';
+      ctx.lineWidth = 1;
+
+      var cpX = (from.x + to.x) / 2;
+      var cpY = (from.y + to.y) / 2 - (to.x - from.x) * 0.05;
+      ctx.moveTo(from.x, from.y);
+      ctx.quadraticCurveTo(cpX, cpY, to.x, to.y);
+      ctx.stroke();
+
+      // Small arrow at midpoint
+      var midT = 0.55;
+      var mx = (1-midT)*(1-midT)*from.x + 2*(1-midT)*midT*cpX + midT*midT*to.x;
+      var my = (1-midT)*(1-midT)*from.y + 2*(1-midT)*midT*cpY + midT*midT*to.y;
+      var dx = to.x - from.x;
+      var dy = to.y - from.y;
+      var angle = Math.atan2(dy, dx);
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.8).toFixed(4) + ')';
+      ctx.moveTo(mx + Math.cos(angle) * 4, my + Math.sin(angle) * 4);
+      ctx.lineTo(mx + Math.cos(angle + 2.5) * 3, my + Math.sin(angle + 2.5) * 3);
+      ctx.lineTo(mx + Math.cos(angle - 2.5) * 3, my + Math.sin(angle - 2.5) * 3);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // ══════════════════════════════════
+    // NODES
+    // ══════════════════════════════════
+    for (var n = 0; n < nodes.length; n++) {
+      var node = nodes[n];
+      var pos = getNodePos(node);
+
+      if (node.type === 'source' || node.type === 'dest') {
+        // Token endpoints — circle with label
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, node.r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Inner fill
+        ctx.fillStyle = 'rgba(255,255,255,0.015)';
+        ctx.fill();
+
+        // Label
+        ctx.font = '9px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.07)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.label, pos.x, pos.y);
+
+      } else if (node.type === 'token') {
+        // Intermediate tokens — smaller circle
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, node.r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.01)';
+        ctx.fill();
+
+        ctx.font = '7px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.055)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.label, pos.x, pos.y);
+
+      } else {
+        // Pool nodes — small diamond
+        ctx.save();
+        ctx.translate(pos.x, pos.y);
+        ctx.rotate(Math.PI / 4);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(-node.r * 0.6, -node.r * 0.6, node.r * 1.2, node.r * 1.2);
+        ctx.fillStyle = 'rgba(255,255,255,0.008)';
+        ctx.fillRect(-node.r * 0.6, -node.r * 0.6, node.r * 1.2, node.r * 1.2);
+        ctx.restore();
+
+        // Pool label below
+        ctx.font = '6px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.035)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(node.label, pos.x, pos.y + node.r + 4);
+      }
+    }
+
+    // ══════════════════════════════════
+    // ANIMATED TRACER — best route
+    // ══════════════════════════════════
+    tracerProgress += tracerSpeed;
+
+    var totalSegments = bestRoute.length - 1;
+    var fullProgress = tracerProgress % 1;
+    var segFloat = fullProgress * totalSegments;
+    var seg = Math.floor(segFloat);
+    var segT = segFloat - seg;
+
+    if (seg < totalSegments) {
+      var fromN = nodes[bestRoute[seg]];
+      var toN = nodes[bestRoute[seg + 1]];
+      var fp = getNodePos(fromN);
+      var tp = getNodePos(toN);
+
+      var cpX2 = (fp.x + tp.x) / 2;
+      var cpY2 = (fp.y + tp.y) / 2 - (tp.x - fp.x) * 0.05;
+
+      // Quadratic bezier position at segT
+      var tX = (1-segT)*(1-segT)*fp.x + 2*(1-segT)*segT*cpX2 + segT*segT*tp.x;
+      var tY = (1-segT)*(1-segT)*fp.y + 2*(1-segT)*segT*cpY2 + segT*segT*tp.y;
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(tX, tY, 8, 0, Math.PI * 2);
+      var glow = ctx.createRadialGradient(tX, tY, 0, tX, tY, 8);
+      glow.addColorStop(0, 'rgba(255,255,255,0.06)');
+      glow.addColorStop(1, 'rgba(255,255,255,0.0)');
+      ctx.fillStyle = glow;
+      ctx.fill();
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(tX, tY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.14)';
+      ctx.fill();
+    }
+
+    // ══════════════════════════════════
+    // TOKEN PAIR TICKER (top)
+    // ══════════════════════════════════
+    tickerOffset -= 0.3;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, w, h * 0.08);
+    ctx.clip();
+
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+
+    var tickerY = h * 0.04;
+    var tickerW = ctx.measureText(tickerText).width;
+    var tx1 = tickerOffset % (tickerW + 100);
+    ctx.fillText(tickerText, tx1, tickerY);
+    ctx.fillText(tickerText, tx1 + tickerW + 100, tickerY);
+
+    // Thin separator line
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.05, h * 0.075);
+    ctx.lineTo(w * 0.95, h * 0.075);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // BLOCK HASHES (bottom)
+    // ══════════════════════════════════
+    blockOffset -= 0.2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, h * 0.93, w, h * 0.07);
+    ctx.clip();
+
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+
+    var blockY = h * 0.965;
+    var blockW = ctx.measureText(blockText).width;
+    var bx1 = blockOffset % (blockW + 80);
+    ctx.fillText(blockText, bx1, blockY);
+    ctx.fillText(blockText, bx1 + blockW + 80, blockY);
+
+    // Thin separator line
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.05, h * 0.93);
+    ctx.lineTo(w * 0.95, h * 0.93);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // LABELS
+    // ══════════════════════════════════
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('ROUTE: CHZ → POOL B → PEPPER → POOL D → USDT', w * 0.08, h * 0.10);
+
+    ctx.textAlign = 'right';
+    ctx.fillText('HOPS: 4  ·  BEST PRICE', w * 0.92, h * 0.10);
+
+    // Aggregator label
+    var blink = Math.sin(frame * 0.04) > 0;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('KAYEN AGGREGATOR', w * 0.08, h * 0.90);
+
+    if (blink) {
+      ctx.beginPath();
+      ctx.arc(w * 0.08 - 6, h * 0.90 - 4, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.07)';
+      ctx.fill();
+    }
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillText('CHILIZ CHAIN', w * 0.92, h * 0.90);
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+// ─── Diablo Trade Inventory Grid ───
+(function() {
+  var canvas = document.getElementById('diabloGrid');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var w, h;
+
+  var cellSize = 52;
+  var gap = 3;
+  var step = cellSize + gap;
+  var cols, rows;
+  var cells = [];
+
+  var symbols = ['⚔', '◈', '☆', '♦'];
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    cols = Math.ceil(w / step) + 2;
+    rows = Math.ceil(h / step) + 2;
+
+    cells = [];
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var filled = Math.random() < 0.08;
+        cells.push({
+          filled: filled,
+          symbol: symbols[Math.floor(Math.random() * symbols.length)],
+          alpha: filled ? 0.04 + Math.random() * 0.03 : 0,
+          targetAlpha: filled ? 0.04 + Math.random() * 0.03 : 0,
+          timer: 500 + Math.random() * 1500,
+        });
+      }
+    }
+  }
+
+  var frame = 0;
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    var offsetX = ((w % step) / 2) - step;
+    var offsetY = ((h % step) / 2) - step;
+    var gridTop = h * 0.10;
+    var gridBot = h * 0.90;
+
+    // Clip grid to middle zone
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, gridTop, w, gridBot - gridTop);
+    ctx.clip();
+
+    ctx.font = '16px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var idx = r * cols + c;
+        var cell = cells[idx];
+        var x = offsetX + c * step;
+        var y = offsetY + r * step;
+
+        // Cell border
+        ctx.strokeStyle = 'rgba(255,255,255,0.015)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, cellSize, cellSize);
+
+        // Slow timer
+        cell.timer--;
+        if (cell.timer <= 0) {
+          if (cell.filled) {
+            cell.targetAlpha = 0;
+            cell.timer = 800 + Math.random() * 2000;
+          } else if (Math.random() < 0.15) {
+            cell.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            cell.targetAlpha = 0.04 + Math.random() * 0.03;
+            cell.filled = true;
+            cell.timer = 600 + Math.random() * 1500;
+          } else {
+            cell.timer = 400 + Math.random() * 1000;
+          }
+        }
+
+        // Very slow fade
+        if (cell.alpha < cell.targetAlpha) {
+          cell.alpha = Math.min(cell.alpha + 0.0008, cell.targetAlpha);
+        } else if (cell.alpha > cell.targetAlpha) {
+          cell.alpha = Math.max(cell.alpha - 0.0008, cell.targetAlpha);
+          if (cell.alpha <= 0.001) {
+            cell.filled = false;
+            cell.alpha = 0;
+          }
+        }
+
+        if (cell.alpha > 0.001) {
+          ctx.fillStyle = 'rgba(255,255,255,' + cell.alpha.toFixed(4) + ')';
+          ctx.fillText(cell.symbol, x + cellSize / 2, y + cellSize / 2);
+        }
+      }
+    }
+
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // TOP — WebSocket status bar
+    // ══════════════════════════════════
+    // Separator line
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.04, h * 0.07);
+    ctx.lineTo(w * 0.96, h * 0.07);
+    ctx.stroke();
+
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textBaseline = 'middle';
+    var topY = h * 0.038;
+
+    // Blinking connection dot
+    var blink = Math.sin(frame * 0.05) > 0;
+    ctx.textAlign = 'left';
+
+    if (blink) {
+      ctx.beginPath();
+      ctx.arc(w * 0.05, topY, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.fill();
+    }
+
+    ctx.fillStyle = 'rgba(255,255,255,0.045)';
+    ctx.fillText('ws://live', w * 0.06, topY);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('●  CONNECTED', w * 0.14, topY);
+
+    // Simulated latency (wobbles slightly)
+    var latency = 11 + Math.floor(Math.sin(frame * 0.02) * 3 + Math.sin(frame * 0.007) * 2);
+    ctx.fillText('│', w * 0.30, topY);
+    ctx.fillText('latency: ' + latency + 'ms', w * 0.32, topY);
+
+    // Uptime
+    ctx.fillText('│', w * 0.48, topY);
+    ctx.fillText('uptime: 99.8%', w * 0.50, topY);
+
+    // Events/s (wobbles)
+    var evts = 42 + Math.floor(Math.sin(frame * 0.013) * 8);
+    ctx.textAlign = 'right';
+    ctx.fillText('events/s: ' + evts, w * 0.95, topY);
+
+    // ══════════════════════════════════
+    // BOTTOM — Search index stats
+    // ══════════════════════════════════
+    // Separator line
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.beginPath();
+    ctx.moveTo(w * 0.04, h * 0.935);
+    ctx.lineTo(w * 0.96, h * 0.935);
+    ctx.stroke();
+
+    var botY = h * 0.965;
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+
+    // Item count from grid
+    var itemCount = 0;
+    for (var ic = 0; ic < cells.length; ic++) {
+      if (cells[ic].filled) itemCount++;
+    }
+
+    ctx.fillText('indexed: 14,247 items', w * 0.05, botY);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillText('│', w * 0.24, botY);
+
+    var qps = 840 + Math.floor(Math.sin(frame * 0.011) * 30);
+    ctx.fillText('queries/s: ' + qps, w * 0.26, botY);
+
+    ctx.fillText('│', w * 0.42, botY);
+    ctx.fillText('cache: HIT 94.2%', w * 0.44, botY);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('MARKETPLACE  ·  LIVE', w * 0.95, botY);
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+// ─── Row reveal on scroll ───
+(function() {
+  var rows = document.querySelectorAll('.st-row');
+  var animated = false;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !animated) {
+        animated = true;
+        rows.forEach(function(row, i) {
+          setTimeout(function() { row.classList.add('visible'); }, i * 35);
+        });
+      }
+    });
+  }, { threshold: 0.15 });
+  var s = document.getElementById('stacks');
+  if (s) observer.observe(s);
+})();
+
+// ─── Colorize proficiency blocks ───
+(function() {
+  document.querySelectorAll('.st-prof').forEach(function(el) {
+    var text = el.textContent;
+    var html = '';
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] === '■') html += '<span class="f">■</span>';
+      else if (text[i] === '□') html += '<span class="e">□</span>';
+      else html += text[i];
+    }
+    el.innerHTML = html;
+  });
+})();
+
+// ─── 3D Card tilt ───
+(function() {
+  var card = document.getElementById('card3d');
+  var wrapper = card ? card.closest('.card-wrapper') : null;
+  var coords = document.getElementById('hudCoords');
+  if (!card || !wrapper) return;
+  wrapper.addEventListener('mousemove', function(e) {
+    var rect = wrapper.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width;
+    var y = (e.clientY - rect.top) / rect.height;
+    card.style.transform = 'rotateY(' + ((x - 0.5) * 18) + 'deg) rotateX(' + ((0.5 - y) * 12) + 'deg)';
+    if (coords) coords.textContent = (x - 0.5).toFixed(2) + ' / ' + (0.5 - y).toFixed(2);
+  });
+  wrapper.addEventListener('mouseleave', function() {
+    card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    setTimeout(function() { card.style.transition = 'transform 0.08s ease-out'; }, 600);
+    if (coords) coords.textContent = '0.00 / 0.00';
+  });
+})();
+</script>
+
+</body>
+</html>
