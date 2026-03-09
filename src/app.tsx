@@ -13,8 +13,11 @@ import { HudCard } from "./modules/global/components/hud-card"
 import { MatrixRain } from "./modules/global/components/matrix-rain"
 import { Navbar } from "./modules/global/components/navbar"
 import { SectionLabel } from "./modules/global/components/section-label"
+import { SectionShell } from "./modules/global/components/section-shell"
 import { AsciiImage } from "./modules/threejs/components/ascii-image"
 import { CommandLine } from "./modules/ui/components/command-line"
+import { ConcaveStake } from "./modules/ui/components/concave-stake"
+import { DiabloTradeGrid } from "./modules/ui/components/diablo-trade-grid"
 import { FjoBondingCurve } from "./modules/ui/components/fjo-bonding-curve"
 import { HexDump } from "./modules/ui/components/hex-dump"
 import { KayenSwapRoute } from "./modules/ui/components/kayen-swap-route"
@@ -40,11 +43,11 @@ function App() {
     <div ref={containerRef} className="relative pt-28">
       <Navbar />
 
-      <section
-        className="relative mx-auto max-w-270 grid grid-cols-[420px_1fr] gap-18 items-center max-[860px]:grid-cols-1 max-[860px]:max-w-105 max-[860px]:gap-12"
+      <SectionShell
         id="about"
+        innerClassName="grid grid-cols-[420px_1fr] gap-18 items-center max-[860px]:grid-cols-1 max-[860px]:max-w-105 max-[860px]:gap-12"
+        background={<MatrixRain />}
       >
-        <MatrixRain />
         <HudCard title="CHANI.IMG" footerLabel="ASCII RENDER">
           <View className="absolute inset-0 -z-10" id="container">
             <AsciiImage
@@ -82,11 +85,10 @@ function App() {
             <TerminalEntry label="focus" value="Web3 · Frontend" />
           </TerminalCard>
         </div>
-      </section>
+      </SectionShell>
 
       {/* Stacks */}
-      <section className="my-30 px-10 max-w-270 mx-auto relative" id="stacks">
-        <HexDump />
+      <SectionShell className="my-30" id="stacks" background={<HexDump />}>
         <SectionLabel label="TECH STACKS" />
         <div className="columns-2 gap-2  max-[860px]:grid-cols-1">
           {STACK_DATA.map((category) => (
@@ -115,94 +117,154 @@ function App() {
             </TerminalCard>
           ))}
         </div>
-      </section>
+      </SectionShell>
 
       {/* Experience */}
       <SectionLabel label="EXPERIENCE" className="max-w-270 mx-auto px-10" />
-      <section className="group relative overflow-hidden py-30 mx-auto">
+      <SectionShell
+        className="overflow-hidden py-30"
+        innerClassName="flex gap-4"
+        background={<FjoBondingCurve className="max-h[90%]" />}
+      >
         {/* Fjord Foundry */}
-        <FjoBondingCurve className="max-h[90%]" />
-        <div className="relative flex gap-4 max-w-270 px-10 mx-auto">
-          <div className="relative z-1">
-            <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
-              fjord foundry
-            </GlitchText>
-            <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
-            <MetaRow
-              items={[
-                { label: "period", value: "2023 — 2025" },
-                { label: "status", value: "COMPLETED" },
-              ]}
-              className="mb-6"
-            />
-            <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
-              Built the Liquidity Bootstrapping Pool UI and token management dashboards for one of DeFi's leading fair
-              launch platforms.
-            </p>
-            <TechTags tags={["TypeScript", "React", "Next.js", "Tailwind", "Ethers", "Viem", "Wagmi"]} />
-          </div>
-          <TerminalCard
-            fitContent
-            prompt={<CommandLine command="wget" args={["-X", "https://fjordfoundry.com"]} />}
-            title="Ghostty"
-          >
-            <AsciiRenderer
-              className="w-fit px-3"
-              fontSize={8}
-              cols={100}
-              colorMode="mono"
-              src="/assets/fjord.webp"
-            ></AsciiRenderer>
-          </TerminalCard>
+        <div className="relative z-1">
+          <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+            fjord foundry
+          </GlitchText>
+          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
+          <MetaRow
+            items={[
+              { label: "period", value: "2023 — 2025" },
+              { label: "status", value: "COMPLETED" },
+            ]}
+            className="mb-6"
+          />
+          <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
+            Built the Liquidity Bootstrapping Pool UI and token management dashboards for one of DeFi's leading fair
+            launch platforms.
+          </p>
+          <TechTags tags={["TypeScript", "React", "Next.js", "Tailwind", "Ethers", "Viem", "Wagmi"]} />
         </div>
-      </section>
+        <TerminalCard
+          fitContent
+          prompt={<CommandLine command="wget" args={["-X", "https://fjordfoundry.com"]} />}
+          title="Ghostty"
+        >
+          <AsciiRenderer className="w-fit px-3" fontSize={8} cols={100} colorMode="mono" src="/assets/fjord.webp" />
+        </TerminalCard>
+      </SectionShell>
 
       {/* Divider */}
       <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
 
       {/* Kayen */}
-      <section className="group relative overflow-hidden py-30 px-10">
-        <KayenSwapRoute />
-        <div className="max-w-270 px-10 mx-auto flex">
-          <div className="relative z-1 mx-auto max-w-270">
-            <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
-              kayen
-            </GlitchText>
-
-            <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
-
-            <MetaRow
-              items={[
-                { label: "period", value: "2024" },
-                { label: "status", value: "COMPLETED" },
-              ]}
-              className="mb-6"
-            />
-
-            <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
-              DEX aggregator interfaces and Solana DeFi tooling. Designed fast, responsive trading UIs for
-              high-throughput environments.
-            </p>
-
-            <TechTags tags={["TypeScript", "React", "Next.js", "Solana", "Metaplex"]} />
-          </div>
-          <TerminalCard
-            fitContent
-            prompt={<CommandLine command="wget" args={["-X", "https://app.kayen.org"]} />}
-            title="Ghostty"
-          >
-            <AsciiRenderer
-              className="w-fit px-3"
-              fontSize={7}
-              charset={"blocks"}
-              cols={80}
-              colorMode="mono"
-              src="/assets/kayen.webp"
-            ></AsciiRenderer>
-          </TerminalCard>
+      <SectionShell className="overflow-hidden py-30" innerClassName="flex" background={<KayenSwapRoute />}>
+        <div className="relative z-1">
+          <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+            kayen
+          </GlitchText>
+          <MetaRow
+            items={[
+              { label: "period", value: "2024" },
+              { label: "status", value: "COMPLETED" },
+            ]}
+            className="mb-6"
+          />
+          <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
+            DEX aggregator interfaces and Solana DeFi tooling. Designed fast, responsive trading UIs for high-throughput
+            environments.
+          </p>
+          <TechTags tags={["TypeScript", "React", "Next.js", "Solana", "Metaplex"]} />
         </div>
-      </section>
-      {/* </section> */}
+        <TerminalCard
+          fitContent
+          prompt={<CommandLine command="wget" args={["-X", "https://app.kayen.org"]} />}
+          title="Ghostty"
+        >
+          <AsciiRenderer
+            className="w-fit px-3"
+            fontSize={8}
+            // charset={"blocks"}
+            cols={100}
+            colorMode="mono"
+            src="/assets/kayen.png"
+          ></AsciiRenderer>
+        </TerminalCard>
+        {/* </div> */}
+      </SectionShell>
+
+      {/* Divider */}
+      <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
+
+      <SectionShell className="overflow-hidden py-30" innerClassName="flex" background={<DiabloTradeGrid />}>
+        <div className="relative z-1">
+          <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+            diablo trade
+          </GlitchText>
+          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FULLSTACK DEVELOPER</div>
+          <MetaRow
+            items={[
+              { label: "period", value: "2023 — 2024" },
+              { label: "status", value: "COMPLETED" },
+            ]}
+            className="mb-6"
+          />
+          <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
+            Game item marketplace with real-time trading features, search indexing, and live WebSocket price feeds.
+          </p>
+          <TechTags tags={["TypeScript", "React", "Next.js", "tRPC", "Prisma", "PostgreSQL", "WebSockets"]} />
+        </div>
+        <TerminalCard
+          fitContent
+          prompt={<CommandLine command="wget" args={["-X", "https://diablo.trade"]} />}
+          title="Ghostty"
+        >
+          <AsciiRenderer
+            className="w-fit px-3 mt-10"
+            fontSize={7.2}
+            cols={100}
+            colorMode="mono"
+            src="/assets/sanctuary_cleaned.webp"
+          />
+        </TerminalCard>
+      </SectionShell>
+
+      {/* Divider */}
+      <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
+
+      <SectionShell className="overflow-hidden py-30" innerClassName="flex" background={<ConcaveStake />}>
+        <div className="relative z-1">
+          <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+            concave
+          </GlitchText>
+          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
+          <MetaRow
+            items={[
+              { label: "period", value: "2021 — 2023" },
+              { label: "status", value: "COMPLETED" },
+            ]}
+            className="mb-6"
+          />
+          <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
+            DeFi protocol dashboards — staking, bonding, and liquidity UIs. Shipped production interfaces handling
+            millions in TVL.
+          </p>
+          <TechTags tags={["TypeScript", "React", "Next.js", "Ethers", "Wagmi", "Jotai"]} />
+        </div>
+        <TerminalCard
+          fitContent
+          prompt={<CommandLine command="wget" args={["-X", "https://diablo.trade"]} />}
+          title="Ghostty"
+        >
+          <AsciiRenderer
+            className="w-fit px-3 mt-10"
+            fontSize={7.2}
+            cols={100}
+            colorMode="mono"
+            src="/assets/concave.png"
+          />
+        </TerminalCard>
+      </SectionShell>
 
       {/* Single shared Canvas — renders all View portals */}
       <Canvas

@@ -101,7 +101,7 @@ function HexColumn({ speed }: { speed: number }) {
 export function HexDump() {
   return (
     <div
-      className="absolute -top-10 -left-[20%] -right-[20%] -bottom-10 pointer-events-none z-0 overflow-hidden max-[860px]:hidden"
+      className="absolute inset-0 inter-events-none z-0 overflow-hidden max-[860px]:hidden"
       style={{
         maskImage: "linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%)",
         WebkitMaskImage: "linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%)",
