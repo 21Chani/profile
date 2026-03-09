@@ -9,7 +9,7 @@ interface GlitchTextProps {
 export function GlitchText({ children, as: tag = "span", className = "" }: GlitchTextProps) {
   return createElement(
     tag,
-    { className: `relative ${className}` },
+    { className: `relative font-mono font-extrabold uppercase ${className}` },
     children,
     <span
       className="absolute top-0 left-0 w-full h-full text-terminal-white opacity-0 animate-glitch pointer-events-none [clip-path:inset(15%_0_65%_0)] [animation-delay:0.1s]"

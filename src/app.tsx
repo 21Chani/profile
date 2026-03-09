@@ -17,6 +17,7 @@ import { AsciiImage } from "./modules/threejs/components/ascii-image"
 import { CommandLine } from "./modules/ui/components/command-line"
 import { FjoBondingCurve } from "./modules/ui/components/fjo-bonding-curve"
 import { HexDump } from "./modules/ui/components/hex-dump"
+import { KayenSwapRoute } from "./modules/ui/components/kayen-swap-route"
 import { MetaRow } from "./modules/ui/components/meta-row"
 import { StackRow } from "./modules/ui/components/stack-row"
 import { TechTags } from "./modules/ui/components/tech-tags"
@@ -61,10 +62,7 @@ function App() {
         <div className="w-fit">
           <SectionLabel label="INIT SEQUENCE" className="mb-4" />
 
-          <GlitchText
-            as="h1"
-            className="font-display text-3xl text-terminal-white leading-[1.05] mb-1.5 max-[860px]:text-2xl"
-          >
+          <GlitchText as="h1" className="text-3xl text-terminal-white leading-[1.05] mb-1.5 max-[860px]:text-2xl">
             diogo
             <br />
             mendonça
@@ -126,7 +124,7 @@ function App() {
         <FjoBondingCurve className="max-h[90%]" />
         <div className="relative flex gap-4 max-w-270 px-10 mx-auto">
           <div className="relative z-1">
-            <GlitchText as="h2" className="font-display text-[38px] text-terminal-white leading-[1.1] mb-2">
+            <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
               fjord foundry
             </GlitchText>
             <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
@@ -164,45 +162,44 @@ function App() {
 
       {/* Kayen */}
       <section className="group relative overflow-hidden py-30 px-10">
-        <div
-          className="pointer-events-none absolute z-0"
-          style={{
-            backgroundImage: [
-              "radial-gradient(circle, transparent 80px, rgba(255,255,255,0.02) 81px, transparent 82px)",
-              "radial-gradient(circle, transparent 160px, rgba(255,255,255,0.015) 161px, transparent 162px)",
-              "radial-gradient(circle, transparent 240px, rgba(255,255,255,0.012) 241px, transparent 242px)",
-              "radial-gradient(circle, transparent 320px, rgba(255,255,255,0.01) 321px, transparent 322px)",
-            ].join(", "),
-            top: "50%",
-            left: "70%",
-            width: "800px",
-            height: "800px",
-            transform: "translate(-50%, -50%)",
-            opacity: 0.8,
-          }}
-        />
+        <KayenSwapRoute />
+        <div className="max-w-270 px-10 mx-auto flex">
+          <div className="relative z-1 mx-auto max-w-270">
+            <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+              kayen
+            </GlitchText>
 
-        <div className="relative z-1 mx-auto max-w-270">
-          <GlitchText as="h2" className="font-display text-[38px] text-terminal-white leading-[1.1] mb-2">
-            kayen
-          </GlitchText>
+            <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
 
-          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
+            <MetaRow
+              items={[
+                { label: "period", value: "2024" },
+                { label: "status", value: "COMPLETED" },
+              ]}
+              className="mb-6"
+            />
 
-          <MetaRow
-            items={[
-              { label: "period", value: "2024" },
-              { label: "status", value: "COMPLETED" },
-            ]}
-            className="mb-6"
-          />
+            <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
+              DEX aggregator interfaces and Solana DeFi tooling. Designed fast, responsive trading UIs for
+              high-throughput environments.
+            </p>
 
-          <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
-            DEX aggregator interfaces and Solana DeFi tooling. Designed fast, responsive trading UIs for high-throughput
-            environments.
-          </p>
-
-          <TechTags tags={["TypeScript", "React", "Next.js", "Solana", "Metaplex"]} />
+            <TechTags tags={["TypeScript", "React", "Next.js", "Solana", "Metaplex"]} />
+          </div>
+          <TerminalCard
+            fitContent
+            prompt={<CommandLine command="wget" args={["-X", "https://app.kayen.org"]} />}
+            title="Ghostty"
+          >
+            <AsciiRenderer
+              className="w-fit px-3"
+              fontSize={7}
+              charset={"blocks"}
+              cols={80}
+              colorMode="mono"
+              src="/assets/kayen.webp"
+            ></AsciiRenderer>
+          </TerminalCard>
         </div>
       </section>
       {/* </section> */}
