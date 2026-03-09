@@ -1,13 +1,59 @@
+import { cva } from "class-variance-authority"
 import type { ReactNode } from "react"
+
+const card = cva(
+  [
+    "group/card relative rounded-lg border text-sm",
+    "border-terminal-border bg-terminal-bg-elevated/60",
+    "transition-[border-color] duration-400 hover:border-terminal-border-bright",
+  ],
+  {
+    variants: {
+      fitContent: {
+        true: "w-fit",
+        false: "overflow-hidden",
+      },
+      cornerBrackets: {
+        true: [
+          "before:absolute before:-top-px before:-left-px before:w-4 before:h-4",
+          "before:border-t before:border-l before:border-terminal-border-mid",
+          "before:z-5 before:pointer-events-none",
+          "before:transition-[border-color] before:duration-400",
+          "hover:before:border-terminal-border-bright",
+
+          "after:absolute after:-bottom-px after:-right-px after:w-4 after:h-4",
+          "after:border-b after:border-r after:border-terminal-border-mid",
+          "after:z-5 after:pointer-events-none",
+          "after:transition-[border-color] after:duration-400",
+          "hover:after:border-terminal-border-bright",
+        ],
+      },
+    },
+    defaultVariants: {
+      fitContent: false,
+      cornerBrackets: false,
+    },
+  },
+)
+
+const body = cva("", {
+  variants: {
+    hasPrompt: {
+      true: "py-0.5 pb-2",
+      false: "px-4.5 py-4",
+    },
+  },
+})
 
 export function TerminalCard({
   title,
   children,
-  className = "",
+  className,
   prompt,
   footer,
   scanLine = false,
   cornerBrackets = false,
+  fitContent = false,
 }: {
   title: string
   children: ReactNode
@@ -16,11 +62,10 @@ export function TerminalCard({
   footer?: ReactNode
   scanLine?: boolean
   cornerBrackets?: boolean
+  fitContent?: boolean
 }) {
   return (
-    <div
-      className={`group/card relative border border-terminal-border bg-terminal-bg-elevated/60 text-sm overflow-hidden transition-[border-color] duration-400 hover:border-terminal-border-bright ${cornerBrackets ? "before:absolute before:-top-px before:-left-px before:w-4 before:h-4 before:border-t before:border-l before:border-terminal-border-mid before:z-5 before:pointer-events-none before:transition-[border-color] before:duration-400 hover:before:border-terminal-border-bright after:absolute after:-bottom-px after:-right-px after:w-4 after:h-4 after:border-b after:border-r after:border-terminal-border-mid after:z-5 after:pointer-events-none after:transition-[border-color] after:duration-400 hover:after:border-terminal-border-bright" : ""} ${className}`}
-    >
+    <div className={card({ fitContent, cornerBrackets, className })}>
       {/* Scan line */}
       {scanLine && (
         <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-white/3 to-transparent animate-scan-down pointer-events-none z-4 opacity-0 group-hover/card:opacity-100 transition-opacity duration-400" />
@@ -42,7 +87,7 @@ export function TerminalCard({
       )}
 
       {/* Body */}
-      <div className={prompt ? "py-0.5 pb-2" : "px-4.5 py-4"}>{children}</div>
+      <div className={body({ hasPrompt: !!prompt })}>{children}</div>
 
       {/* Footer */}
       {footer && (
