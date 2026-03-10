@@ -8,6 +8,7 @@ import "./app.css"
 
 import type { AsciiMaterialType } from "@/modules/threejs/shaders/ascii"
 import { AsciiRenderer } from "./modules/global/components/ascii-renderer"
+import { Em } from "./modules/global/components/em"
 import { GlitchText } from "./modules/global/components/glitch-text"
 import { HudCard } from "./modules/global/components/hud-card"
 import { MatrixRain } from "./modules/global/components/matrix-rain"
@@ -17,6 +18,7 @@ import { SectionShell } from "./modules/global/components/section-shell"
 import { AsciiImage } from "./modules/threejs/components/ascii-image"
 import { CommandLine } from "./modules/ui/components/command-line"
 import { ConcaveStake } from "./modules/ui/components/concave-stake"
+import { ContactLink } from "./modules/ui/components/contact-link"
 import { DiabloTradeGrid } from "./modules/ui/components/diablo-trade-grid"
 import { FjoBondingCurve } from "./modules/ui/components/fjo-bonding-curve"
 import { HexDump } from "./modules/ui/components/hex-dump"
@@ -72,10 +74,10 @@ function App() {
           </GlitchText>
 
           <div className="text-xs text-terminal-text-dim tracking-[6px] mb-8 font-light">SR. FRONTEND ENGINEER</div>
-          <p className="text-terminal-text-dim text-[12.5px] leading-8 mb-9 [&>em]:text-terminal-text [&>em]:not-italic [&>em]:border-b [&>em]:border-dashed [&>em]:border-terminal-border-bright">
-            Senior Frontend Engineer with <em>5+ years</em> of experience, specializing in <em>TypeScript</em> and{" "}
-            <em>React</em>. Known for leveraging hyperfocus and a relentless drive to deliver{" "}
-            <em>elegant, high-performance</em> solutions.
+          <p className="text-terminal-text-dim text-[12.5px] mb-9">
+            Hey, I'm Diogo — but most people call me <Em>Chani</Em>. I'm a tech enthusiast from Brazil with a broad
+            background across the stack, from hardware to software. For the past three years, I've been deep in the{" "}
+            <Em>web3 ecosystem</Em>, working with blockchain, smart contracts, and decentralized applications.
           </p>
 
           <TerminalCard title="~/about">
@@ -131,7 +133,7 @@ function App() {
           <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
             fjord foundry
           </GlitchText>
-          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
+          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">SR. WEB3 FULL-STACK DEVELOPER</div>
           <MetaRow
             items={[
               { label: "period", value: "2023 — 2025" },
@@ -163,6 +165,7 @@ function App() {
           <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
             kayen
           </GlitchText>
+          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">SR. WEB3 FULL-STACK DEVELOPER</div>
           <MetaRow
             items={[
               { label: "period", value: "2024" },
@@ -253,7 +256,7 @@ function App() {
         </div>
         <TerminalCard
           fitContent
-          prompt={<CommandLine command="wget" args={["-X", "https://diablo.trade"]} />}
+          prompt={<CommandLine command="wget" args={["-X", "https://app.concave.lol"]} />}
           title="Ghostty"
         >
           <AsciiRenderer
@@ -264,6 +267,34 @@ function App() {
             src="/assets/concave.png"
           />
         </TerminalCard>
+      </SectionShell>
+
+      {/* Divider */}
+      <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
+
+      {/* Contact */}
+      <SectionShell
+        id="contact"
+        className="py-30"
+        innerClassName="grid grid-cols-2 gap-18 items-start max-[860px]:grid-cols-1 max-[860px]:gap-12"
+      >
+        <div>
+          <SectionLabel label="CONTACT" className="mb-8" />
+          <GlitchText as="h2" className="text-[36px] text-terminal-white leading-[1.1] mb-5 max-[860px]:text-[28px]">
+            let's
+            <br />
+            build
+          </GlitchText>
+          <p className="text-[12.5px] text-terminal-text-dim leading-8">
+            Always happy to connect over interesting projects and <Em>ideas</Em>.
+          </p>
+        </div>
+
+        <nav className="flex flex-col gap-0.5" aria-label="Contact links">
+          <ContactLink label="EMAIL" value="contact@chani.sh" href="mailto:contact@chani.sh" />
+          <ContactLink label="GITHUB" value="github.com/21Chani" href="https://github.com/21Chani" external />
+          <ContactLink label="WEB" value="chani.sh" href="https://chani.sh" />
+        </nav>
       </SectionShell>
 
       {/* Single shared Canvas — renders all View portals */}
