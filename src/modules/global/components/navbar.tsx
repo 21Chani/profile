@@ -9,9 +9,15 @@ export function Navbar({ className = "" }: { className?: string }) {
     <nav
       className={`fixed top-0 left-0 right-0 z-1000 flex items-center justify-between bg-terminal-bg/75 backdrop-blur-[20px] border-b border-terminal-border px-5 py-3.5 md:px-10 md:py-4 ${className}`}
     >
-      <a href="/" className="font-display text-sm text-terminal-white tracking-[3px] no-underline md:text-lg">
-        chani.sh
-      </a>
+      <div className="flex items-center gap-2">
+        <img className="size-8" src="icon.png" />
+        <a
+          href="/"
+          className="font-mono uppercase font-black text-sm text-terminal-white tracking-3px] no-underline md:text-lg"
+        >
+          chani.sh
+        </a>
+      </div>
 
       <div className="flex gap-1.5">
         {navLinks.map(({ label, href }) => (
