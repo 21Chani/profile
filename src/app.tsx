@@ -47,7 +47,7 @@ function App() {
 
       <SectionShell
         id="about"
-        innerClassName="grid grid-cols-[420px_1fr] gap-18 items-center max-[860px]:grid-cols-1 max-[860px]:max-w-105 max-[860px]:gap-12"
+        innerClassName="grid grid-cols-[420px_1fr] gap-18 items-center max-[860px]:grid-cols-1 max-[860px]:gap-12"
         background={<MatrixRain />}
       >
         <HudCard title="CHANI.IMG" footerLabel="ASCII RENDER">
@@ -90,9 +90,9 @@ function App() {
       </SectionShell>
 
       {/* Stacks */}
-      <SectionShell className="my-30" id="stacks" background={<HexDump />}>
+      <SectionShell className="my-16 md:my-30" id="stacks" background={<HexDump />}>
         <SectionLabel label="TECH STACKS" />
-        <div className="columns-2 gap-2  max-[860px]:grid-cols-1">
+        <div className="columns-2 gap-2 max-[860px]:columns-1">
           {STACK_DATA.map((category) => (
             <TerminalCard
               className="mb-2 rounded-lg"
@@ -122,15 +122,15 @@ function App() {
       </SectionShell>
 
       {/* Experience */}
-      <SectionLabel label="EXPERIENCE" className="max-w-270 mx-auto px-10" />
+      <SectionLabel label="EXPERIENCE" className="max-w-270 mx-auto px-5 md:px-10" />
       <SectionShell
-        className="overflow-hidden py-30"
-        innerClassName="flex gap-4"
+        className="overflow-hidden py-16 md:py-30"
+        innerClassName="flex flex-col md:flex-row gap-4"
         background={<FjoBondingCurve className="max-h[90%]" />}
       >
         {/* Fjord Foundry */}
         <div className="relative z-1">
-          <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+          <GlitchText as="h2" className="text-2xl md:text-[38px] text-terminal-white leading-[1.1] mb-2">
             fjord foundry
           </GlitchText>
           <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">SR. WEB3 FULL-STACK DEVELOPER</div>
@@ -149,6 +149,7 @@ function App() {
         </div>
         <TerminalCard
           fitContent
+          className="hidden md:block"
           prompt={<CommandLine command="wget" args={["-X", "https://fjordfoundry.com"]} />}
           title="Ghostty"
         >
@@ -160,9 +161,13 @@ function App() {
       <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
 
       {/* Kayen */}
-      <SectionShell className="overflow-hidden py-30" innerClassName="flex" background={<KayenSwapRoute />}>
+      <SectionShell
+        className="overflow-hidden py-16 md:py-30"
+        innerClassName="flex flex-col md:flex-row"
+        background={<KayenSwapRoute />}
+      >
         <div className="relative z-1">
-          <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+          <GlitchText as="h2" className="text-2xl md:text-[38px] text-terminal-white leading-[1.1] mb-2">
             kayen
           </GlitchText>
           <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">SR. WEB3 FULL-STACK DEVELOPER</div>
@@ -181,27 +186,24 @@ function App() {
         </div>
         <TerminalCard
           fitContent
+          className="hidden md:block"
           prompt={<CommandLine command="wget" args={["-X", "https://app.kayen.org"]} />}
           title="Ghostty"
         >
-          <AsciiRenderer
-            className="w-fit px-3"
-            fontSize={8}
-            // charset={"blocks"}
-            cols={100}
-            colorMode="mono"
-            src="/assets/kayen.png"
-          ></AsciiRenderer>
+          <AsciiRenderer className="w-fit px-3" fontSize={8} cols={100} colorMode="mono" src="/assets/kayen.png" />
         </TerminalCard>
-        {/* </div> */}
       </SectionShell>
 
       {/* Divider */}
       <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
 
-      <SectionShell className="overflow-hidden py-30" innerClassName="flex" background={<DiabloTradeGrid />}>
+      <SectionShell
+        className="overflow-hidden py-16 md:py-30"
+        innerClassName="flex flex-col md:flex-row"
+        background={<DiabloTradeGrid />}
+      >
         <div className="relative z-1">
-          <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+          <GlitchText as="h2" className="text-2xl md:text-[38px] text-terminal-white leading-[1.1] mb-2">
             diablo trade
           </GlitchText>
           <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FULLSTACK DEVELOPER</div>
@@ -219,6 +221,7 @@ function App() {
         </div>
         <TerminalCard
           fitContent
+          className="hidden md:block"
           prompt={<CommandLine command="wget" args={["-X", "https://diablo.trade"]} />}
           title="Ghostty"
         >
@@ -235,9 +238,13 @@ function App() {
       {/* Divider */}
       <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
 
-      <SectionShell className="overflow-hidden py-30" innerClassName="flex" background={<ConcaveStake />}>
+      <SectionShell
+        className="overflow-hidden py-16 md:py-30"
+        innerClassName="flex flex-col md:flex-row"
+        background={<ConcaveStake />}
+      >
         <div className="relative z-1">
-          <GlitchText as="h2" className="text-[38px] text-terminal-white leading-[1.1] mb-2">
+          <GlitchText as="h2" className="text-2xl md:text-[38px] text-terminal-white leading-[1.1] mb-2">
             concave
           </GlitchText>
           <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FRONTEND DEVELOPER</div>
@@ -256,6 +263,7 @@ function App() {
         </div>
         <TerminalCard
           fitContent
+          className="hidden md:block"
           prompt={<CommandLine command="wget" args={["-X", "https://app.concave.lol"]} />}
           title="Ghostty"
         >
@@ -275,7 +283,7 @@ function App() {
       {/* Contact */}
       <SectionShell
         id="contact"
-        className="py-30"
+        className="py-16 md:py-30"
         innerClassName="grid grid-cols-2 gap-18 items-start max-[860px]:grid-cols-1 max-[860px]:gap-12"
       >
         <div>
