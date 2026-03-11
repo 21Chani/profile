@@ -21,6 +21,6 @@ export function SectionShell({
     as,
     { id, className: `group relative ${className}` },
     background,
-    <div className={`relative max-w-270 mx-auto px-10 ${innerClassName}`}>{children}</div>,
+    <div className={`relative max-w-270 mx-auto px-5 md:px-10 ${innerClassName}`}>{children}</div>,
   )
 }

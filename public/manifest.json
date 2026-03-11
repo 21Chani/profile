@@ -1,0 +1,14 @@
+{
+  "name": "chani.sh — Diogo Mendonca",
+  "short_name": "chani.sh",
+  "description": "Portfolio of Diogo Mendonca (Chani) — Senior Frontend Engineer and Web3 Full-Stack Developer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512x512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
