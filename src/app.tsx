@@ -1,5 +1,6 @@
 import { View } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
+import { Analytics } from "@vercel/analytics/react"
 import { gsap } from "gsap"
 import { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
@@ -52,6 +53,7 @@ function App() {
 
   return (
     <div ref={containerRef} className="relative pt-28">
+      <Analytics />
       <Navbar />
 
       <SectionShell
@@ -84,8 +86,8 @@ function App() {
 
           <div className="text-xs text-terminal-text-dim tracking-[6px] mb-8 font-light">SR. FULL-STACK ENGINEER</div>
           <p className="text-terminal-text-dim text-[12.5px] mb-9">
-            Hey, I'm Diogo — most people call me <Em>Chani</Em>. Full-stack dev from Brazil, been building for the
-            web for 5+ years. Lately I've been all in on <Em>web3</Em> — DeFi protocols, DEX aggregators, token launches,
+            Hey, I'm Diogo — most people call me <Em>Chani</Em>. Full-stack dev from Brazil, been building for the web
+            for 5+ years. Lately I've been all in on <Em>web3</Em> — DeFi protocols, DEX aggregators, token launches,
             that kind of thing.
           </p>
 
@@ -292,7 +294,7 @@ function App() {
       {/* Contact */}
       <SectionShell
         id="contact"
-        className="py-16 md:py-30"
+        className="py-16 md:py-30 min-h-screen items-center flex"
         innerClassName="grid grid-cols-2 gap-18 items-start max-[860px]:grid-cols-1 max-[860px]:gap-12"
       >
         <div>
