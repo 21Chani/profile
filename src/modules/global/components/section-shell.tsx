@@ -20,7 +20,7 @@ export function SectionShell({
   return createElement(
     as,
     { id, className: `group relative ${className}` },
-    background,
+    background && <div className="absolute inset-0 max-w-300 mx-auto">{background}</div>,
     <div className={`relative max-w-270 mx-auto px-5 md:px-10 ${innerClassName}`}>{children}</div>,
   )
 }
