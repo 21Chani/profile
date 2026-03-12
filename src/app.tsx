@@ -41,6 +41,15 @@ function App() {
     gsap.to(matRef.uniforms.u_Progress, { ease: "power4.out", duration: 1.2, value: 1 })
   }, [matRef])
 
+  useEffect(() => {
+    const hash = window.location.hash.slice(1)
+    if (!hash) return
+    // Wait for React to finish rendering before scrolling
+    requestAnimationFrame(() => {
+      document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" })
+    })
+  }, [])
+
   return (
     <div ref={containerRef} className="relative pt-28">
       <Navbar />
@@ -73,11 +82,11 @@ function App() {
             mendonça
           </GlitchText>
 
-          <div className="text-xs text-terminal-text-dim tracking-[6px] mb-8 font-light">SR. FRONTEND ENGINEER</div>
+          <div className="text-xs text-terminal-text-dim tracking-[6px] mb-8 font-light">SR. FULL-STACK ENGINEER</div>
           <p className="text-terminal-text-dim text-[12.5px] mb-9">
-            Hey, I'm Diogo — but most people call me <Em>Chani</Em>. I'm a tech enthusiast from Brazil with a broad
-            background across the stack, from hardware to software. For the past three years, I've been deep in the{" "}
-            <Em>web3 ecosystem</Em>, working with blockchain, smart contracts, and decentralized applications.
+            Hey, I'm Diogo — most people call me <Em>Chani</Em>. Full-stack dev from Brazil, been building for the
+            web for 5+ years. Lately I've been all in on <Em>web3</Em> — DeFi protocols, DEX aggregators, token launches,
+            that kind of thing.
           </p>
 
           <TerminalCard title="~/about">
@@ -122,7 +131,7 @@ function App() {
       </SectionShell>
 
       {/* Experience */}
-      <SectionLabel label="EXPERIENCE" className="max-w-270 mx-auto px-5 md:px-10" />
+      <SectionLabel id="work" label="EXPERIENCE" className="max-w-270 mx-auto px-5 md:px-10" />
       <SectionShell
         className="overflow-hidden py-16 md:py-30"
         innerClassName="flex flex-col md:flex-row gap-4"
@@ -206,7 +215,7 @@ function App() {
           <GlitchText as="h2" className="text-2xl md:text-[38px] text-terminal-white leading-[1.1] mb-2">
             diablo trade
           </GlitchText>
-          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FULLSTACK DEVELOPER</div>
+          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FULL-STACK DEVELOPER</div>
           <MetaRow
             items={[
               { label: "period", value: "2023 — 2024" },
@@ -294,7 +303,7 @@ function App() {
             build
           </GlitchText>
           <p className="text-[12.5px] text-terminal-text-dim leading-8">
-            Always happy to connect over interesting projects and <Em>ideas</Em>.
+            Always happy to connect over <Em>interesting</Em> projects and <Em>ideas</Em>.
           </p>
         </div>
 
