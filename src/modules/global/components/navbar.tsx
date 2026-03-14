@@ -1,3 +1,5 @@
+import { ThemeSwitcher } from "./theme-switcher"
+
 const navLinks = [
   { label: "ABOUT", href: "#about" },
   { label: "STACKS", href: "#stacks" },
@@ -17,9 +19,11 @@ export function Navbar({ className = "" }: { className?: string }) {
         >
           chani.sh
         </a>
+        <div className="w-px h-4 bg-terminal-border-mid" />
+        <ThemeSwitcher />
       </div>
 
-      <div className="flex gap-1.5">
+      <div className="flex items-center gap-1.5">
         {navLinks.map(({ label, href }) => (
           <a
             key={label}

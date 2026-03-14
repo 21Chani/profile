@@ -68,7 +68,7 @@ export function TerminalCard({
     <div className={card({ fitContent, cornerBrackets, className })}>
       {/* Scan line */}
       {scanLine && (
-        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-white/3 to-transparent animate-scan-down pointer-events-none z-4 opacity-0 group-hover/card:opacity-100 transition-opacity duration-400" />
+        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-terminal-white/3 to-transparent animate-scan-down pointer-events-none z-4 opacity-0 group-hover/card:opacity-100 transition-opacity duration-400" />
       )}
 
       {/* Title bar */}
@@ -91,7 +91,7 @@ export function TerminalCard({
 
       {/* Footer */}
       {footer && (
-        <div className="flex justify-between items-center px-3.5 py-1.75 border-t border-terminal-border bg-[rgba(12,12,12,0.6)]">
+        <div className="flex justify-between items-center px-3.5 py-1.75 border-t border-terminal-border bg-terminal-bg-overlay/60">
           {footer}
         </div>
       )}

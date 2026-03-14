@@ -15,7 +15,7 @@ export function StackRow({
   return (
     <div className="group/row relative flex items-center px-3.5 py-1 cursor-default text-sm leading-[1.4]">
       {/* hover bg */}
-      <div className="absolute inset-0 bg-white/[0.02] opacity-0 group-hover/row:opacity-100 transition-opacity duration-150 pointer-events-none" />
+      <div className="absolute inset-0 bg-terminal-white/[0.02] opacity-0 group-hover/row:opacity-100 transition-opacity duration-150 pointer-events-none" />
 
       <span className="w-[22px] shrink-0 text-xs text-terminal-text-muted text-center relative z-1 transition-colors duration-150 group-hover/row:text-terminal-text-dim">
         {icon}

@@ -1,3 +1,6 @@
+import type { CanvasChannels } from "./theme-colors"
+import { canvasColor } from "./theme-colors"
+
 export type CharsetName = "standard" | "blocks" | "minimal"
 export type ColorMode = "color" | "mono" | "matrix"
 
@@ -65,8 +68,11 @@ export function imageToAsciiData(
   return result
 }
 
-export function getAsciiColor(cell: AsciiCell, mode: ColorMode): string {
+export function getAsciiColor(cell: AsciiCell, mode: ColorMode, channels?: CanvasChannels): string {
   if (mode === "mono") {
+    if (channels) {
+      return canvasColor(channels, cell.lum)
+    }
     const v = Math.floor(cell.lum * 255)
     return `rgb(${v},${v},${v})`
   }

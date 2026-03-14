@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { type CanvasChannels, getCanvasChannels, canvasColor } from "@/modules/global/lib/theme-colors"
 
 interface Vault {
   xf: number
@@ -29,12 +30,12 @@ function createVaults(): Vault[] {
   ]
 }
 
-function drawLock(ctx: CanvasRenderingContext2D, x: number, y: number, alpha: number) {
+function drawLock(ctx: CanvasRenderingContext2D, x: number, y: number, alpha: number, ch: CanvasChannels) {
   const s = 6
   // Shackle
   ctx.beginPath()
   ctx.arc(x, y - s * 0.6, s * 0.5, Math.PI, 0, false)
-  ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(4)})`
+  ctx.strokeStyle = canvasColor(ch, alpha)
   ctx.lineWidth = 1
   ctx.stroke()
   // Body
@@ -42,7 +43,7 @@ function drawLock(ctx: CanvasRenderingContext2D, x: number, y: number, alpha: nu
   // Keyhole
   ctx.beginPath()
   ctx.arc(x, y + s * 0.2, 1, 0, Math.PI * 2)
-  ctx.fillStyle = `rgba(255,255,255,${(alpha * 0.8).toFixed(4)})`
+  ctx.fillStyle = canvasColor(ch, alpha * 0.8)
   ctx.fill()
 }
 
@@ -60,6 +61,9 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
     let h = 0
     let rafId = 0
     const state = stateRef.current
+    let ch = getCanvasChannels()
+    function onThemeChange() { ch = getCanvasChannels() }
+    document.addEventListener("themechange", onThemeChange)
 
     function resize() {
       const rect = canvas!.parentElement!.getBoundingClientRect()
@@ -85,7 +89,7 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
       for (let c = 0; c < vaults.length; c++) {
         const v = vaults[c]
         ctx.beginPath()
-        ctx.strokeStyle = "rgba(255,255,255,0.018)"
+        ctx.strokeStyle = canvasColor(ch, 0.018)
         ctx.lineWidth = 1
         ctx.moveTo(v.xf * w, v.yf * h + 10)
         ctx.lineTo(poolX, poolY)
@@ -96,14 +100,14 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
       // ── Central pool node ──
       ctx.beginPath()
       ctx.arc(poolX, poolY, 14, 0, Math.PI * 2)
-      ctx.strokeStyle = "rgba(255,255,255,0.035)"
+      ctx.strokeStyle = canvasColor(ch, 0.035)
       ctx.lineWidth = 1
       ctx.stroke()
-      ctx.fillStyle = "rgba(255,255,255,0.01)"
+      ctx.fillStyle = canvasColor(ch, 0.01)
       ctx.fill()
 
       ctx.font = '6px "JetBrains Mono", monospace'
-      ctx.fillStyle = "rgba(255,255,255,0.04)"
+      ctx.fillStyle = canvasColor(ch, 0.04)
       ctx.textAlign = "center"
       ctx.textBaseline = "middle"
       ctx.fillText("POOL", poolX, poolY)
@@ -132,13 +136,13 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
         const boxX = x - boxW / 2
         const boxY = y - 22
 
-        ctx.strokeStyle = `rgba(255,255,255,${(activeAlpha * 0.5).toFixed(4)})`
+        ctx.strokeStyle = canvasColor(ch, activeAlpha * 0.5)
         ctx.lineWidth = 1
         ctx.strokeRect(boxX, boxY, boxW, boxH)
 
         // Corner ticks
         const tk = 6
-        ctx.strokeStyle = `rgba(255,255,255,${(activeAlpha * 0.7).toFixed(4)})`
+        ctx.strokeStyle = canvasColor(ch, activeAlpha * 0.7)
         // TL
         ctx.beginPath()
         ctx.moveTo(boxX, boxY + tk)
@@ -166,44 +170,44 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
 
         // ── Lock icon with pulse glow ──
         if (v.elapsed > 0.9) {
-          const glowAlpha = (0.03 + pulse).toFixed(4)
+          const glowAlpha = 0.03 + pulse
           ctx.beginPath()
           ctx.arc(x, y - 16, 10, 0, Math.PI * 2)
           const glow = ctx.createRadialGradient(x, y - 16, 0, x, y - 16, 10)
-          glow.addColorStop(0, `rgba(255,255,255,${glowAlpha})`)
-          glow.addColorStop(1, "rgba(255,255,255,0.0)")
+          glow.addColorStop(0, canvasColor(ch, glowAlpha))
+          glow.addColorStop(1, canvasColor(ch, 0))
           ctx.fillStyle = glow
           ctx.fill()
         }
-        drawLock(ctx, x, y - 16, activeAlpha * 1.2)
+        drawLock(ctx, x, y - 16, activeAlpha * 1.2, ch)
 
         // ── Vault label ──
         ctx.font = '7px "JetBrains Mono", monospace'
         ctx.textAlign = "center"
         ctx.textBaseline = "top"
-        ctx.fillStyle = `rgba(255,255,255,${activeAlpha.toFixed(4)})`
+        ctx.fillStyle = canvasColor(ch, activeAlpha)
         ctx.fillText(v.label, x, y + 2)
 
         // ── Amount staked ──
         ctx.font = '9px "JetBrains Mono", monospace'
-        ctx.fillStyle = `rgba(255,255,255,${(activeAlpha * 1.3).toFixed(4)})`
+        ctx.fillStyle = canvasColor(ch, activeAlpha * 1.3)
         ctx.fillText(v.amount + " CNV", x, y + 14)
 
         // ── Progress bar ──
         const bx = x - BAR_WIDTH / 2
         const by = y + 27
 
-        ctx.strokeStyle = `rgba(255,255,255,${(activeAlpha * 0.6).toFixed(4)})`
+        ctx.strokeStyle = canvasColor(ch, activeAlpha * 0.6)
         ctx.lineWidth = 1
         ctx.strokeRect(bx, by, BAR_WIDTH, BAR_HEIGHT)
 
         const fillW = BAR_WIDTH * v.elapsed
-        ctx.fillStyle = `rgba(255,255,255,${(activeAlpha * 0.8).toFixed(4)})`
+        ctx.fillStyle = canvasColor(ch, activeAlpha * 0.8)
         ctx.fillRect(bx, by, fillW, BAR_HEIGHT)
       }
 
       // ── Top — Protocol stats ──
-      ctx.strokeStyle = "rgba(255,255,255,0.025)"
+      ctx.strokeStyle = canvasColor(ch, 0.025)
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.moveTo(w * 0.04, h * 0.07)
@@ -215,10 +219,10 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
       const topY = h * 0.038
 
       ctx.textAlign = "left"
-      ctx.fillStyle = "rgba(255,255,255,0.04)"
+      ctx.fillStyle = canvasColor(ch, 0.04)
       ctx.fillText("STAKING VAULTS", w * 0.05, topY)
 
-      ctx.fillStyle = "rgba(255,255,255,0.03)"
+      ctx.fillStyle = canvasColor(ch, 0.03)
       ctx.fillText("\u2502", w * 0.22, topY)
 
       const tvl = (4.2 + Math.sin(frame * 0.005) * 0.15).toFixed(1)
@@ -234,14 +238,14 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
       if (blink) {
         ctx.beginPath()
         ctx.arc(w * 0.95 + 6, topY, 2, 0, Math.PI * 2)
-        ctx.fillStyle = "rgba(255,255,255,0.07)"
+        ctx.fillStyle = canvasColor(ch, 0.07)
         ctx.fill()
       }
-      ctx.fillStyle = "rgba(255,255,255,0.035)"
+      ctx.fillStyle = canvasColor(ch, 0.035)
       ctx.fillText("\u25CF ACTIVE", w * 0.95, topY)
 
       // ── Bottom — Epoch info ──
-      ctx.strokeStyle = "rgba(255,255,255,0.025)"
+      ctx.strokeStyle = canvasColor(ch, 0.025)
       ctx.beginPath()
       ctx.moveTo(w * 0.04, h * 0.935)
       ctx.lineTo(w * 0.96, h * 0.935)
@@ -250,11 +254,11 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
       const botY = h * 0.965
       ctx.font = '8px "JetBrains Mono", monospace'
       ctx.textAlign = "left"
-      ctx.fillStyle = "rgba(255,255,255,0.04)"
+      ctx.fillStyle = canvasColor(ch, 0.04)
 
       ctx.fillText("epoch: 847", w * 0.05, botY)
 
-      ctx.fillStyle = "rgba(255,255,255,0.03)"
+      ctx.fillStyle = canvasColor(ch, 0.03)
       ctx.fillText("\u2502", w * 0.18, botY)
 
       const secs = Math.floor(3600 - ((frame * 0.1) % 3600))
@@ -269,7 +273,7 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
       ctx.fillText("total staked: 168.2K CNV", w * 0.62, botY)
 
       ctx.textAlign = "right"
-      ctx.fillStyle = "rgba(255,255,255,0.035)"
+      ctx.fillStyle = canvasColor(ch, 0.035)
       ctx.fillText("CONCAVE  \u00B7  DeFi", w * 0.95, botY)
 
       rafId = requestAnimationFrame(draw)
@@ -284,6 +288,7 @@ export function ConcaveStake({ className = "" }: { className?: string }) {
     return () => {
       cancelAnimationFrame(rafId)
       observer.disconnect()
+      document.removeEventListener("themechange", onThemeChange)
     }
   }, [])
 
