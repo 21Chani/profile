@@ -1,4 +1,5 @@
 import { useAsciiImage } from "@/modules/global/hooks/use-ascii-image"
+import { useCanvasChannels } from "@/modules/global/hooks/use-canvas-channels"
 import { DARK_THRESHOLD, getAsciiColor } from "@/modules/global/lib/ascii-convert"
 import type { CharsetName, ColorMode } from "@/modules/global/lib/ascii-convert"
 
@@ -20,6 +21,7 @@ export function AsciiRenderer({
   className,
 }: AsciiRendererProps) {
   const { data } = useAsciiImage({ src, cols, charset })
+  const channels = useCanvasChannels()
 
   if (!data) return null
 
@@ -35,7 +37,7 @@ export function AsciiRenderer({
               cell.lum < DARK_THRESHOLD ? (
                 " "
               ) : (
-                <span key={x} style={{ color: getAsciiColor(cell, colorMode) }}>
+                <span key={x} style={{ color: getAsciiColor(cell, colorMode, channels) }}>
                   {cell.char}
                 </span>
               ),

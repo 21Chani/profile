@@ -1,4 +1,6 @@
 import { useMemo } from "react"
+import { useCanvasChannels } from "../../global/hooks/use-canvas-channels"
+import { type CanvasChannels, canvasColor } from "../../global/lib/theme-colors"
 
 const HEX = "0123456789ABCDEF"
 
@@ -17,18 +19,18 @@ function randomAscii(n: number): string {
 type RowData =
   | { type: "gap" }
   | { type: "hex"; addr: string; pairs: string; ascii: string }
-  | { type: "event"; cls: string; tag: string; message: string; suffix: string }
+  | { type: "event"; alpha: number; tag: string; message: string; suffix: string }
 
 const EVENT_TEMPLATES = [
-  { cls: "text-white/[0.06]", tag: "[WARN]", message: "memory allocation failed at 0x" },
-  { cls: "text-white/[0.06]", tag: "[WARN]", message: "buffer overflow detected 0x" },
-  { cls: "text-white/[0.06]", tag: "[WARN]", message: "heap fragmentation at 0x" },
-  { cls: "text-white/[0.07]", tag: "[ERR]", message: " stack overflow at 0x" },
-  { cls: "text-white/[0.07]", tag: "[ERR]", message: " segfault in thread 0x" },
-  { cls: "text-white/[0.07]", tag: "[ERR]", message: " null pointer deref 0x" },
-  { cls: "text-white/[0.045]", tag: "[SYS]", message: " process 0x" },
-  { cls: "text-white/[0.045]", tag: "[SYS]", message: " allocated 0x" },
-  { cls: "text-white/[0.045]", tag: "[SYS]", message: " gc sweep cycle 0x" },
+  { alpha: 0.06, tag: "[WARN]", message: "memory allocation failed at 0x" },
+  { alpha: 0.06, tag: "[WARN]", message: "buffer overflow detected 0x" },
+  { alpha: 0.06, tag: "[WARN]", message: "heap fragmentation at 0x" },
+  { alpha: 0.07, tag: "[ERR]", message: " stack overflow at 0x" },
+  { alpha: 0.07, tag: "[ERR]", message: " segfault in thread 0x" },
+  { alpha: 0.07, tag: "[ERR]", message: " null pointer deref 0x" },
+  { alpha: 0.045, tag: "[SYS]", message: " process 0x" },
+  { alpha: 0.045, tag: "[SYS]", message: " allocated 0x" },
+  { alpha: 0.045, tag: "[SYS]", message: " gc sweep cycle 0x" },
 ]
 
 function generateColumn(totalRows: number): RowData[] {
@@ -42,7 +44,7 @@ function generateColumn(totalRows: number): RowData[] {
     }
     if (Math.random() < 0.15) {
       const evt = EVENT_TEMPLATES[Math.floor(Math.random() * EVENT_TEMPLATES.length)]
-      rows.push({ type: "event", cls: evt.cls, tag: evt.tag, message: evt.message, suffix: randomHex(4) })
+      rows.push({ type: "event", alpha: evt.alpha, tag: evt.tag, message: evt.message, suffix: randomHex(4) })
       rows.push({ type: "gap" })
       i += 2
       continue
@@ -56,11 +58,11 @@ function generateColumn(totalRows: number): RowData[] {
   return rows
 }
 
-function HexRow({ row }: { row: RowData }) {
+function HexRow({ row, ch }: { row: RowData; ch: CanvasChannels }) {
   if (row.type === "gap") return <div className="h-11" />
   if (row.type === "event") {
     return (
-      <div className={`px-2.5 tracking-[1px] ${row.cls}`}>
+      <div className="px-2.5 tracking-[1px]" style={{ color: canvasColor(ch, row.alpha) }}>
         <span className="text-xxs tracking-[2px]">{row.tag}</span>
         {row.message}
         {row.suffix}
@@ -69,19 +71,20 @@ function HexRow({ row }: { row: RowData }) {
   }
   return (
     <div className="px-2.5">
-      <span className="text-white/[0.05]">{row.addr}</span>
+      <span style={{ color: canvasColor(ch, 0.05) }}>{row.addr}</span>
       {row.pairs} |{row.ascii}|
     </div>
   )
 }
 
-function HexColumn({ speed }: { speed: number }) {
+function HexColumn({ speed, ch }: { speed: number; ch: CanvasChannels }) {
   const rows = useMemo(() => generateColumn(50), [])
 
   return (
     <div
-      className="flex flex-col font-mono text-[10px] leading-[22px] tracking-[1.5px] text-white/[0.035] select-none whitespace-nowrap shrink-0 will-change-transform animate-hex-scroll"
+      className="flex flex-col font-mono text-[10px] leading-[22px] tracking-[1.5px] select-none whitespace-nowrap shrink-0 will-change-transform animate-hex-scroll"
       style={{
+        color: canvasColor(ch, 0.035),
         animationDuration: `${speed}s`,
         animationDelay: `${-(Math.random() * speed)}s`,
       }}
@@ -90,7 +93,7 @@ function HexColumn({ speed }: { speed: number }) {
       {[0, 1].map((pass) => (
         <div key={pass}>
           {rows.map((row, i) => (
-            <HexRow key={`${pass}-${i}`} row={row} />
+            <HexRow key={`${pass}-${i}`} row={row} ch={ch} />
           ))}
         </div>
       ))}
@@ -99,6 +102,8 @@ function HexColumn({ speed }: { speed: number }) {
 }
 
 export function HexDump() {
+  const ch = useCanvasChannels()
+
   return (
     <div
       className="absolute inset-0 inter-events-none z-0 overflow-hidden max-[860px]:hidden"
@@ -108,8 +113,8 @@ export function HexDump() {
       }}
     >
       <div className="flex justify-between w-full px-[5%]">
-        <HexColumn speed={75} />
-        <HexColumn speed={85} />
+        <HexColumn speed={75} ch={ch} />
+        <HexColumn speed={85} ch={ch} />
       </div>
     </div>
   )

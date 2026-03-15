@@ -1,10 +1,18 @@
 import { useMemo } from "react"
+import { useCanvasChannels } from "../hooks/use-canvas-channels"
+import { canvasColor } from "../lib/theme-colors"
 
 const CHARS = ".·:;|{}()<>=/\\~+-_[]$#@!?*^%&0123456789abcdef"
 const COL_SPACING = 20
 const BRIGHTNESSES = ["normal", "bright", "dim"] as const
 
 type Brightness = (typeof BRIGHTNESSES)[number]
+
+const BRIGHTNESS_ALPHA: Record<Brightness, number> = {
+  normal: 0.045,
+  bright: 0.09,
+  dim: 0.02,
+}
 
 interface MatrixColumn {
   id: number
@@ -13,12 +21,6 @@ interface MatrixColumn {
   duration: number
   delay: number
   chars: string[]
-}
-
-const brightnessColor: Record<Brightness, string> = {
-  normal: "text-white/[0.045]",
-  bright: "text-white/[0.09]",
-  dim: "text-white/[0.02]",
 }
 
 function randomChar(): string {
@@ -41,10 +43,20 @@ function generateColumns(count: number): MatrixColumn[] {
 
 export function MatrixRain() {
   const columns = useMemo(() => {
-    // SSR-safe: default to a reasonable count, but use window width if available
     const width = typeof window !== "undefined" ? window.innerWidth : 1440
     return generateColumns(Math.floor(width / COL_SPACING))
   }, [])
+
+  const ch = useCanvasChannels()
+
+  const brightnessColor: Record<Brightness, string> = useMemo(
+    () => ({
+      normal: canvasColor(ch, BRIGHTNESS_ALPHA.normal),
+      bright: canvasColor(ch, BRIGHTNESS_ALPHA.bright),
+      dim: canvasColor(ch, BRIGHTNESS_ALPHA.dim),
+    }),
+    [ch],
+  )
 
   return (
     <div
@@ -58,11 +70,12 @@ export function MatrixRain() {
       {columns.map((col) => (
         <div
           key={col.id}
-          className={`absolute top-0 flex flex-col font-mono text-xs leading-5.5 select-none pointer-events-none animate-matrix-fall will-change-transform ${brightnessColor[col.brightness]}`}
+          className="absolute top-0 flex flex-col font-mono text-xs leading-5.5 select-none pointer-events-none animate-matrix-fall will-change-transform"
           style={{
             left: `${col.left}%`,
             animationDuration: `${col.duration}s`,
             animationDelay: `${col.delay}s`,
+            color: brightnessColor[col.brightness],
           }}
         >
           {col.chars.map((char, j) => (

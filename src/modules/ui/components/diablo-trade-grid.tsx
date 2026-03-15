@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { getCanvasChannels, canvasColor } from "@/modules/global/lib/theme-colors"
 
 const symbols = ["⚔", "◈", "☆", "♦"]
 
@@ -28,6 +29,9 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
     const gap = 3
     const step = cellSize + gap
     const state = stateRef.current
+    let ch = getCanvasChannels()
+    function onThemeChange() { ch = getCanvasChannels() }
+    document.addEventListener("themechange", onThemeChange)
 
     function resize() {
       const rect = canvas!.parentElement!.getBoundingClientRect()
@@ -85,7 +89,7 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
           const y = offsetY + r * step
 
           // Cell border
-          ctx.strokeStyle = "rgba(255,255,255,0.015)"
+          ctx.strokeStyle = canvasColor(ch, 0.015)
           ctx.lineWidth = 1
           ctx.strokeRect(x, y, cellSize, cellSize)
 
@@ -117,7 +121,7 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
           }
 
           if (cell.alpha > 0.001) {
-            ctx.fillStyle = "rgba(255,255,255," + cell.alpha.toFixed(4) + ")"
+            ctx.fillStyle = canvasColor(ch, cell.alpha)
             ctx.fillText(cell.symbol, x + cellSize / 2, y + cellSize / 2)
           }
         }
@@ -126,7 +130,7 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
       ctx.restore()
 
       // ── TOP — WebSocket status bar ──
-      ctx.strokeStyle = "rgba(255,255,255,0.025)"
+      ctx.strokeStyle = canvasColor(ch, 0.025)
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.moveTo(w * 0.04, h * 0.07)
@@ -143,14 +147,14 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
       if (blink) {
         ctx.beginPath()
         ctx.arc(w * 0.05, topY, 2, 0, Math.PI * 2)
-        ctx.fillStyle = "rgba(255,255,255,0.08)"
+        ctx.fillStyle = canvasColor(ch, 0.08)
         ctx.fill()
       }
 
-      ctx.fillStyle = "rgba(255,255,255,0.045)"
+      ctx.fillStyle = canvasColor(ch, 0.045)
       ctx.fillText("ws://live", w * 0.06, topY)
 
-      ctx.fillStyle = "rgba(255,255,255,0.035)"
+      ctx.fillStyle = canvasColor(ch, 0.035)
       ctx.fillText("●  CONNECTED", w * 0.14, topY)
 
       const latency = 11 + Math.floor(Math.sin(frame * 0.02) * 3 + Math.sin(frame * 0.007) * 2)
@@ -165,7 +169,7 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
       ctx.fillText("events/s: " + evts, w * 0.95, topY)
 
       // ── BOTTOM — Search index stats ──
-      ctx.strokeStyle = "rgba(255,255,255,0.025)"
+      ctx.strokeStyle = canvasColor(ch, 0.025)
       ctx.beginPath()
       ctx.moveTo(w * 0.04, h * 0.935)
       ctx.lineTo(w * 0.96, h * 0.935)
@@ -174,11 +178,11 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
       const botY = h * 0.965
       ctx.font = '8px "JetBrains Mono", monospace'
       ctx.textAlign = "left"
-      ctx.fillStyle = "rgba(255,255,255,0.04)"
+      ctx.fillStyle = canvasColor(ch, 0.04)
 
       ctx.fillText("indexed: 14,247 items", w * 0.05, botY)
 
-      ctx.fillStyle = "rgba(255,255,255,0.03)"
+      ctx.fillStyle = canvasColor(ch, 0.03)
       ctx.fillText("│", w * 0.24, botY)
 
       const qps = 840 + Math.floor(Math.sin(frame * 0.011) * 30)
@@ -188,7 +192,7 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
       ctx.fillText("cache: HIT 94.2%", w * 0.44, botY)
 
       ctx.textAlign = "right"
-      ctx.fillStyle = "rgba(255,255,255,0.035)"
+      ctx.fillStyle = canvasColor(ch, 0.035)
       ctx.fillText("MARKETPLACE  ·  LIVE", w * 0.95, botY)
 
       rafId = requestAnimationFrame(draw)
@@ -203,6 +207,7 @@ export function DiabloTradeGrid({ className = "" }: { className?: string }) {
     return () => {
       cancelAnimationFrame(rafId)
       observer.disconnect()
+      document.removeEventListener("themechange", onThemeChange)
     }
   }, [])
 

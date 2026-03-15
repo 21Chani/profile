@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { getCanvasChannels, canvasColor } from "@/modules/global/lib/theme-colors"
 
 function curveY(xNorm: number) {
   const decay = Math.exp(-3.2 * xNorm)
@@ -33,6 +34,9 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
     const tracerSpeed = 0.0012
     const trailMax = 40
     const state = stateRef.current
+    let ch = getCanvasChannels()
+    function onThemeChange() { ch = getCanvasChannels() }
+    document.addEventListener("themechange", onThemeChange)
 
     function resize() {
       const rect = canvas!.parentElement!.getBoundingClientRect()
@@ -57,7 +61,7 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
       const chartH = chartB - chartT
 
       // Axis lines
-      ctx.strokeStyle = "rgba(255,255,255,0.04)"
+      ctx.strokeStyle = canvasColor(ch, 0.04)
       ctx.lineWidth = 1
 
       ctx.beginPath()
@@ -74,7 +78,7 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
       ctx.font = '8px "JetBrains Mono", monospace'
       ctx.textAlign = "right"
       ctx.textBaseline = "middle"
-      ctx.fillStyle = "rgba(255,255,255,0.04)"
+      ctx.fillStyle = canvasColor(ch, 0.04)
 
       const prices = [1.0, 0.75, 0.5, 0.25, 0.0]
       for (let p = 0; p < prices.length; p++) {
@@ -85,13 +89,13 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
         ctx.stroke()
         if (prices[p] > 0 && prices[p] < 1) {
           ctx.setLineDash([2, 6])
-          ctx.strokeStyle = "rgba(255,255,255,0.02)"
+          ctx.strokeStyle = canvasColor(ch, 0.02)
           ctx.beginPath()
           ctx.moveTo(chartL + 1, ty)
           ctx.lineTo(chartR, ty)
           ctx.stroke()
           ctx.setLineDash([])
-          ctx.strokeStyle = "rgba(255,255,255,0.04)"
+          ctx.strokeStyle = canvasColor(ch, 0.04)
         }
         ctx.fillText(prices[p].toFixed(2), chartL - 8, ty)
       }
@@ -110,7 +114,7 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
       }
 
       // Axis labels
-      ctx.fillStyle = "rgba(255,255,255,0.035)"
+      ctx.fillStyle = canvasColor(ch, 0.035)
       ctx.font = '7px "JetBrains Mono", monospace'
       ctx.textAlign = "center"
       ctx.fillText("TIME", chartL + chartW / 2, chartB + 22)
@@ -135,13 +139,13 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
         const barDist = Math.abs(b / barCount - state.tracerT)
         const barHighlight = barDist < 0.06 ? 0.03 : 0
 
-        ctx.fillStyle = "rgba(255,255,255," + (0.025 + barHighlight).toFixed(4) + ")"
+        ctx.fillStyle = canvasColor(ch, 0.025 + barHighlight)
         ctx.fillRect(bx, by, barW, bh)
       }
 
       // The curve
       ctx.beginPath()
-      ctx.strokeStyle = "rgba(255,255,255,0.07)"
+      ctx.strokeStyle = canvasColor(ch, 0.07)
       ctx.lineWidth = 1.5
 
       const steps = 200
@@ -159,8 +163,8 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
       ctx.lineTo(chartL, chartB)
       ctx.closePath()
       const grad = ctx.createLinearGradient(0, chartT, 0, chartB)
-      grad.addColorStop(0, "rgba(255,255,255,0.02)")
-      grad.addColorStop(1, "rgba(255,255,255,0.0)")
+      grad.addColorStop(0, canvasColor(ch, 0.02))
+      grad.addColorStop(1, canvasColor(ch, 0))
       ctx.fillStyle = grad
       ctx.fill()
 
@@ -168,12 +172,12 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
       const startY = chartB - curveY(0) * chartH
       ctx.beginPath()
       ctx.arc(chartL, startY, 2.5, 0, Math.PI * 2)
-      ctx.fillStyle = "rgba(255,255,255,0.08)"
+      ctx.fillStyle = canvasColor(ch, 0.08)
       ctx.fill()
 
       // Label on curve
       ctx.font = '7px "JetBrains Mono", monospace'
-      ctx.fillStyle = "rgba(255,255,255,0.05)"
+      ctx.fillStyle = canvasColor(ch, 0.05)
       ctx.textAlign = "left"
       ctx.fillText("LBP DECAY", chartL + 12, startY - 10)
 
@@ -196,26 +200,26 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
         const trSize = (tr / state.trail.length) * 1.5
         ctx.beginPath()
         ctx.arc(state.trail[tr].x, state.trail[tr].y, trSize, 0, Math.PI * 2)
-        ctx.fillStyle = "rgba(255,255,255," + trAlpha.toFixed(4) + ")"
+        ctx.fillStyle = canvasColor(ch, trAlpha)
         ctx.fill()
       }
 
       // Main dot
       ctx.beginPath()
       ctx.arc(dotX, dotY, 3, 0, Math.PI * 2)
-      ctx.fillStyle = "rgba(255,255,255,0.12)"
+      ctx.fillStyle = canvasColor(ch, 0.12)
       ctx.fill()
 
       // Glow ring
       ctx.beginPath()
       ctx.arc(dotX, dotY, 6, 0, Math.PI * 2)
-      ctx.strokeStyle = "rgba(255,255,255,0.04)"
+      ctx.strokeStyle = canvasColor(ch, 0.04)
       ctx.lineWidth = 1
       ctx.stroke()
 
       // Crosshair dashes to axes
       ctx.setLineDash([2, 4])
-      ctx.strokeStyle = "rgba(255,255,255,0.03)"
+      ctx.strokeStyle = canvasColor(ch, 0.03)
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.moveTo(dotX, dotY)
@@ -232,7 +236,7 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
       ctx.font = '8px "JetBrains Mono", monospace'
       ctx.textAlign = "right"
       ctx.textBaseline = "middle"
-      ctx.fillStyle = "rgba(255,255,255,0.07)"
+      ctx.fillStyle = canvasColor(ch, 0.07)
       ctx.fillText(curPrice.toFixed(3), chartL - 8, dotY)
 
       // ETH/TKN pair label
@@ -246,16 +250,16 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
       if (blink) {
         ctx.beginPath()
         ctx.arc(lblX + 4, lblY - 5, 2, 0, Math.PI * 2)
-        ctx.fillStyle = "rgba(255,255,255,0.08)"
+        ctx.fillStyle = canvasColor(ch, 0.08)
         ctx.fill()
       }
 
       ctx.font = '9px "JetBrains Mono", monospace'
-      ctx.fillStyle = "rgba(255,255,255,0.06)"
+      ctx.fillStyle = canvasColor(ch, 0.06)
       ctx.fillText("◆ ETH / TKN", lblX, lblY)
 
       ctx.font = '7px "JetBrains Mono", monospace'
-      ctx.fillStyle = "rgba(255,255,255,0.035)"
+      ctx.fillStyle = canvasColor(ch, 0.035)
       ctx.fillText("FJORD LBP", lblX, lblY + 12)
 
       rafId = requestAnimationFrame(draw)
@@ -270,6 +274,7 @@ export function FjoBondingCurve({ className = "" }: { className?: string }) {
     return () => {
       cancelAnimationFrame(rafId)
       observer.disconnect()
+      document.removeEventListener("themechange", onThemeChange)
     }
   }, [])
 

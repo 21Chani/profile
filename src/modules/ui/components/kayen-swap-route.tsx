@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { getCanvasChannels, canvasColor } from "@/modules/global/lib/theme-colors"
 
 interface Node {
   id: string
@@ -73,6 +74,9 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
     let h = 0
     let rafId = 0
     const state = stateRef.current
+    let ch = getCanvasChannels()
+    function onThemeChange() { ch = getCanvasChannels() }
+    document.addEventListener("themechange", onThemeChange)
 
     function resize() {
       const rect = canvas!.parentElement!.getBoundingClientRect()
@@ -99,7 +103,7 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
         const alpha = 0.02 + weight * 0.03
 
         ctx.beginPath()
-        ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(4)})`
+        ctx.strokeStyle = canvasColor(ch, alpha)
         ctx.lineWidth = 1
 
         const cpX = (from.x + to.x) / 2
@@ -115,7 +119,7 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
         const angle = Math.atan2(to.y - from.y, to.x - from.x)
 
         ctx.beginPath()
-        ctx.fillStyle = `rgba(255,255,255,${(alpha * 0.8).toFixed(4)})`
+        ctx.fillStyle = canvasColor(ch, alpha * 0.8)
         ctx.moveTo(mx + Math.cos(angle) * 4, my + Math.sin(angle) * 4)
         ctx.lineTo(mx + Math.cos(angle + 2.5) * 3, my + Math.sin(angle + 2.5) * 3)
         ctx.lineTo(mx + Math.cos(angle - 2.5) * 3, my + Math.sin(angle - 2.5) * 3)
@@ -131,28 +135,28 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
         if (node.type === "source" || node.type === "dest") {
           ctx.beginPath()
           ctx.arc(pos.x, pos.y, node.r, 0, Math.PI * 2)
-          ctx.strokeStyle = "rgba(255,255,255,0.06)"
+          ctx.strokeStyle = canvasColor(ch, 0.06)
           ctx.lineWidth = 1
           ctx.stroke()
-          ctx.fillStyle = "rgba(255,255,255,0.015)"
+          ctx.fillStyle = canvasColor(ch, 0.015)
           ctx.fill()
 
           ctx.font = '9px "JetBrains Mono", monospace'
-          ctx.fillStyle = "rgba(255,255,255,0.07)"
+          ctx.fillStyle = canvasColor(ch, 0.07)
           ctx.textAlign = "center"
           ctx.textBaseline = "middle"
           ctx.fillText(node.label, pos.x, pos.y)
         } else if (node.type === "token") {
           ctx.beginPath()
           ctx.arc(pos.x, pos.y, node.r, 0, Math.PI * 2)
-          ctx.strokeStyle = "rgba(255,255,255,0.05)"
+          ctx.strokeStyle = canvasColor(ch, 0.05)
           ctx.lineWidth = 1
           ctx.stroke()
-          ctx.fillStyle = "rgba(255,255,255,0.01)"
+          ctx.fillStyle = canvasColor(ch, 0.01)
           ctx.fill()
 
           ctx.font = '7px "JetBrains Mono", monospace'
-          ctx.fillStyle = "rgba(255,255,255,0.055)"
+          ctx.fillStyle = canvasColor(ch, 0.055)
           ctx.textAlign = "center"
           ctx.textBaseline = "middle"
           ctx.fillText(node.label, pos.x, pos.y)
@@ -160,15 +164,15 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
           ctx.save()
           ctx.translate(pos.x, pos.y)
           ctx.rotate(Math.PI / 4)
-          ctx.strokeStyle = "rgba(255,255,255,0.04)"
+          ctx.strokeStyle = canvasColor(ch, 0.04)
           ctx.lineWidth = 1
           ctx.strokeRect(-node.r * 0.6, -node.r * 0.6, node.r * 1.2, node.r * 1.2)
-          ctx.fillStyle = "rgba(255,255,255,0.008)"
+          ctx.fillStyle = canvasColor(ch, 0.008)
           ctx.fillRect(-node.r * 0.6, -node.r * 0.6, node.r * 1.2, node.r * 1.2)
           ctx.restore()
 
           ctx.font = '6px "JetBrains Mono", monospace'
-          ctx.fillStyle = "rgba(255,255,255,0.035)"
+          ctx.fillStyle = canvasColor(ch, 0.035)
           ctx.textAlign = "center"
           ctx.textBaseline = "top"
           ctx.fillText(node.label, pos.x, pos.y + node.r + 4)
@@ -199,15 +203,15 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
         ctx.beginPath()
         ctx.arc(tX, tY, 8, 0, Math.PI * 2)
         const glow = ctx.createRadialGradient(tX, tY, 0, tX, tY, 8)
-        glow.addColorStop(0, "rgba(255,255,255,0.06)")
-        glow.addColorStop(1, "rgba(255,255,255,0.0)")
+        glow.addColorStop(0, canvasColor(ch, 0.06))
+        glow.addColorStop(1, canvasColor(ch, 0))
         ctx.fillStyle = glow
         ctx.fill()
 
         // Dot
         ctx.beginPath()
         ctx.arc(tX, tY, 2.5, 0, Math.PI * 2)
-        ctx.fillStyle = "rgba(255,255,255,0.14)"
+        ctx.fillStyle = canvasColor(ch, 0.14)
         ctx.fill()
       }
 
@@ -219,7 +223,7 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
       ctx.clip()
 
       ctx.font = '8px "JetBrains Mono", monospace'
-      ctx.fillStyle = "rgba(255,255,255,0.04)"
+      ctx.fillStyle = canvasColor(ch, 0.04)
       ctx.textAlign = "left"
       ctx.textBaseline = "middle"
 
@@ -229,7 +233,7 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
       ctx.fillText(tickerText, tx1, tickerY)
       ctx.fillText(tickerText, tx1 + tickerW + 100, tickerY)
 
-      ctx.strokeStyle = "rgba(255,255,255,0.02)"
+      ctx.strokeStyle = canvasColor(ch, 0.02)
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.moveTo(w * 0.05, h * 0.075)
@@ -245,7 +249,7 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
       ctx.clip()
 
       ctx.font = '7px "JetBrains Mono", monospace'
-      ctx.fillStyle = "rgba(255,255,255,0.03)"
+      ctx.fillStyle = canvasColor(ch, 0.03)
       ctx.textAlign = "left"
       ctx.textBaseline = "middle"
 
@@ -255,7 +259,7 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
       ctx.fillText(blockText, bx1, blockY)
       ctx.fillText(blockText, bx1 + blockW + 80, blockY)
 
-      ctx.strokeStyle = "rgba(255,255,255,0.02)"
+      ctx.strokeStyle = canvasColor(ch, 0.02)
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.moveTo(w * 0.05, h * 0.93)
@@ -265,7 +269,7 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
 
       // ── Labels ──
       ctx.font = '7px "JetBrains Mono", monospace'
-      ctx.fillStyle = "rgba(255,255,255,0.04)"
+      ctx.fillStyle = canvasColor(ch, 0.04)
       ctx.textAlign = "left"
       ctx.textBaseline = "top"
       ctx.fillText("ROUTE: CHZ \u2192 POOL B \u2192 PEPPER \u2192 POOL D \u2192 USDT", w * 0.08, h * 0.10)
@@ -277,18 +281,18 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
       const blink = Math.sin(state.frame * 0.04) > 0
       ctx.textAlign = "left"
       ctx.textBaseline = "bottom"
-      ctx.fillStyle = "rgba(255,255,255,0.035)"
+      ctx.fillStyle = canvasColor(ch, 0.035)
       ctx.fillText("KAYEN AGGREGATOR", w * 0.08, h * 0.90)
 
       if (blink) {
         ctx.beginPath()
         ctx.arc(w * 0.08 - 6, h * 0.90 - 4, 2, 0, Math.PI * 2)
-        ctx.fillStyle = "rgba(255,255,255,0.07)"
+        ctx.fillStyle = canvasColor(ch, 0.07)
         ctx.fill()
       }
 
       ctx.textAlign = "right"
-      ctx.fillStyle = "rgba(255,255,255,0.03)"
+      ctx.fillStyle = canvasColor(ch, 0.03)
       ctx.fillText("CHILIZ CHAIN", w * 0.92, h * 0.90)
 
       rafId = requestAnimationFrame(draw)
@@ -303,6 +307,7 @@ export function KayenSwapRoute({ className = "" }: { className?: string }) {
     return () => {
       cancelAnimationFrame(rafId)
       observer.disconnect()
+      document.removeEventListener("themechange", onThemeChange)
     }
   }, [])
 
