@@ -16,6 +16,7 @@ import { MatrixRain } from "./modules/global/components/matrix-rain"
 import { Navbar } from "./modules/global/components/navbar"
 import { SectionLabel } from "./modules/global/components/section-label"
 import { SectionShell } from "./modules/global/components/section-shell"
+import { useTheme } from "./modules/global/hooks/use-theme"
 import { AsciiImage } from "./modules/threejs/components/ascii-image"
 import { CommandLine } from "./modules/ui/components/command-line"
 import { ConcaveStake } from "./modules/ui/components/concave-stake"
@@ -35,6 +36,8 @@ const planeGeometry = new THREE.PlaneGeometry(2, 2, 50, 50)
 
 function App() {
   const containerRef = useRef<HTMLDivElement>(null!)
+  const isLightTheme = useTheme().theme === "light"
+
   const [matRef, setMatRef] = useState<AsciiMaterialType | null>()
 
   useEffect(() => {
@@ -164,7 +167,15 @@ function App() {
           prompt={<CommandLine command="wget" args={["-X", "https://fjordfoundry.com"]} />}
           title="Ghostty"
         >
-          <AsciiRenderer className="w-fit px-3" fontSize={8} cols={100} colorMode="mono" src="/assets/fjord.webp" />
+          <AsciiRenderer
+            className="w-fit px-3"
+            fontSize={8}
+            cols={100}
+            colorMode="mono"
+            inverse={isLightTheme}
+            contrast={1.3}
+            src="/assets/fjord.webp"
+          />
         </TerminalCard>
       </SectionShell>
 
@@ -201,7 +212,15 @@ function App() {
           prompt={<CommandLine command="wget" args={["-X", "https://app.kayen.org"]} />}
           title="Ghostty"
         >
-          <AsciiRenderer className="w-fit px-3" fontSize={8} cols={100} colorMode="mono" src="/assets/kayen.png" />
+          <AsciiRenderer
+            className="w-fit px-3"
+            fontSize={8}
+            cols={100}
+            colorMode="mono"
+            contrast={1.2}
+            inverse={isLightTheme}
+            src="/assets/kayen.png"
+          />
         </TerminalCard>
       </SectionShell>
 
@@ -239,8 +258,10 @@ function App() {
           <AsciiRenderer
             className="w-fit px-3 mt-10"
             fontSize={7.2}
+            // contrast={1.3}
             cols={100}
             colorMode="mono"
+            inverse={isLightTheme}
             src="/assets/sanctuary_cleaned.webp"
           />
         </TerminalCard>
@@ -283,6 +304,8 @@ function App() {
             fontSize={7.2}
             cols={100}
             colorMode="mono"
+            contrast={1.8}
+            inverse={isLightTheme}
             src="/assets/concave.png"
           />
         </TerminalCard>

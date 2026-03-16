@@ -1,5 +1,4 @@
 import type { CanvasChannels } from "./theme-colors"
-import { canvasColor } from "./theme-colors"
 
 export type CharsetName = "standard" | "blocks" | "minimal"
 export type ColorMode = "color" | "mono" | "matrix"
@@ -68,16 +67,41 @@ export function imageToAsciiData(
   return result
 }
 
-export function getAsciiColor(cell: AsciiCell, mode: ColorMode, channels?: CanvasChannels): string {
+export function getAsciiChar(
+  cell: AsciiCell,
+  charset: CharsetName,
+  contrast: number,
+  inverse: boolean,
+): string {
+  const chars = CHARSETS[charset]
+  let br = Math.min(1, Math.max(0, (cell.lum - 0.5) * contrast + 0.5))
+  if (inverse) br = 1 - br
+  return chars[Math.floor(br * (chars.length - 1))]
+}
+
+export function getAsciiColor(
+  cell: AsciiCell,
+  mode: ColorMode,
+  channels: CanvasChannels | undefined,
+  contrast: number,
+  inverse: boolean,
+): string {
   if (mode === "mono") {
+    let br = Math.min(1, Math.max(0, (cell.lum - 0.5) * contrast + 0.5))
+    if (inverse) br = 1 - br
     if (channels) {
-      return canvasColor(channels, cell.lum)
+      return `hsla(${channels.h},${channels.s}%,${channels.l}%,${br})`
     }
-    const v = Math.floor(cell.lum * 255)
+    const v = Math.floor(br * 255)
     return `rgb(${v},${v},${v})`
   }
   if (mode === "matrix") {
-    return `rgb(0,${Math.floor(40 + cell.lum * 215)},0)`
+    let br = Math.min(1, Math.max(0, (cell.lum - 0.5) * contrast + 0.5))
+    if (inverse) br = 1 - br
+    return `rgb(0,${Math.floor(40 + br * 215)},0)`
   }
-  return `rgb(${cell.r},${cell.g},${cell.b})`
+  const r = Math.min(255, Math.max(0, ((cell.r / 255 - 0.5) * contrast + 0.5) * 255))
+  const g = Math.min(255, Math.max(0, ((cell.g / 255 - 0.5) * contrast + 0.5) * 255))
+  const b = Math.min(255, Math.max(0, ((cell.b / 255 - 0.5) * contrast + 0.5) * 255))
+  return `rgb(${~~r},${~~g},${~~b})`
 }
