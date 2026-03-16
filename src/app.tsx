@@ -1,8 +1,7 @@
-import { View } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
 import { Analytics } from "@vercel/analytics/react"
 import { gsap } from "gsap"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import * as THREE from "three"
 
 import "./app.css"
@@ -35,7 +34,6 @@ import { STACK_DATA } from "./modules/ui/lib/stack-data"
 const planeGeometry = new THREE.PlaneGeometry(2, 2, 50, 50)
 
 function App() {
-  const containerRef = useRef<HTMLDivElement>(null!)
   const isLightTheme = useTheme().theme === "light"
 
   const [matRef, setMatRef] = useState<AsciiMaterialType | null>()
@@ -55,7 +53,7 @@ function App() {
   }, [])
 
   return (
-    <div ref={containerRef} className="relative pt-28">
+    <div className="relative pt-28">
       <Analytics />
       <Navbar />
 
@@ -65,7 +63,7 @@ function App() {
         background={<MatrixRain />}
       >
         <HudCard title="CHANI.IMG" footerLabel="ASCII RENDER">
-          <View className="absolute inset-0 -z-10" id="container">
+          <Canvas className="absolute inset-0 ">
             <AsciiImage
               defaultProgress={0}
               materialRef={setMatRef}
@@ -74,7 +72,7 @@ function App() {
               geometry={planeGeometry}
               size={0.05}
             />
-          </View>
+          </Canvas>
         </HudCard>
 
         {/* Right: About text */}
@@ -261,6 +259,7 @@ function App() {
             // contrast={1.3}
             cols={100}
             colorMode="mono"
+            charset="standard"
             inverse={isLightTheme}
             src="/assets/sanctuary_cleaned.webp"
           />
@@ -338,15 +337,6 @@ function App() {
           <ContactLink label="WEB" value="chani.sh" href="https://chani.sh" />
         </nav>
       </SectionShell>
-
-      {/* Single shared Canvas — renders all View portals */}
-      <Canvas
-        className="fixed! top-0 left-0 w-full h-full pointer-events-none"
-        style={{ zIndex: 2 }}
-        eventSource={containerRef}
-      >
-        <View.Port />
-      </Canvas>
     </div>
   )
 }
