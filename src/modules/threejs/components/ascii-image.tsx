@@ -1,7 +1,6 @@
-import { useResizeObserver } from "@/modules/global/hooks/use-resize-observer"
 import { useTexture, type PointsInstancesProps } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
-import { useCallback, useMemo, useRef, useState } from "react"
+import { useCallback, useMemo, useRef } from "react"
 import { BufferGeometry, PerspectiveCamera } from "three"
 import { useRandomizeAttributes } from "../hooks/use-randomize-attributes"
 import { processSpriteSheet } from "../lib/process-sprite-sheet"
@@ -13,22 +12,13 @@ void AsciiMaterial
 interface AsciiImageProps extends Omit<PointsInstancesProps, "material"> {
   spriteSrc: string
   shapeSrc: string
-  container?: string | HTMLElement | null
   geometry: BufferGeometry
   materialRef?: (instance: AsciiMaterialType | null) => void
   defaultProgress?: number
   size?: number
 }
 
-export function AsciiImage({
-  defaultProgress = 1,
-  materialRef,
-  shapeSrc,
-  spriteSrc,
-  size,
-  // container,
-  ...props
-}: AsciiImageProps) {
+export function AsciiImage({ defaultProgress = 1, materialRef, shapeSrc, spriteSrc, size, ...props }: AsciiImageProps) {
   const matRef = useRef<AsciiMaterialType>(null)
 
   const setMaterialRef = useCallback(
@@ -51,28 +41,17 @@ export function AsciiImage({
     return height / width
   }, [shapeTexture])
 
-  const { camera } = useThree()
-  const [containerSize, setContainerSize] = useState({ width: 1, height: 1 })
+  const { camera, size: canvasSize } = useThree()
 
-  useResizeObserver("#container", {
-    onResize: (e) => {
-      const { width, height } = e.contentRect
-      setContainerSize({ width, height })
-
-      if (!matRef.current) return
-      matRef.current.uniforms.u_Resolution.value.set(width * window.devicePixelRatio, height * window.devicePixelRatio)
-    },
-  })
-
-  // Compute viewport in world units from the View's container size + camera
+  // Compute viewport in world units from canvas size + camera
   const viewViewport = useMemo(() => {
     const cam = camera as PerspectiveCamera
     const distance = cam.position.z
     const visibleHeight = 2 * Math.tan((cam.fov * Math.PI) / 360) * distance
-    const viewAspect = containerSize.width / containerSize.height
+    const viewAspect = canvasSize.width / canvasSize.height
     const visibleWidth = visibleHeight * viewAspect
     return { width: visibleWidth, height: visibleHeight }
-  }, [camera, containerSize])
+  }, [camera, canvasSize.width, canvasSize.height])
 
   // Scale to fit View width (geometry is 2 units wide: -1 to 1)
   const scaleX = viewViewport.width / 2
@@ -84,6 +63,8 @@ export function AsciiImage({
   useFrame((state) => {
     if (!matRef.current) return
     matRef.current.uniforms.u_Time.value = state.clock.getElapsedTime()
+    const { width, height } = state.size
+    matRef.current.uniforms.u_Resolution.value.set(width * window.devicePixelRatio, height * window.devicePixelRatio)
   })
 
   return (
