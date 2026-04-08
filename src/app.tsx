@@ -23,6 +23,7 @@ import { ContactLink } from "./modules/ui/components/contact-link"
 import { DiabloTradeGrid } from "./modules/ui/components/diablo-trade-grid"
 import { FjoBondingCurve } from "./modules/ui/components/fjo-bonding-curve"
 import { HexDump } from "./modules/ui/components/hex-dump"
+import { KatanaFlywheel } from "./modules/ui/components/katana-flywheel"
 import { KayenSwapRoute } from "./modules/ui/components/kayen-swap-route"
 import { MetaRow } from "./modules/ui/components/meta-row"
 import { StackRow } from "./modules/ui/components/stack-row"
@@ -135,6 +136,50 @@ function App() {
 
       {/* Experience */}
       <SectionLabel id="work" label="EXPERIENCE" className="max-w-270 mx-auto px-5 md:px-10" />
+      {/* Katana */}
+      <SectionShell
+        className="overflow-hidden py-16 md:py-30"
+        innerClassName="flex flex-col md:flex-row gap-4"
+        background={<KatanaFlywheel />}
+      >
+        <div className="relative z-1">
+          <GlitchText as="h2" className="text-2xl md:text-[38px] text-terminal-white leading-[1.1] mb-2">
+            katana
+          </GlitchText>
+          <div className="text-xs text-terminal-text-muted tracking-[4px] mb-9">FULL-STACK DEVELOPER</div>
+          <MetaRow
+            items={[
+              { label: "period", value: "2025 — 2026" },
+              { label: "status", value: "COMPLETED" },
+            ]}
+            className="mb-6"
+          />
+          <p className="text-[12.5px] text-terminal-text-dim leading-8 mb-6">
+            DeFi chain for deep liquidity and sustainable yield. Led email campaign structure, built the quest system
+            end-to-end from backend to frontend, and improved UX/UI designs across the platform.
+          </p>
+          <TechTags tags={["TypeScript", "React", "Next.js", "Wagmi", "Viem", "Node.js"]} />
+        </div>
+        <TerminalCard
+          fitContent
+          className="hidden md:block"
+          prompt={<CommandLine command="wget" args={["-X", "https://katana.network"]} />}
+          title="Ghostty"
+        >
+          <AsciiRenderer
+            className="w-fit px-3"
+            fontSize={8}
+            cols={100}
+            colorMode="mono"
+            inverse={isLightTheme}
+            src="/assets/katana.png"
+          />
+        </TerminalCard>
+      </SectionShell>
+
+      {/* Divider */}
+      <div className="mx-auto max-w-270 h-px bg-linear-to-r from-transparent via-terminal-border-mid to-transparent" />
+
       <SectionShell
         className="overflow-hidden py-16 md:py-30"
         innerClassName="flex flex-col md:flex-row gap-4"

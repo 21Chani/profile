@@ -1,0 +1,2891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>chani.sh</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Major+Mono+Display&display=swap');
+
+  :root {
+    --bg: #050505;
+    --bg-elevated: #0a0a0a;
+    --bg-panel: #0f0f0f;
+    --border: #1a1a1a;
+    --border-mid: #282828;
+    --border-bright: #3a3a3a;
+    --text-muted: #404040;
+    --text-dim: #6e6e6e;
+    --text: #d4d4d4;
+    --text-bright: #f5f5f5;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  ::selection { background: var(--white); color: var(--bg); }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-mid); }
+
+  /* ═══ ASCII MILKY WAY BACKGROUND (hero) ═══ */
+  .hero-waveform {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .hero-waveform canvas {
+    position: absolute; top: 0; left: 0;
+    pointer-events: none;
+  }
+  #heroGlow { z-index: 1; }
+  #heroWaveform { z-index: 0; }
+
+  /* ═══ SCANLINES (kept) ═══ */
+  body::after {
+    content: '';
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.06) 1px, rgba(0,0,0,0.06) 2px);
+    pointer-events: none; z-index: 9999;
+  }
+
+  #threeCanvas {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 0; pointer-events: none;
+  }
+
+  .page { position: relative; z-index: 1; }
+
+  .section-label {
+    font-size: 9px; letter-spacing: 5px; color: var(--text-muted);
+    margin-bottom: 48px; display: flex; align-items: center; gap: 12px;
+    position: relative; z-index: 1;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border-mid), transparent);
+  }
+
+  /* ═══ NAV ═══ */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 16px 40px; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(5,5,5,0.75);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 15px; color: var(--white); letter-spacing: 3px; text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 10px;
+    letter-spacing: 2px; padding: 6px 14px; border: 1px solid transparent; transition: all 0.3s;
+  }
+  .nav-links a:hover { color: var(--text-bright); border-color: var(--border-mid); }
+
+  /* ═══ HERO ═══ */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 80px 40px 40px;
+    position: relative; overflow: hidden;
+  }
+  .hero-inner {
+    display: grid; grid-template-columns: 420px 1fr; gap: 72px;
+    align-items: center; max-width: 1080px; width: 100%;
+    position: relative; z-index: 1;
+  }
+
+  .card-wrapper { perspective: 1200px; }
+  .card-3d { position: relative; transform-style: preserve-3d; transition: transform 0.08s ease-out; }
+
+  .hud-frame {
+    position: relative; background: var(--bg-elevated);
+    border: 1px solid var(--border-mid);
+    box-shadow: 0 0 0 1px var(--border), inset 0 0 60px rgba(0,0,0,0.8);
+  }
+  .hud-corner {
+    position: absolute; width: 24px; height: 24px;
+    border-color: var(--border-bright); border-style: solid; border-width: 0;
+    z-index: 10; transition: border-color 0.4s;
+  }
+  .hud-corner.tl { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .hud-corner.tr { top: -1px; right: -1px; border-top-width: 1px; border-right-width: 1px; }
+  .hud-corner.bl { bottom: -1px; left: -1px; border-bottom-width: 1px; border-left-width: 1px; }
+  .hud-corner.br { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+  .card-3d:hover .hud-corner { border-color: #555; }
+
+  .hud-tick { position: absolute; background: var(--border-mid); z-index: 10; transition: background 0.4s; }
+  .hud-tick.h { width: 20px; height: 1px; }
+  .hud-tick.v { width: 1px; height: 20px; }
+  .hud-tick.top-m { top: -1px; left: 50%; transform: translateX(-50%); }
+  .hud-tick.bot-m { bottom: -1px; left: 50%; transform: translateX(-50%); }
+  .hud-tick.left-m { left: -1px; top: 50%; transform: translateY(-50%); }
+  .hud-tick.right-m { right: -1px; top: 50%; transform: translateY(-50%); }
+  .card-3d:hover .hud-tick { background: #444; }
+
+  .hud-header, .hud-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 16px; background: rgba(15,15,15,0.9);
+  }
+  .hud-header { border-bottom: 1px solid var(--border); }
+  .hud-footer { padding: 8px 16px; border-top: 1px solid var(--border); }
+  .hud-header-left, .hud-footer-text { font-size: 9px; letter-spacing: 3px; color: var(--text-muted); }
+  .hud-footer-text { font-size: 8px; letter-spacing: 2px; }
+  .hud-header-right { display: flex; gap: 6px; align-items: center; }
+  .hud-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); opacity: 0.5; }
+  .hud-dot.active { background: var(--text-dim); opacity: 1; animation: dotPulse 2s ease infinite; }
+  .hud-coords { font-size: 8px; color: var(--text-muted); font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+
+  .hud-viewport { position: relative; width: 100%; aspect-ratio: 3/4; overflow: hidden; background: #080808; }
+  .hud-viewport canvas { display: block; width: 100%; height: 100%; }
+  .hud-scan {
+    position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    animation: scanDown 5s linear infinite; pointer-events: none; z-index: 5;
+  }
+
+  .about { max-width: 480px; }
+  .about-prefix {
+    font-size: 9px; letter-spacing: 5px; color: var(--text-muted);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .about-prefix::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-mid), transparent); }
+  .about-name {
+    font-family: 'Major Mono Display', monospace; font-size: 44px;
+    color: var(--white); line-height: 1.05; margin-bottom: 6px; position: relative;
+  }
+  .about-name .g {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    color: var(--white); opacity: 0; animation: glitch 7s ease infinite; pointer-events: none;
+  }
+  .about-name .g:nth-child(2) { clip-path: inset(15% 0 65% 0); animation-delay: 0.1s; }
+  .about-name .g:nth-child(3) { clip-path: inset(65% 0 10% 0); animation-delay: 0.25s; }
+  .about-title { font-size: 12px; color: var(--text-dim); letter-spacing: 6px; margin-bottom: 32px; font-weight: 300; }
+  .about-bio { color: var(--text-dim); font-size: 12.5px; line-height: 2; margin-bottom: 36px; }
+  .about-bio em { color: var(--text); font-style: normal; border-bottom: 1px dashed var(--border-bright); }
+
+  .terminal { border: 1px solid var(--border); background: rgba(10,10,10,0.6); font-size: 11.5px; }
+  .terminal-bar {
+    display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+    border-bottom: 1px solid var(--border); background: rgba(15,15,15,0.8);
+  }
+  .term-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--border-mid); }
+  .term-title { font-size: 9px; letter-spacing: 2px; color: var(--text-muted); margin-left: 6px; }
+  .terminal-body { padding: 16px 18px; }
+  .term-line { display: flex; padding: 3px 0; }
+  .term-line .prompt { color: var(--text-muted); margin-right: 8px; user-select: none; }
+  .term-line .key { color: var(--text-muted); display: inline-block; width: 100px; }
+  .term-line .val { color: var(--text); }
+  .cursor-blink {
+    display: inline-block; width: 7px; height: 13px;
+    background: var(--text-dim); animation: cursorBlink 1.2s step-end infinite;
+    vertical-align: middle; margin-left: 4px;
+  }
+
+  /* ═══ STACKS ═══ */
+  .stacks { padding: 120px 40px; max-width: 1080px; margin: 0 auto; position: relative; }
+  .stacks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; position: relative; z-index: 1; }
+
+  /* ═══ HEX DUMP BACKGROUND (stacks) ═══ */
+  .hex-dump {
+    position: absolute; top: -40px; left: -20%; right: -20%; bottom: -40px;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+    mask-image:
+      linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(180deg, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
+  .hex-dump-cols {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 5%;
+  }
+  .hex-dump-inner {
+    display: flex; flex-direction: column;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 22px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.035);
+    user-select: none;
+    white-space: nowrap;
+    animation: hexScroll linear infinite;
+    will-change: transform;
+    flex-shrink: 0;
+  }
+  .hex-row {
+    padding: 0 10px;
+  }
+  .hex-row.gap { height: 44px; } /* empty gap rows */
+  .hex-addr { color: rgba(255,255,255,0.05); }
+
+  /* Terminal event lines */
+  .hex-row.evt-warn {
+    color: rgba(255,255,255,0.06);
+    letter-spacing: 1px;
+  }
+  .hex-row.evt-err {
+    color: rgba(255,255,255,0.07);
+    letter-spacing: 1px;
+  }
+  .hex-row.evt-sys {
+    color: rgba(255,255,255,0.045);
+    letter-spacing: 1px;
+  }
+  .evt-tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  @keyframes hexScroll {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+
+  .stack-terminal {
+    border: 1px solid var(--border); background: var(--bg-elevated);
+    position: relative; overflow: hidden; transition: border-color 0.4s;
+  }
+  .stack-terminal:hover { border-color: var(--border-bright); }
+  .stack-terminal:hover .st-scan { opacity: 1; }
+
+  .stack-terminal::before,
+  .stack-terminal::after {
+    content: ''; position: absolute; width: 16px; height: 16px;
+    border-color: var(--border-mid); border-style: solid; border-width: 0;
+    z-index: 5; transition: border-color 0.4s; pointer-events: none;
+  }
+  .stack-terminal::before { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .stack-terminal::after { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+  .stack-terminal:hover::before,
+  .stack-terminal:hover::after { border-color: var(--border-bright); }
+
+  .st-scan {
+    position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.03) 50%, transparent 95%);
+    animation: scanDown 6s linear infinite; pointer-events: none; z-index: 4;
+    opacity: 0; transition: opacity 0.4s;
+  }
+
+  .st-titlebar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 14px; border-bottom: 1px solid var(--border); background: rgba(12,12,12,0.9);
+  }
+  .st-dots { display: flex; gap: 5px; }
+  .st-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    border: 1px solid var(--border-mid); transition: border-color 0.3s;
+  }
+  .stack-terminal:hover .st-dot { border-color: var(--border-bright); }
+  .st-path { font-size: 9px; letter-spacing: 1px; color: var(--text-muted); margin-left: 4px; }
+
+  .st-prompt {
+    padding: 10px 14px 6px; font-size: 10px; color: var(--text-muted);
+    display: flex; align-items: center; user-select: none;
+  }
+  .st-prompt-user { color: var(--text-dim); }
+  .st-prompt-cmd { color: var(--text); margin-left: 6px; }
+  .st-prompt-flag { color: var(--text-muted); margin-left: 5px; }
+
+  .st-body { padding: 2px 0 8px; }
+
+  .st-row {
+    display: flex; align-items: center;
+    padding: 4px 14px;
+    position: relative; cursor: default;
+    font-size: 11.5px; line-height: 1.4;
+  }
+  .st-row:hover .st-row-bg { opacity: 1; }
+  .st-row:hover .st-fname { color: var(--text-bright); }
+  .st-row:hover .st-fext { color: var(--text-dim); }
+  .st-row:hover .st-ficon { color: var(--text-dim); }
+  .st-row:hover .st-prof { color: var(--text-dim); }
+  .st-row:hover .st-prof .f { color: var(--text-bright); }
+  .st-row:hover .st-prof .e { color: var(--border-bright); }
+
+  .st-row-bg {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.02);
+    opacity: 0; transition: opacity 0.15s; pointer-events: none;
+  }
+
+  .st-ficon {
+    width: 22px; flex-shrink: 0;
+    font-size: 12px; color: var(--text-muted);
+    position: relative; z-index: 1; transition: color 0.15s;
+    text-align: center;
+  }
+  .st-fname {
+    color: var(--text); transition: color 0.15s;
+    position: relative; z-index: 1; white-space: nowrap;
+  }
+  .st-fext {
+    color: var(--text-muted); transition: color 0.15s;
+    position: relative; z-index: 1;
+  }
+  .st-prof {
+    margin-left: auto;
+    font-size: 8px; letter-spacing: 2px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    position: relative; z-index: 1;
+    transition: color 0.15s;
+    white-space: nowrap;
+  }
+  .st-prof .f { color: var(--text-dim); }
+  .st-prof .e { color: var(--border-mid); }
+
+  .st-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 14px; border-top: 1px solid var(--border); background: rgba(12,12,12,0.6);
+  }
+  .st-footer-text {
+    font-size: 8px; letter-spacing: 1px; color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .st-row {
+    opacity: 0; transform: translateY(3px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .st-row.visible { opacity: 1; transform: translateY(0); }
+
+  /* ═══ EXPERIENCE SECTIONS ═══ */
+  .exp-section {
+    padding: 120px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .exp-inner {
+    max-width: 1080px; margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+
+  /* Company name — glitch effect, JetBrains Mono extra-bold */
+  .exp-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 48px; color: var(--white);
+    line-height: 1.1; margin-bottom: 10px;
+    position: relative;
+    letter-spacing: -1px;
+  }
+  .exp-name .g {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    color: var(--white); opacity: 0; pointer-events: none;
+  }
+  .exp-name .g:nth-child(2) {
+    clip-path: inset(20% 0 60% 0);
+    animation: glitch 8s ease infinite 0.15s;
+  }
+  .exp-name .g:nth-child(3) {
+    clip-path: inset(60% 0 15% 0);
+    animation: glitch 8s ease infinite 0.3s;
+  }
+
+  .exp-role {
+    font-size: 10px; color: var(--text-muted);
+    letter-spacing: 4px; margin-bottom: 36px;
+  }
+
+  /* Deprecated / migration badge */
+  .exp-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    border: 1px solid var(--border-mid);
+    padding: 3px 10px;
+    margin-left: 12px;
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .exp-badge:hover {
+    border-color: var(--border-bright);
+    color: var(--text-dim);
+  }
+
+  /* Terminal kill signal */
+  .exp-kill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+  .exp-kill .kill-signal { color: var(--text-dim); }
+  .exp-kill .kill-pid { color: var(--text-muted); }
+  .exp-kill .kill-redirect { color: var(--text-muted); font-style: normal; }
+  .exp-kill .kill-target { color: var(--text); border-bottom: 1px dashed var(--border-bright); }
+
+  /* Layout — info left, terminal preview right */
+  .exp-layout {
+    display: grid; grid-template-columns: 1fr 280px;
+    gap: 48px; align-items: start;
+  }
+
+  /* Meta block */
+  .exp-meta {
+    display: flex; gap: 24px; margin-bottom: 24px;
+    font-size: 10px;
+  }
+  .exp-meta-item { display: flex; gap: 6px; }
+  .exp-meta-key { color: var(--text-muted); letter-spacing: 1px; }
+  .exp-meta-val { color: var(--text); font-variant-numeric: tabular-nums; }
+
+  .exp-desc {
+    font-size: 12.5px; color: var(--text-dim);
+    line-height: 2; margin-bottom: 24px;
+  }
+
+  .exp-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+  .exp-tag {
+    font-size: 9px; letter-spacing: 1px; color: var(--text-muted);
+    padding: 3px 10px; border: 1px solid var(--border); transition: all 0.3s;
+  }
+  .exp-section:hover .exp-tag { border-color: var(--border-mid); color: var(--text-dim); }
+
+  /* Terminal preview for ASCII image */
+  .exp-preview {
+    border: 1px solid var(--border); background: var(--bg-elevated);
+    position: relative; overflow: hidden;
+    transition: border-color 0.4s;
+  }
+  .exp-section:hover .exp-preview { border-color: var(--border-bright); }
+
+  /* HUD corners on preview */
+  .exp-preview-corner {
+    position: absolute; width: 16px; height: 16px;
+    border-color: var(--border-mid); border-style: solid; border-width: 0;
+    z-index: 5; transition: border-color 0.4s; pointer-events: none;
+  }
+  .exp-preview-corner.tl { top: -1px; left: -1px; border-top-width: 1px; border-left-width: 1px; }
+  .exp-preview-corner.tr { top: -1px; right: -1px; border-top-width: 1px; border-right-width: 1px; }
+  .exp-preview-corner.bl { bottom: -1px; left: -1px; border-bottom-width: 1px; border-left-width: 1px; }
+  .exp-preview-corner.br { bottom: -1px; right: -1px; border-bottom-width: 1px; border-right-width: 1px; }
+  .exp-section:hover .exp-preview-corner { border-color: var(--border-bright); }
+
+  .exp-preview-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+    background: rgba(12,12,12,0.9);
+  }
+  .exp-preview-dots { display: flex; gap: 5px; }
+  .exp-preview-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    border: 1px solid var(--border-mid); transition: border-color 0.3s;
+  }
+  .exp-section:hover .exp-preview-dot { border-color: var(--border-bright); }
+  .exp-preview-title { font-size: 8px; letter-spacing: 2px; color: var(--text-muted); margin-left: 4px; }
+
+  .exp-preview-body {
+    padding: 12px;
+    background: rgba(8,8,8,0.6);
+  }
+  .exp-preview-body pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; line-height: 1.4;
+    color: var(--text-dim); margin: 0;
+    white-space: pre; overflow: hidden;
+  }
+
+  .exp-preview-footer {
+    display: flex; justify-content: space-between;
+    padding: 6px 12px; border-top: 1px solid var(--border);
+    background: rgba(12,12,12,0.6);
+  }
+  .exp-preview-footer span {
+    font-size: 8px; letter-spacing: 1px; color: var(--text-muted);
+  }
+
+  .exp-preview-scan {
+    position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.03) 50%, transparent 95%);
+    animation: scanDown 5s linear infinite; pointer-events: none; z-index: 4;
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .exp-section:hover .exp-preview-scan { opacity: 1; }
+
+  /* Divider between experience sections */
+  .exp-divider {
+    max-width: 1080px; margin: 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-mid) 20%, var(--border-mid) 80%, transparent);
+  }
+
+  /* ── Per-section backgrounds ── */
+
+  /* Fjord: LBP bonding curve */
+  .exp-section.exp-fjord .fjord-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .fjord-bg canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    mask-image:
+      radial-gradient(ellipse 90% 70% at 50% 50%, black 15%, transparent 70%);
+    -webkit-mask-image:
+      radial-gradient(ellipse 90% 70% at 50% 50%, black 15%, transparent 70%);
+  }
+
+  /* Kayen: swap route diagram */
+  .exp-section.exp-kayen .kayen-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .kayen-bg canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    mask-image:
+      linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  }
+
+  /* Diablo Trade: inventory grid */
+  .exp-section.exp-diablo .diablo-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .diablo-bg canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    mask-image:
+      linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);
+  }
+
+  /* Concave: protocol state machine */
+  .exp-section.exp-concave .concave-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .concave-bg canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    mask-image:
+      linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);
+  }
+
+  /* Katana: quest / email campaign flow */
+  .exp-section.exp-katana .katana-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .katana-bg canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    mask-image:
+      linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0%, black 7%, black 93%, transparent 100%);
+  }
+
+  /* ═══ CONTACT ═══ */
+  .contact { padding: 120px 40px; max-width: 1080px; margin: 0 auto; }
+  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
+  .contact-heading { font-family: 'Major Mono Display', monospace; font-size: 36px; color: var(--white); line-height: 1.1; margin-bottom: 20px; }
+  .contact-sub { font-size: 12.5px; color: var(--text-dim); line-height: 2; }
+  .contact-links { display: flex; flex-direction: column; gap: 2px; }
+  .contact-link {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0; border-bottom: 1px solid var(--border);
+    text-decoration: none; color: var(--text-dim); transition: all 0.3s;
+  }
+  .contact-link:first-child { border-top: 1px solid var(--border); }
+  .contact-link:hover { color: var(--text-bright); }
+  .contact-link:hover .contact-arrow { opacity: 1; transform: translateX(0); }
+  .contact-link-label { font-size: 10px; letter-spacing: 2px; }
+  .contact-link-value { font-size: 12px; }
+  .contact-arrow { font-size: 14px; opacity: 0; transform: translateX(-8px); transition: all 0.3s; }
+
+  /* ═══ FOOTER ═══ */
+  .footer {
+    border-top: 1px solid var(--border); padding: 20px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 10px; color: var(--text-muted);
+  }
+  .footer-status { display: flex; align-items: center; gap: 8px; }
+  .status-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--text-dim); animation: dotPulse 3s ease infinite; }
+
+  @keyframes cursorBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes dotPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  @keyframes scanDown { 0% { top: 0; } 100% { top: 100%; } }
+  @keyframes glitch {
+    0%,93%,100% { opacity: 0; transform: translateX(0); }
+    94% { opacity: 0.7; transform: translateX(-4px); }
+    95% { opacity: 0.5; transform: translateX(4px); }
+    96% { opacity: 0; }
+  }
+
+  @media (max-width: 860px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 48px; max-width: 420px; }
+    .about-name { font-size: 32px; }
+    .nav { padding: 14px 20px; }
+    .hero, .stacks, .work, .contact { padding-left: 20px; padding-right: 20px; }
+    .nav-links a { font-size: 9px; padding: 5px 10px; letter-spacing: 1px; }
+    .exp-layout { grid-template-columns: 1fr; gap: 32px; }
+    .exp-preview { max-width: 280px; }
+    .exp-name { font-size: 32px; }
+    .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    .contact-heading { font-size: 28px; }
+    .stacks-grid { grid-template-columns: 1fr; }
+    .hero-waveform, .hex-dump, .katana-bg { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="threeCanvas"></canvas>
+
+<div class="page">
+
+  <nav class="nav">
+    <a href="#" class="nav-logo">chani.sh</a>
+    <div class="nav-links">
+      <a href="#about">ABOUT</a>
+      <a href="#stacks">STACKS</a>
+      <a href="#work">WORK</a>
+      <a href="#contact">CONTACT</a>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="about">
+    <div class="hero-waveform">
+      <canvas id="heroWaveform"></canvas>
+      <canvas id="heroGlow"></canvas>
+    </div>
+    <div class="hero-inner">
+      <div class="card-wrapper">
+        <div class="card-3d" id="card3d">
+          <div class="hud-frame">
+            <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+            <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+            <div class="hud-tick h top-m"></div><div class="hud-tick h bot-m"></div>
+            <div class="hud-tick v left-m"></div><div class="hud-tick v right-m"></div>
+            <div class="hud-header">
+              <span class="hud-header-left">CHANI.IMG</span>
+              <div class="hud-header-right">
+                <div class="hud-dot"></div><div class="hud-dot"></div><div class="hud-dot active"></div>
+              </div>
+            </div>
+            <div class="hud-viewport" id="asciiViewport"><div class="hud-scan"></div></div>
+            <div class="hud-footer">
+              <span class="hud-footer-text">ASCII RENDER</span>
+              <span class="hud-coords" id="hudCoords">0.00 / 0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about">
+        <div class="about-prefix">INIT SEQUENCE</div>
+        <h1 class="about-name">
+          diogo<br>mendonça
+          <span class="g" aria-hidden="true">diogo<br>mendonça</span>
+          <span class="g" aria-hidden="true">diogo<br>mendonça</span>
+        </h1>
+        <div class="about-title">SR. FRONTEND ENGINEER</div>
+        <p class="about-bio">
+          Senior Frontend Engineer with <em>5+ years</em> of experience,
+          specializing in <em>TypeScript</em> and <em>React</em>. Known for
+          leveraging hyperfocus and a relentless drive to deliver
+          <em>elegant, high-performance</em> solutions.
+        </p>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
+            <span class="term-title">~/about</span>
+          </div>
+          <div class="terminal-body">
+            <div class="term-line"><span class="prompt">▸</span><span class="key">alias</span><span class="val">Chani</span></div>
+            <div class="term-line"><span class="prompt">▸</span><span class="key">location</span><span class="val">Brazil</span></div>
+            <div class="term-line"><span class="prompt">▸</span><span class="key">exp</span><span class="val">5+ years</span></div>
+            <div class="term-line"><span class="prompt">▸</span><span class="key">focus</span><span class="val">Web3 · Frontend</span></div>
+            <div class="term-line"><span class="prompt">▸</span><span class="key">status</span><span class="val">open to work <span class="cursor-blink"></span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STACKS ═══ -->
+  <section class="stacks" id="stacks">
+    <div class="hex-dump" id="hexDump"><div class="hex-dump-cols" id="hexDumpCols"></div></div>
+    <div class="section-label">TECH STACKS</div>
+
+    <div class="stacks-grid">
+
+      <!-- FRONTEND -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/frontend</span>
+        </div>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
+        </div>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚛</span><span class="st-fname">react</span><span class="st-fext">.tsx</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▲</span><span class="st-fname">next</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◇</span><span class="st-fname">typescript</span><span class="st-fext">.lang.ts</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">tailwind</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊡</span><span class="st-fname">tanstack</span><span class="st-fext">.query.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚡</span><span class="st-fname">vite</span><span class="st-fext">.config.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◧</span><span class="st-fname">shadcn</span><span class="st-fext">.ui.tsx</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">zod</span><span class="st-fext">.schema.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◉</span><span class="st-fname">jotai</span><span class="st-fext">.store.ts</span><span class="st-prof">■■■■□</span></div>
+        </div>
+        <div class="st-footer"><span class="st-footer-text">9 files</span></div>
+      </div>
+
+      <!-- LANGUAGES -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/languages</span>
+        </div>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
+        </div>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◇</span><span class="st-fname">typescript</span><span class="st-fext">.ts</span><span class="st-prof">■■■■■</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◆</span><span class="st-fname">javascript</span><span class="st-fext">.js</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">css</span><span class="st-fext">.module.css</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◁</span><span class="st-fname">html</span><span class="st-fext">.template.html</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">solidity</span><span class="st-fext">.sol</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊞</span><span class="st-fname">golang</span><span class="st-fext">.go</span><span class="st-prof">■■■□□</span></div>
+        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
+      </div>
+
+      <!-- WEB3 -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/web3</span>
+        </div>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
+        </div>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◎</span><span class="st-fname">viem</span><span class="st-fext">.client.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊙</span><span class="st-fname">wagmi</span><span class="st-fext">.hooks.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⬡</span><span class="st-fname">ethers</span><span class="st-fext">.provider.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◈</span><span class="st-fname">solana-web3</span><span class="st-fext">.connection.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▣</span><span class="st-fname">metaplex</span><span class="st-fext">.nft.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⚓</span><span class="st-fname">anchor</span><span class="st-fext">.program.rs</span><span class="st-prof">■■■□□</span></div>
+        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
+      </div>
+
+      <!-- BACKEND / INFRA -->
+      <div class="stack-terminal">
+        <div class="st-scan"></div>
+        <div class="st-titlebar">
+          <div class="st-dots"><div class="st-dot"></div><div class="st-dot"></div><div class="st-dot"></div></div>
+          <span class="st-path">chani@dev: ~/stacks/backend</span>
+        </div>
+        <div class="st-prompt">
+          <span class="st-prompt-user">$</span>
+          <span class="st-prompt-cmd">ls</span>
+          <span class="st-prompt-flag">-1</span>
+        </div>
+        <div class="st-body">
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⇌</span><span class="st-fname">trpc</span><span class="st-fext">.router.ts</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◫</span><span class="st-fname">prisma</span><span class="st-fext">.schema</span><span class="st-prof">■■■■□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⊟</span><span class="st-fname">postgresql</span><span class="st-fext">.sql</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">◉</span><span class="st-fname">mongodb</span><span class="st-fext">.aggregate.ts</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">▦</span><span class="st-fname">docker</span><span class="st-fext">-compose.yml</span><span class="st-prof">■■■□□</span></div>
+          <div class="st-row"><div class="st-row-bg"></div><span class="st-ficon">⇄</span><span class="st-fname">websocket</span><span class="st-fext">.gateway.ts</span><span class="st-prof">■■■■□</span></div>
+        </div>
+        <div class="st-footer"><span class="st-footer-text">6 files</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ EXPERIENCE ═══ -->
+  <div id="work">
+    <div style="max-width:1080px;margin:0 auto;padding:0 40px;">
+      <div class="section-label">EXPERIENCE</div>
+    </div>
+
+    <!-- ── Katana ── -->
+    <section class="exp-section exp-katana">
+      <div class="katana-bg">
+        <canvas id="katanaFlow"></canvas>
+      </div>
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          katana
+          <span class="g" aria-hidden="true">katana</span>
+          <span class="g" aria-hidden="true">katana</span>
+        </h2>
+        <div class="exp-role">FULL-STACK DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2025 — 2026</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">COMPLETED</span></div>
+            </div>
+            <p class="exp-desc">DeFi chain for deep liquidity and sustainable yield. Led email campaign structure, built the quest system end-to-end from backend to frontend, and improved UX/UI designs across the platform.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">Wagmi</span><span class="exp-tag">Viem</span><span class="exp-tag">Node.js</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║  FLYWHEEL                  ║
+  ║       ┌─VAULT─┐           ║
+  ║     ╱           ╲          ║
+  ║  BRIDGE    →    YIELD     ║
+  ║     ╲           ╱          ║
+  ║       └──CoL──┘           ║
+  ║                            ║
+  ║  ▸ TVL: $240M+            ║
+  ║  ▸ vKAT staked: 82.4%    ║
+  ║  ▸ seq fees → CoL: 100%  ║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>katana-defi.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="exp-divider"></div>
+
+    <!-- ── Fjord Foundry ── -->
+    <section class="exp-section exp-fjord">
+      <div class="fjord-bg">
+        <canvas id="fjordCurve"></canvas>
+      </div>
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          fjord foundry
+          <span class="g" aria-hidden="true">fjord foundry</span>
+          <span class="g" aria-hidden="true">fjord foundry</span>
+        </h2>
+        <div class="exp-role">FRONTEND DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2023 — 2025</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">COMPLETED</span></div>
+            </div>
+            <p class="exp-desc">Built the Liquidity Bootstrapping Pool UI and token management dashboards for one of DeFi's leading fair launch platforms.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">Tailwind</span><span class="exp-tag">Ethers</span><span class="exp-tag">Viem</span><span class="exp-tag">Wagmi</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║   ┌──────┐  ▓▓▓▓▓▓▓     ║
+  ║   │ LBP  │  ░░░░░░░     ║
+  ║   │CHART │  ▓▓▓▓░░░     ║
+  ║   │      │  ░░░░░░░     ║
+  ║   └──┬───┘  ▓▓░░░░░     ║
+  ║      │     ┌─────────┐   ║
+  ║   ───┘     │  TOKEN  │   ║
+  ║            │  LAUNCH  │   ║
+  ║            └─────────┘   ║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>fjord-ui.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="exp-divider"></div>
+
+    <!-- ── Kayen ── -->
+    <section class="exp-section exp-kayen">
+      <div class="kayen-bg">
+        <canvas id="kayenRoute"></canvas>
+      </div>
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          kayen
+          <span class="g" aria-hidden="true">kayen</span>
+          <span class="g" aria-hidden="true">kayen</span>
+        </h2>
+        <div class="exp-kill">
+          <span class="kill-signal">[SIGTERM]</span> <span class="kill-pid">pid 2024 killed</span><br>
+          <span class="kill-redirect">▸ process migrated to</span> <span class="kill-target">fanx</span>
+        </div>
+        <div class="exp-role">FRONTEND DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2024</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">SUNSET</span></div>
+            </div>
+            <p class="exp-desc">DEX aggregator interfaces and Solana DeFi tooling. Designed fast, responsive trading UIs for high-throughput environments.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">Solana</span><span class="exp-tag">Metaplex</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║  SOL ━━▶ USDC            ║
+  ║  ┌───────────────────┐   ║
+  ║  │  ◈ SWAP            │   ║
+  ║  │    0.42 ━━▶ 12.80  │   ║
+  ║  │    slippage: 0.5%  │   ║
+  ║  └───────────────────┘   ║
+  ║                           ║
+  ║  ▸ route: JUP → RAY      ║
+  ║  ▸ hops: 3  ● latency 4ms║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>kayen-dex.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="exp-divider"></div>
+
+    <!-- ── Diablo Trade ── -->
+    <section class="exp-section exp-diablo">
+      <div class="diablo-bg">
+        <canvas id="diabloGrid"></canvas>
+      </div>
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          diablo trade
+          <span class="g" aria-hidden="true">diablo trade</span>
+          <span class="g" aria-hidden="true">diablo trade</span>
+        </h2>
+        <div class="exp-role">FULLSTACK DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2023 — 2024</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">COMPLETED</span></div>
+            </div>
+            <p class="exp-desc">Game item marketplace with real-time trading features, search indexing, and live WebSocket price feeds.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">tRPC</span><span class="exp-tag">Prisma</span><span class="exp-tag">PostgreSQL</span><span class="exp-tag">WebSockets</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║  ⚔ ITEM MARKETPLACE      ║
+  ║  ┌────┐ ┌────┐ ┌────┐   ║
+  ║  │ ⚔  │ │ ◈  │ │ ⛊  │   ║
+  ║  │$420│ │$180│ │$95 │   ║
+  ║  └────┘ └────┘ └────┘   ║
+  ║                           ║
+  ║  ▸ ws://live ● CONNECTED ║
+  ║  ▸ indexed: 14.2K items  ║
+  ║  ▸ latency: 12ms         ║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>diablo-market.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="exp-divider"></div>
+
+    <!-- ── Concave ── -->
+    <section class="exp-section exp-concave">
+      <div class="concave-bg">
+        <canvas id="concaveState"></canvas>
+      </div>
+      <div class="exp-inner">
+        <h2 class="exp-name">
+          concave
+          <span class="g" aria-hidden="true">concave</span>
+          <span class="g" aria-hidden="true">concave</span>
+        </h2>
+        <div class="exp-role">FRONTEND DEVELOPER</div>
+
+        <div class="exp-layout">
+          <div>
+            <div class="exp-meta">
+              <div class="exp-meta-item"><span class="exp-meta-key">period</span><span class="exp-meta-val">2021 — 2023</span></div>
+              <div class="exp-meta-item"><span class="exp-meta-key">status</span><span class="exp-meta-val">COMPLETED</span></div>
+            </div>
+            <p class="exp-desc">DeFi protocol dashboards — staking, bonding, and liquidity UIs. Shipped production interfaces handling millions in TVL.</p>
+            <div class="exp-tech">
+              <span class="exp-tag">TypeScript</span><span class="exp-tag">React</span><span class="exp-tag">Next.js</span>
+              <span class="exp-tag">Ethers</span><span class="exp-tag">Wagmi</span><span class="exp-tag">Jotai</span>
+            </div>
+          </div>
+
+          <div class="exp-preview">
+            <div class="exp-preview-scan"></div>
+            <div class="exp-preview-corner tl"></div><div class="exp-preview-corner tr"></div>
+            <div class="exp-preview-corner bl"></div><div class="exp-preview-corner br"></div>
+            <div class="exp-preview-bar">
+              <div class="exp-preview-dots"><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div><div class="exp-preview-dot"></div></div>
+              <span class="exp-preview-title">PREVIEW.ASC</span>
+            </div>
+            <div class="exp-preview-body">
+              <pre>
+  ╔══════════════════════════╗
+  ║  TVL: $4.2M               ║
+  ║  ┌──────────────────┐    ║
+  ║  │ ▓▓▓▓▓▓▓░░░ STAKE │    ║
+  ║  │ ▓▓▓▓░░░░░  BOND  │    ║
+  ║  │ ▓▓▓▓▓░░░░  LP    │    ║
+  ║  └──────────────────┘    ║
+  ║                           ║
+  ║  ▸ APY: 142.8%            ║
+  ║  ▸ bonding: 5d 12h left  ║
+  ╚══════════════════════════╝</pre>
+            </div>
+            <div class="exp-preview-footer">
+              <span>concave-defi.asc</span>
+              <span>280x180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ CONTACT ═══ -->
+  <section class="contact" id="contact">
+    <div class="section-label">CONTACT</div>
+    <div class="contact-inner">
+      <div>
+        <h2 class="contact-heading">let's<br>build</h2>
+        <p class="contact-sub">Always happy to connect over interesting projects and ideas.</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:contact@chani.sh" class="contact-link">
+          <div><div class="contact-link-label">EMAIL</div><div class="contact-link-value">contact@chani.sh</div></div>
+          <span class="contact-arrow">→</span>
+        </a>
+        <a href="https://github.com/21Chani" target="_blank" rel="noopener" class="contact-link">
+          <div><div class="contact-link-label">GITHUB</div><div class="contact-link-value">github.com/21Chani</div></div>
+          <span class="contact-arrow">→</span>
+        </a>
+        <a href="https://chani.sh" class="contact-link">
+          <div><div class="contact-link-label">WEB</div><div class="contact-link-value">chani.sh</div></div>
+          <span class="contact-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-status"><div class="status-pip"></div><span>AVAILABLE FOR HIRE</span></div>
+    <span>© 2025 — chani.sh</span>
+  </footer>
+
+</div>
+
+<script>
+// ─── Hero ASCII Milky Way (WebGL) ───
+try {
+(() => {
+  const glCanvas = document.getElementById('heroWaveform');
+  if (!glCanvas) return;
+  const gl = glCanvas.getContext('webgl', { alpha: false, antialias: false });
+  if (!gl) { console.warn('WebGL not available for hero background'); return; }
+
+  const glowCanvas = document.getElementById('heroGlow');
+  const glowCtx = glowCanvas.getContext('2d');
+
+  const ATLAS_CELL = 64, ATLAS_FONT = 40, ATLAS_PAD = 8;
+  const ALL_CHARS = ['·', '∙', '•', '●', '◦', '◌', '○'];
+  let atlasCellTotal, atlasWidth, atlasHeight;
+
+  function createAtlas() {
+    const count = ALL_CHARS.length;
+    const cellTotal = ATLAS_CELL + ATLAS_PAD;
+    const ac = document.createElement('canvas');
+    ac.width = count * cellTotal; ac.height = cellTotal;
+    const ctx = ac.getContext('2d');
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, ac.width, ac.height);
+    ctx.font = ATLAS_FONT + 'px "Courier New","SF Mono",monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff';
+    for (let i = 0; i < count; i++) ctx.fillText(ALL_CHARS[i], i * cellTotal + ATLAS_CELL / 2 + ATLAS_PAD / 2, cellTotal / 2);
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ac);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    atlasCellTotal = cellTotal; atlasWidth = ac.width; atlasHeight = ac.height;
+    return tex;
+  }
+
+  const VERT_SRC = `
+    attribute float a_baseAngle; attribute float a_dist; attribute float a_charIndex;
+    attribute float a_baseBright; attribute float a_armStr; attribute float a_pointSize;
+    uniform float u_time; uniform vec2 u_resolution; uniform vec2 u_center; uniform float u_galaxyR;
+    varying float v_charIndex; varying vec3 v_color; varying float v_alpha;
+    const float ORB_CORE=0.02,ORB_EDGE=0.003,CORE_F=0.06,BULGE_F=0.20;
+    void main(){
+      float nd=a_dist/u_galaxyR;
+      float cl=min(nd,2.5);float spd=ORB_CORE+(ORB_EDGE-ORB_CORE)*sqrt(cl/2.5);
+      float curAngle=a_baseAngle+spd*u_time;
+      vec2 pos=u_center+vec2(cos(curAngle),sin(curAngle))*a_dist;
+      float arm=a_armStr,bright=a_baseBright,alpha=0.0,pSize=a_pointSize;
+      if(nd<CORE_F){alpha=0.0;}
+      else if(nd<BULGE_F){float f=(nd-CORE_F)/(BULGE_F-CORE_F);bright=0.30+(1.0-f)*0.15+arm*0.10;alpha=0.25*(1.0-f*0.4)*(0.4+0.6*arm)+0.05;pSize+=(1.0-f)*0.8;}
+      else if(nd<=1.15){float ef=nd>0.85?(1.15-nd)/0.30:1.0;bright=a_baseBright*0.15+arm*0.35*ef;alpha=(0.06+arm*arm*0.18)*ef;if(arm>0.85){bright+=0.25;alpha=min(alpha+0.10,0.35);}}
+      else{float hf=clamp(1.0-(nd-1.15)/1.0,0.0,1.0);bright=a_baseBright*0.25;alpha=0.05*hf;}
+      bright=clamp(bright,0.02,0.25);alpha=clamp(alpha,0.0,0.15);
+      vec2 cp=(pos/u_resolution)*2.0-1.0;cp.y=-cp.y;
+      gl_Position=vec4(cp,0.0,1.0);gl_PointSize=max(1.0,pSize);
+      v_charIndex=a_charIndex;v_color=vec3(bright);v_alpha=alpha;
+    }`;
+
+  const FRAG_SRC = `
+    precision mediump float;
+    varying float v_charIndex; varying vec3 v_color; varying float v_alpha;
+    uniform sampler2D u_atlas; uniform float u_cellTotal; uniform vec2 u_atlasSize;
+    void main(){
+      if(v_alpha<0.01)discard;
+      float ci=floor(v_charIndex+0.5);
+      float padHalf=(u_cellTotal-${ATLAS_CELL}.0)*0.5;
+      float cellX=ci*u_cellTotal+padHalf,cellY=padHalf;
+      vec2 uv=vec2((cellX+gl_PointCoord.x*${ATLAS_CELL}.0)/u_atlasSize.x,(cellY+gl_PointCoord.y*${ATLAS_CELL}.0)/u_atlasSize.y);
+      float mask=texture2D(u_atlas,uv).r;if(mask<0.1)discard;
+      gl_FragColor=vec4(v_color*mask,v_alpha*mask);
+    }`;
+
+  function compileShader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){console.error(gl.getShaderInfoLog(s));return null}return s}
+  function linkProg(v,f){const p=gl.createProgram();gl.attachShader(p,v);gl.attachShader(p,f);gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS)){console.error(gl.getProgramInfoLog(p));return null}return p}
+
+  const vs=compileShader(gl.VERTEX_SHADER,VERT_SRC),fs=compileShader(gl.FRAGMENT_SHADER,FRAG_SRC),program=linkProg(vs,fs);
+  const aLoc={baseAngle:gl.getAttribLocation(program,'a_baseAngle'),dist:gl.getAttribLocation(program,'a_dist'),charIndex:gl.getAttribLocation(program,'a_charIndex'),baseBright:gl.getAttribLocation(program,'a_baseBright'),armStr:gl.getAttribLocation(program,'a_armStr'),pointSize:gl.getAttribLocation(program,'a_pointSize')};
+  const uLoc={time:gl.getUniformLocation(program,'u_time'),resolution:gl.getUniformLocation(program,'u_resolution'),center:gl.getUniformLocation(program,'u_center'),galaxyR:gl.getUniformLocation(program,'u_galaxyR'),atlas:gl.getUniformLocation(program,'u_atlas'),cellTotal:gl.getUniformLocation(program,'u_cellTotal'),atlasSize:gl.getUniformLocation(program,'u_atlasSize')};
+  const atlasTex=createAtlas();
+
+  let W,H,galaxyCX,galaxyCY,galaxyRadius,particleCount=0,vbo=null,time=0,lastFrame=0;
+  const FLOATS_PER=6,GALAXY_RADIUS_FRAC=0.75,NUM_ARMS=4,SPIRAL_TURNS=2.5,SPIRAL_TIGHT=0.32,ARM_WIDTH=3.0,TAU=Math.PI*2;
+
+  function gaussRand(){const u1=Math.random(),u2=Math.random();return Math.sqrt(-2*Math.log(u1+0.0001))*Math.cos(TAU*u2)}
+  function spiralAngle(nd,ai){return(ai/NUM_ARMS)*TAU+SPIRAL_TURNS*TAU*Math.pow(nd,SPIRAL_TIGHT)}
+  function simpleNoise(x){const s=Math.sin(x*127.1+311.7)*43758.5453;return s-Math.floor(s)}
+  function backboneWobble(nd,ai){const n1=simpleNoise(nd*4+ai*7.3)-.5,n2=simpleNoise(nd*8.7+ai*13.1)-.5,n3=simpleNoise(nd*15.3+ai*21.7)-.5;return(n1*.5+n2*.3+n3*.2)*(.3+.7*nd)}
+  function pickChar(as,nd){const r=Math.random();if(nd<.06)return[2,3,5,6][Math.floor(r*4)];if(nd<.2)return[1,2,3,4][Math.floor(r*4)];if(as>.7)return[1,2,3,4][Math.floor(r*4)];if(as>.3)return[0,1,2,4][Math.floor(r*4)];return[0,1][Math.floor(r*2)]}
+
+  function buildParticles(){
+    const dots=[];
+    function addDot(a,d,as,b,ps,ci){dots.push(a,d,ci,b,as,ps)}
+
+    // A2: Bulge
+    const bI=galaxyRadius*.06,bO=galaxyRadius*.2,bD=Math.floor(120*(galaxyRadius/300));
+    for(let i=0;i<bD;i++){const r=bI+Math.random()*(bO-bI),a=Math.random()*TAU,nd=r/galaxyRadius;let best=0;for(let ai=0;ai<NUM_ARMS;ai++){const sa=spiralAngle(nd,ai)+backboneWobble(nd,ai);let d=a-sa;d-=Math.round(d/TAU)*TAU;best=Math.max(best,Math.max(0,1-Math.abs(d)/.8))}const as=.3+.7*best;addDot(a,r,as,.4+Math.random()*.3,22+Math.random()*3,pickChar(as,nd))}
+
+    // A3: Broad arm scatter
+    for(let ai=0;ai<NUM_ARMS;ai++){for(let s=0;s<200;s++){const nd=.12+(s/200)*1.03,dist=nd*galaxyRadius,sa=spiralAngle(nd,ai)+backboneWobble(nd,ai),lw=ARM_WIDTH*(.3+.8*nd),lc=Math.floor(7*(.5+.8*nd)),ef=nd>.85?Math.max(0,(1.15-nd)/.3):1;
+    for(let d=0;d<lc;d++){const sc=gaussRand()*lw*.55,da=sa+sc,rj=gaussRand()*galaxyRadius*.06*nd,dd=dist+rj;if(dd<0)continue;const ns=Math.abs(sc)/lw,as=Math.max(0,1-ns*ns),b=.15+Math.random()*.25+as*.3*ef;addDot(da,dd,as*ef,b,20+as*4+Math.random()*3,pickChar(as,nd))}}}
+
+    // A4: Inter-arm
+    const iD=Math.floor(1500*(galaxyRadius/300));
+    for(let i=0;i<iD;i++){const nd=.15+Math.random()*.95,d=nd*galaxyRadius,a=Math.random()*TAU;addDot(a,d,.1+Math.random()*.15,.15+Math.random()*.2,18+Math.random()*3,pickChar(.1,nd))}
+
+    // A5: Background
+    const bgD=Math.floor(1200*Math.max(W,H)/1000);
+    for(let i=0;i<bgD;i++){const x=Math.random()*W,y=Math.random()*H,dx=x-galaxyCX,dy=y-galaxyCY,d=Math.sqrt(dx*dx+dy*dy),a=Math.atan2(dy,dx);addDot(a,d,.08+Math.random()*.1,.12+Math.random()*.15,18+Math.random()*3,pickChar(.1,2))}
+
+    // B: Spine reinforcement
+    for(let ai=0;ai<NUM_ARMS;ai++){for(let s=0;s<400;s++){const nd=.1+(s/400)*1,dist=nd*galaxyRadius,sa=spiralAngle(nd,ai)+backboneWobble(nd,ai),tw=.18*(.3+.7*nd),ef=nd>.85?Math.max(0,(1.1-nd)/.25):1;
+    for(let d=0;d<4;d++){const sc=gaussRand()*tw*.4,da=sa+sc,rj=gaussRand()*galaxyRadius*.018*nd,dd=dist+rj;if(dd<0)continue;const ns=Math.abs(sc)/tw,as=Math.max(0,1-ns*ns);addDot(da,dd,Math.min(1,as*ef+.3),.3+Math.random()*.2+as*.3*ef,20+as*3+Math.random()*2,pickChar(.8,nd))}}}
+
+    particleCount=dots.length/FLOATS_PER;
+    if(vbo)gl.deleteBuffer(vbo);
+    vbo=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vbo);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(dots),gl.STATIC_DRAW);
+  }
+
+  function renderGlow(){
+    glowCanvas.width=W;glowCanvas.height=H;
+    const ctx=glowCtx;ctx.clearRect(0,0,W,H);
+    const bR=galaxyRadius*.2*2,g2=ctx.createRadialGradient(galaxyCX,galaxyCY,0,galaxyCX,galaxyCY,bR);
+    g2.addColorStop(0,'rgba(220,220,220,0.012)');g2.addColorStop(.5,'rgba(150,150,150,0.004)');g2.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+  }
+
+  // Visibility observer
+  let visible=true;
+  const obs=new IntersectionObserver(function(e){visible=e[0].isIntersecting},{threshold:0.05});
+  obs.observe(glCanvas.parentElement.parentElement);
+
+  function init(){
+    const rect=glCanvas.parentElement.getBoundingClientRect();
+    W=rect.width;H=rect.height;
+    glCanvas.width=W;glCanvas.height=H;
+    glCanvas.style.width=W+'px';glCanvas.style.height=H+'px';
+    glowCanvas.width=W;glowCanvas.height=H;
+    glowCanvas.style.width=W+'px';glowCanvas.style.height=H+'px';
+    galaxyCX=W*.5;galaxyCY=H*.5;galaxyRadius=Math.min(W,H)*GALAXY_RADIUS_FRAC;
+    gl.viewport(0,0,W,H);buildParticles();renderGlow();
+  }
+
+  function render(ts){
+    requestAnimationFrame(render);
+    if(!visible)return;
+    const dt=Math.min((ts-lastFrame)/1000,.05);lastFrame=ts;time+=dt;
+    gl.clearColor(0.0196,0.0196,0.0196,1);gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(program);
+    gl.uniform1f(uLoc.time,time);gl.uniform2f(uLoc.resolution,W,H);gl.uniform2f(uLoc.center,galaxyCX,galaxyCY);
+    gl.uniform1f(uLoc.galaxyR,galaxyRadius);gl.uniform1f(uLoc.cellTotal,atlasCellTotal);gl.uniform2f(uLoc.atlasSize,atlasWidth,atlasHeight);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,atlasTex);gl.uniform1i(uLoc.atlas,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,vbo);
+    const stride=FLOATS_PER*4;
+    gl.enableVertexAttribArray(aLoc.baseAngle);gl.vertexAttribPointer(aLoc.baseAngle,1,gl.FLOAT,false,stride,0);
+    gl.enableVertexAttribArray(aLoc.dist);gl.vertexAttribPointer(aLoc.dist,1,gl.FLOAT,false,stride,4);
+    gl.enableVertexAttribArray(aLoc.charIndex);gl.vertexAttribPointer(aLoc.charIndex,1,gl.FLOAT,false,stride,8);
+    gl.enableVertexAttribArray(aLoc.baseBright);gl.vertexAttribPointer(aLoc.baseBright,1,gl.FLOAT,false,stride,12);
+    gl.enableVertexAttribArray(aLoc.armStr);gl.vertexAttribPointer(aLoc.armStr,1,gl.FLOAT,false,stride,16);
+    gl.enableVertexAttribArray(aLoc.pointSize);gl.vertexAttribPointer(aLoc.pointSize,1,gl.FLOAT,false,stride,20);
+    gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.disable(gl.DEPTH_TEST);
+    gl.drawArrays(gl.POINTS,0,particleCount);
+  }
+
+  window.addEventListener('resize',init);
+  init();requestAnimationFrame(render);
+})();
+} catch(e) { console.warn('Hero WebGL failed:', e); }
+
+// ─── Hex Dump Generator ───
+(function() {
+  var colsContainer = document.getElementById('hexDumpCols');
+  if (!colsContainer) return;
+
+  var hex = '0123456789ABCDEF';
+  function rHex(n) {
+    var s = '';
+    for (var i = 0; i < n; i++) s += hex[Math.floor(Math.random() * 16)];
+    return s;
+  }
+
+  // Terminal event templates
+  var events = [
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> memory allocation failed at 0x' },
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> buffer overflow detected 0x' },
+    { cls: 'evt-warn', text: '<span class="evt-tag">[WARN]</span> heap fragmentation at 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  stack overflow at 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  segfault in thread 0x' },
+    { cls: 'evt-err',  text: '<span class="evt-tag">[ERR]</span>  null pointer deref 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  process 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  allocated 0x' },
+    { cls: 'evt-sys',  text: '<span class="evt-tag">[SYS]</span>  gc sweep cycle 0x' },
+  ];
+
+  var colConfigs = [
+    { speed: 75 },
+    { speed: 85 }
+  ];
+
+  colConfigs.forEach(function(cfg) {
+    var inner = document.createElement('div');
+    inner.className = 'hex-dump-inner';
+    inner.style.animationDuration = cfg.speed + 's';
+    inner.style.animationDelay = -(Math.random() * cfg.speed) + 's';
+
+    var fragment = document.createDocumentFragment();
+    var totalRows = 50;
+
+    for (var pass = 0; pass < 2; pass++) {
+      var i = 0;
+      while (i < totalRows) {
+        // Random chance for a gap (30%)
+        if (Math.random() < 0.3) {
+          var gap = document.createElement('div');
+          gap.className = 'hex-row gap';
+          fragment.appendChild(gap);
+          i++;
+          continue;
+        }
+
+        // Random chance for a terminal event (15%)
+        if (Math.random() < 0.15) {
+          var evt = events[Math.floor(Math.random() * events.length)];
+          var evtRow = document.createElement('div');
+          evtRow.className = 'hex-row ' + evt.cls;
+          evtRow.innerHTML = evt.text + rHex(4);
+          fragment.appendChild(evtRow);
+          // Add a small gap after events
+          var gapAfter = document.createElement('div');
+          gapAfter.className = 'hex-row gap';
+          fragment.appendChild(gapAfter);
+          i += 2;
+          continue;
+        }
+
+        // Normal hex row
+        var row = document.createElement('div');
+        row.className = 'hex-row';
+        var addr = '0x' + (((i % totalRows) * 16).toString(16)).toUpperCase().padStart(6, '0');
+        var hexPairs = '';
+        var ascii = '';
+        for (var j = 0; j < 8; j++) {
+          hexPairs += ' ' + rHex(2);
+          ascii += String.fromCharCode(33 + Math.floor(Math.random() * 93));
+        }
+        row.innerHTML = '<span class="hex-addr">' + addr + '</span>' + hexPairs + '  |' + ascii + '|';
+        fragment.appendChild(row);
+        i++;
+      }
+    }
+
+    inner.appendChild(fragment);
+    colsContainer.appendChild(inner);
+  });
+})();
+
+// ─── Fjord LBP Bonding Curve ───
+(function() {
+  var canvas = document.getElementById('fjordCurve');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var w, h;
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  var padT = 0.18;
+  var padB = 0.15;
+
+  function curveY(xNorm) {
+    var decay = Math.exp(-3.2 * xNorm);
+    var noise = Math.sin(xNorm * 42) * 0.008 + Math.sin(xNorm * 97) * 0.004;
+    return decay + noise;
+  }
+
+  // Pre-generate volume bar data (deterministic)
+  var volBars = [];
+  for (var v = 0; v < 36; v++) {
+    // Higher volume at start (launch hype), tapering off
+    var base = Math.exp(-2 * (v / 36)) * 0.8;
+    // Random-looking spikes using sin
+    var spike = Math.abs(Math.sin(v * 7.3 + 2.1)) * 0.4 + Math.abs(Math.sin(v * 13.7)) * 0.2;
+    volBars.push(Math.min(1, base + spike * base));
+  }
+
+  // Tracer state
+  var tracerT = 0;
+  var tracerSpeed = 0.0012;
+  var trail = []; // stores last N positions
+  var trailMax = 40;
+
+  var frame = 0;
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    var chartL = w * 0.08;
+    var chartR = w * 0.92;
+    var chartT = h * padT;
+    var chartB = h * (1 - padB);
+    var chartW = chartR - chartL;
+    var chartH = chartB - chartT;
+
+    // ══════════════════════════════════
+    // BASE CHART (untouched structure)
+    // ══════════════════════════════════
+
+    // ── Axis lines ──
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.moveTo(chartL, chartT - 10);
+    ctx.lineTo(chartL, chartB);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(chartL, chartB);
+    ctx.lineTo(chartR + 10, chartB);
+    ctx.stroke();
+
+    // ── Y-axis tick marks + price labels ──
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+
+    var prices = [1.0, 0.75, 0.5, 0.25, 0.0];
+    for (var p = 0; p < prices.length; p++) {
+      var ty = chartB - prices[p] * chartH;
+      ctx.beginPath();
+      ctx.moveTo(chartL - 4, ty);
+      ctx.lineTo(chartL, ty);
+      ctx.stroke();
+      if (prices[p] > 0 && prices[p] < 1) {
+        ctx.setLineDash([2, 6]);
+        ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+        ctx.beginPath();
+        ctx.moveTo(chartL + 1, ty);
+        ctx.lineTo(chartR, ty);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      }
+      ctx.fillText(prices[p].toFixed(2), chartL - 8, ty);
+    }
+
+    // ── X-axis time labels ──
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    var times = ['0h', '24h', '48h', '72h'];
+    for (var ti = 0; ti < times.length; ti++) {
+      var tx = chartL + (ti / (times.length - 1)) * chartW;
+      ctx.beginPath();
+      ctx.moveTo(tx, chartB);
+      ctx.lineTo(tx, chartB + 4);
+      ctx.stroke();
+      ctx.fillText(times[ti], tx, chartB + 8);
+    }
+
+    // ── Axis labels ──
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('TIME', chartL + chartW / 2, chartB + 22);
+
+    ctx.save();
+    ctx.translate(chartL - 28, chartT + chartH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('PRICE', 0, 0);
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // VOLUME BARS (new)
+    // ══════════════════════════════════
+    var barCount = volBars.length;
+    var barW = (chartW / barCount) * 0.6;
+    var barGap = chartW / barCount;
+    var maxBarH = chartH * 0.18;
+
+    for (var b = 0; b < barCount; b++) {
+      var bx = chartL + b * barGap + barGap * 0.2;
+      var bh = volBars[b] * maxBarH;
+      var by = chartB - bh;
+
+      // Bars are brighter where the tracer currently is
+      var barDist = Math.abs((b / barCount) - tracerT);
+      var barHighlight = barDist < 0.06 ? 0.03 : 0;
+
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.025 + barHighlight).toFixed(4) + ')';
+      ctx.fillRect(bx, by, barW, bh);
+    }
+
+    // ══════════════════════════════════
+    // THE CURVE
+    // ══════════════════════════════════
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1.5;
+
+    var steps = 200;
+    for (var i = 0; i <= steps; i++) {
+      var xNorm = i / steps;
+      var px = chartL + xNorm * chartW;
+      var py = chartB - curveY(xNorm) * chartH;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // ── Fill under curve ──
+    ctx.lineTo(chartR, chartB);
+    ctx.lineTo(chartL, chartB);
+    ctx.closePath();
+    var grad = ctx.createLinearGradient(0, chartT, 0, chartB);
+    grad.addColorStop(0, 'rgba(255,255,255,0.02)');
+    grad.addColorStop(1, 'rgba(255,255,255,0.0)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // ── Small dot at curve start ──
+    var startY = chartB - curveY(0) * chartH;
+    ctx.beginPath();
+    ctx.arc(chartL, startY, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fill();
+
+    // ── Label on curve ──
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    ctx.textAlign = 'left';
+    ctx.fillText('LBP DECAY', chartL + 12, startY - 10);
+
+    // ══════════════════════════════════
+    // ANIMATED TRACER DOT (new)
+    // ══════════════════════════════════
+    tracerT += tracerSpeed;
+    if (tracerT > 1) {
+      tracerT = 0;
+      trail = [];
+    }
+
+    var dotX = chartL + tracerT * chartW;
+    var dotY = chartB - curveY(tracerT) * chartH;
+
+    // Store trail position
+    trail.push({ x: dotX, y: dotY });
+    if (trail.length > trailMax) trail.shift();
+
+    // Draw trail
+    for (var tr = 0; tr < trail.length; tr++) {
+      var trAlpha = (tr / trail.length) * 0.06;
+      var trSize = (tr / trail.length) * 1.5;
+      ctx.beginPath();
+      ctx.arc(trail[tr].x, trail[tr].y, trSize, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + trAlpha.toFixed(4) + ')';
+      ctx.fill();
+    }
+
+    // Draw main dot
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fill();
+
+    // Glow ring
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 6, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Horizontal + vertical crosshair from dot to axes
+    ctx.setLineDash([2, 4]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    // To Y axis
+    ctx.beginPath();
+    ctx.moveTo(dotX, dotY);
+    ctx.lineTo(chartL, dotY);
+    ctx.stroke();
+    // To X axis
+    ctx.beginPath();
+    ctx.moveTo(dotX, dotY);
+    ctx.lineTo(dotX, chartB);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Price label at Y axis
+    var curPrice = curveY(tracerT);
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.fillText(curPrice.toFixed(3), chartL - 8, dotY);
+
+    // ══════════════════════════════════
+    // ETH/TKN PAIR LABEL (new)
+    // ══════════════════════════════════
+    var lblX = chartR - 8;
+    var lblY = chartT - 2;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+
+    // Blinking dot
+    var blink = Math.sin(frame * 0.05) > 0;
+    if (blink) {
+      ctx.beginPath();
+      ctx.arc(lblX + 4, lblY - 5, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.fill();
+    }
+
+    ctx.font = '9px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.fillText('◆ ETH / TKN', lblX, lblY);
+
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('FJORD LBP', lblX, lblY + 12);
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+// ─── Kayen Swap Route Diagram ───
+(function() {
+  var canvas = document.getElementById('kayenRoute');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var w, h;
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  // Route graph — nodes and connections
+  // Positions defined as fractions of w/h
+  var nodes = [
+    // Source token (left)
+    { id: 'CHZ',    xf: 0.08, yf: 0.45, label: 'CHZ',    r: 18, type: 'source' },
+    // Pool layer 1
+    { id: 'POOL_A', xf: 0.28, yf: 0.25, label: 'POOL A', r: 12, type: 'pool' },
+    { id: 'POOL_B', xf: 0.28, yf: 0.50, label: 'POOL B', r: 12, type: 'pool' },
+    { id: 'POOL_C', xf: 0.28, yf: 0.75, label: 'POOL C', r: 12, type: 'pool' },
+    // Intermediate tokens
+    { id: 'PEPPER', xf: 0.48, yf: 0.30, label: 'PEPPER', r: 14, type: 'token' },
+    { id: 'FAN',    xf: 0.48, yf: 0.65, label: 'FAN',    r: 14, type: 'token' },
+    // Pool layer 2
+    { id: 'POOL_D', xf: 0.68, yf: 0.35, label: 'POOL D', r: 12, type: 'pool' },
+    { id: 'POOL_E', xf: 0.68, yf: 0.55, label: 'POOL E', r: 12, type: 'pool' },
+    // Destination (right)
+    { id: 'USDT',   xf: 0.90, yf: 0.45, label: 'USDT',   r: 18, type: 'dest' },
+  ];
+
+  // Edges: [from_index, to_index, weight (0-1 for line brightness)]
+  var edges = [
+    // CHZ → pools
+    [0, 1, 0.6],
+    [0, 2, 1.0],  // best route
+    [0, 3, 0.4],
+    // Pools → intermediate tokens
+    [1, 4, 0.6],
+    [2, 4, 0.8],
+    [2, 5, 0.7],
+    [3, 5, 0.4],
+    // Intermediate → pools layer 2
+    [4, 6, 0.9],
+    [4, 7, 0.3],
+    [5, 7, 0.6],
+    // Pools → USDT
+    [6, 8, 0.9],
+    [7, 8, 0.5],
+  ];
+
+  // Best route path for the tracer: CHZ → POOL_B → PEPPER → POOL_D → USDT
+  var bestRoute = [0, 2, 4, 6, 8];
+
+  // Tracer state
+  var tracerProgress = 0;
+  var tracerSpeed = 0.003;
+  var tracerSegment = 0;
+
+  // Token pair ticker data
+  var tickerPairs = [
+    'CHZ/USDT 0.0871 ▲', 'PEPPER/CHZ 0.0012 ▼', 'FAN/USDT 0.342 ▲',
+    'BAR/CHZ 4.21 ▲', 'JUV/USDT 1.87 ▼', 'PSG/CHZ 6.04 ▲',
+    'ACM/USDT 2.14 ▼', 'ATM/CHZ 3.76 ▲', 'GAL/USDT 1.52 ▲',
+    'CHZ/USDT 0.0871 ▲', 'PEPPER/CHZ 0.0012 ▼', 'FAN/USDT 0.342 ▲',
+  ];
+  var tickerText = tickerPairs.join('   │   ');
+  var tickerOffset = 0;
+
+  // Block hash data
+  var blockHashes = [];
+  var hexChars = '0123456789abcdef';
+  for (var bh = 0; bh < 20; bh++) {
+    var hash = '0x';
+    for (var hc = 0; hc < 8; hc++) hash += hexChars[Math.floor(Math.sin(bh * 13.7 + hc * 3.1) * 8 + 8)];
+    blockHashes.push('#' + (48200000 + bh * 137) + ' ' + hash);
+  }
+  var blockText = blockHashes.join('    ');
+  var blockOffset = 0;
+
+  var frame = 0;
+
+  function getNodePos(n) {
+    return { x: n.xf * w, y: n.yf * h };
+  }
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    // ══════════════════════════════════
+    // EDGES
+    // ══════════════════════════════════
+    for (var e = 0; e < edges.length; e++) {
+      var fromNode = nodes[edges[e][0]];
+      var toNode = nodes[edges[e][1]];
+      var weight = edges[e][2];
+      var from = getNodePos(fromNode);
+      var to = getNodePos(toNode);
+
+      var alpha = 0.02 + weight * 0.03;
+
+      // Draw path with a slight curve
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,255,255,' + alpha.toFixed(4) + ')';
+      ctx.lineWidth = 1;
+
+      var cpX = (from.x + to.x) / 2;
+      var cpY = (from.y + to.y) / 2 - (to.x - from.x) * 0.05;
+      ctx.moveTo(from.x, from.y);
+      ctx.quadraticCurveTo(cpX, cpY, to.x, to.y);
+      ctx.stroke();
+
+      // Small arrow at midpoint
+      var midT = 0.55;
+      var mx = (1-midT)*(1-midT)*from.x + 2*(1-midT)*midT*cpX + midT*midT*to.x;
+      var my = (1-midT)*(1-midT)*from.y + 2*(1-midT)*midT*cpY + midT*midT*to.y;
+      var dx = to.x - from.x;
+      var dy = to.y - from.y;
+      var angle = Math.atan2(dy, dx);
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.8).toFixed(4) + ')';
+      ctx.moveTo(mx + Math.cos(angle) * 4, my + Math.sin(angle) * 4);
+      ctx.lineTo(mx + Math.cos(angle + 2.5) * 3, my + Math.sin(angle + 2.5) * 3);
+      ctx.lineTo(mx + Math.cos(angle - 2.5) * 3, my + Math.sin(angle - 2.5) * 3);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // ══════════════════════════════════
+    // NODES
+    // ══════════════════════════════════
+    for (var n = 0; n < nodes.length; n++) {
+      var node = nodes[n];
+      var pos = getNodePos(node);
+
+      if (node.type === 'source' || node.type === 'dest') {
+        // Token endpoints — circle with label
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, node.r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Inner fill
+        ctx.fillStyle = 'rgba(255,255,255,0.015)';
+        ctx.fill();
+
+        // Label
+        ctx.font = '9px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.07)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.label, pos.x, pos.y);
+
+      } else if (node.type === 'token') {
+        // Intermediate tokens — smaller circle
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, node.r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.01)';
+        ctx.fill();
+
+        ctx.font = '7px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.055)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.label, pos.x, pos.y);
+
+      } else {
+        // Pool nodes — small diamond
+        ctx.save();
+        ctx.translate(pos.x, pos.y);
+        ctx.rotate(Math.PI / 4);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(-node.r * 0.6, -node.r * 0.6, node.r * 1.2, node.r * 1.2);
+        ctx.fillStyle = 'rgba(255,255,255,0.008)';
+        ctx.fillRect(-node.r * 0.6, -node.r * 0.6, node.r * 1.2, node.r * 1.2);
+        ctx.restore();
+
+        // Pool label below
+        ctx.font = '6px "JetBrains Mono", monospace';
+        ctx.fillStyle = 'rgba(255,255,255,0.035)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(node.label, pos.x, pos.y + node.r + 4);
+      }
+    }
+
+    // ══════════════════════════════════
+    // ANIMATED TRACER — best route
+    // ══════════════════════════════════
+    tracerProgress += tracerSpeed;
+
+    var totalSegments = bestRoute.length - 1;
+    var fullProgress = tracerProgress % 1;
+    var segFloat = fullProgress * totalSegments;
+    var seg = Math.floor(segFloat);
+    var segT = segFloat - seg;
+
+    if (seg < totalSegments) {
+      var fromN = nodes[bestRoute[seg]];
+      var toN = nodes[bestRoute[seg + 1]];
+      var fp = getNodePos(fromN);
+      var tp = getNodePos(toN);
+
+      var cpX2 = (fp.x + tp.x) / 2;
+      var cpY2 = (fp.y + tp.y) / 2 - (tp.x - fp.x) * 0.05;
+
+      // Quadratic bezier position at segT
+      var tX = (1-segT)*(1-segT)*fp.x + 2*(1-segT)*segT*cpX2 + segT*segT*tp.x;
+      var tY = (1-segT)*(1-segT)*fp.y + 2*(1-segT)*segT*cpY2 + segT*segT*tp.y;
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(tX, tY, 8, 0, Math.PI * 2);
+      var glow = ctx.createRadialGradient(tX, tY, 0, tX, tY, 8);
+      glow.addColorStop(0, 'rgba(255,255,255,0.06)');
+      glow.addColorStop(1, 'rgba(255,255,255,0.0)');
+      ctx.fillStyle = glow;
+      ctx.fill();
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(tX, tY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.14)';
+      ctx.fill();
+    }
+
+    // ══════════════════════════════════
+    // TOKEN PAIR TICKER (top)
+    // ══════════════════════════════════
+    tickerOffset -= 0.3;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, w, h * 0.08);
+    ctx.clip();
+
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+
+    var tickerY = h * 0.04;
+    var tickerW = ctx.measureText(tickerText).width;
+    var tx1 = tickerOffset % (tickerW + 100);
+    ctx.fillText(tickerText, tx1, tickerY);
+    ctx.fillText(tickerText, tx1 + tickerW + 100, tickerY);
+
+    // Thin separator line
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.05, h * 0.075);
+    ctx.lineTo(w * 0.95, h * 0.075);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // BLOCK HASHES (bottom)
+    // ══════════════════════════════════
+    blockOffset -= 0.2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, h * 0.93, w, h * 0.07);
+    ctx.clip();
+
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+
+    var blockY = h * 0.965;
+    var blockW = ctx.measureText(blockText).width;
+    var bx1 = blockOffset % (blockW + 80);
+    ctx.fillText(blockText, bx1, blockY);
+    ctx.fillText(blockText, bx1 + blockW + 80, blockY);
+
+    // Thin separator line
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.05, h * 0.93);
+    ctx.lineTo(w * 0.95, h * 0.93);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // LABELS
+    // ══════════════════════════════════
+    ctx.font = '7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText('ROUTE: CHZ → POOL B → PEPPER → POOL D → USDT', w * 0.08, h * 0.10);
+
+    ctx.textAlign = 'right';
+    ctx.fillText('HOPS: 4  ·  BEST PRICE', w * 0.92, h * 0.10);
+
+    // Aggregator label
+    var blink = Math.sin(frame * 0.04) > 0;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('KAYEN AGGREGATOR', w * 0.08, h * 0.90);
+
+    if (blink) {
+      ctx.beginPath();
+      ctx.arc(w * 0.08 - 6, h * 0.90 - 4, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.07)';
+      ctx.fill();
+    }
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillText('CHILIZ CHAIN', w * 0.92, h * 0.90);
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+// ─── Diablo Trade Inventory Grid ───
+(function() {
+  var canvas = document.getElementById('diabloGrid');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var w, h;
+
+  var cellSize = 52;
+  var gap = 3;
+  var step = cellSize + gap;
+  var cols, rows;
+  var cells = [];
+
+  var symbols = ['⚔', '◈', '☆', '♦'];
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    cols = Math.ceil(w / step) + 2;
+    rows = Math.ceil(h / step) + 2;
+
+    cells = [];
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var filled = Math.random() < 0.08;
+        cells.push({
+          filled: filled,
+          symbol: symbols[Math.floor(Math.random() * symbols.length)],
+          alpha: filled ? 0.04 + Math.random() * 0.03 : 0,
+          targetAlpha: filled ? 0.04 + Math.random() * 0.03 : 0,
+          timer: 500 + Math.random() * 1500,
+        });
+      }
+    }
+  }
+
+  var frame = 0;
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    var offsetX = ((w % step) / 2) - step;
+    var offsetY = ((h % step) / 2) - step;
+    var gridTop = h * 0.10;
+    var gridBot = h * 0.90;
+
+    // Clip grid to middle zone
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, gridTop, w, gridBot - gridTop);
+    ctx.clip();
+
+    ctx.font = '16px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var idx = r * cols + c;
+        var cell = cells[idx];
+        var x = offsetX + c * step;
+        var y = offsetY + r * step;
+
+        // Cell border
+        ctx.strokeStyle = 'rgba(255,255,255,0.015)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, cellSize, cellSize);
+
+        // Slow timer
+        cell.timer--;
+        if (cell.timer <= 0) {
+          if (cell.filled) {
+            cell.targetAlpha = 0;
+            cell.timer = 800 + Math.random() * 2000;
+          } else if (Math.random() < 0.15) {
+            cell.symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            cell.targetAlpha = 0.04 + Math.random() * 0.03;
+            cell.filled = true;
+            cell.timer = 600 + Math.random() * 1500;
+          } else {
+            cell.timer = 400 + Math.random() * 1000;
+          }
+        }
+
+        // Very slow fade
+        if (cell.alpha < cell.targetAlpha) {
+          cell.alpha = Math.min(cell.alpha + 0.0008, cell.targetAlpha);
+        } else if (cell.alpha > cell.targetAlpha) {
+          cell.alpha = Math.max(cell.alpha - 0.0008, cell.targetAlpha);
+          if (cell.alpha <= 0.001) {
+            cell.filled = false;
+            cell.alpha = 0;
+          }
+        }
+
+        if (cell.alpha > 0.001) {
+          ctx.fillStyle = 'rgba(255,255,255,' + cell.alpha.toFixed(4) + ')';
+          ctx.fillText(cell.symbol, x + cellSize / 2, y + cellSize / 2);
+        }
+      }
+    }
+
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // TOP — WebSocket status bar
+    // ══════════════════════════════════
+    // Separator line
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.04, h * 0.07);
+    ctx.lineTo(w * 0.96, h * 0.07);
+    ctx.stroke();
+
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textBaseline = 'middle';
+    var topY = h * 0.038;
+
+    // Blinking connection dot
+    var blink = Math.sin(frame * 0.05) > 0;
+    ctx.textAlign = 'left';
+
+    if (blink) {
+      ctx.beginPath();
+      ctx.arc(w * 0.05, topY, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.fill();
+    }
+
+    ctx.fillStyle = 'rgba(255,255,255,0.045)';
+    ctx.fillText('ws://live', w * 0.06, topY);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('●  CONNECTED', w * 0.14, topY);
+
+    // Simulated latency (wobbles slightly)
+    var latency = 11 + Math.floor(Math.sin(frame * 0.02) * 3 + Math.sin(frame * 0.007) * 2);
+    ctx.fillText('│', w * 0.30, topY);
+    ctx.fillText('latency: ' + latency + 'ms', w * 0.32, topY);
+
+    // Uptime
+    ctx.fillText('│', w * 0.48, topY);
+    ctx.fillText('uptime: 99.8%', w * 0.50, topY);
+
+    // Events/s (wobbles)
+    var evts = 42 + Math.floor(Math.sin(frame * 0.013) * 8);
+    ctx.textAlign = 'right';
+    ctx.fillText('events/s: ' + evts, w * 0.95, topY);
+
+    // ══════════════════════════════════
+    // BOTTOM — Search index stats
+    // ══════════════════════════════════
+    // Separator line
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.beginPath();
+    ctx.moveTo(w * 0.04, h * 0.935);
+    ctx.lineTo(w * 0.96, h * 0.935);
+    ctx.stroke();
+
+    var botY = h * 0.965;
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+
+    // Item count from grid
+    var itemCount = 0;
+    for (var ic = 0; ic < cells.length; ic++) {
+      if (cells[ic].filled) itemCount++;
+    }
+
+    ctx.fillText('indexed: 14,247 items', w * 0.05, botY);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillText('│', w * 0.24, botY);
+
+    var qps = 840 + Math.floor(Math.sin(frame * 0.011) * 30);
+    ctx.fillText('queries/s: ' + qps, w * 0.26, botY);
+
+    ctx.fillText('│', w * 0.42, botY);
+    ctx.fillText('cache: HIT 94.2%', w * 0.44, botY);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('MARKETPLACE  ·  LIVE', w * 0.95, botY);
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+// ─── Concave Staking Lock-up Vaults ───
+(function() {
+  var canvas = document.getElementById('concaveState');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var w, h;
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  // Vault positions and configs — scattered across section
+  var vaults = [
+    { xf: 0.12, yf: 0.28, lockDays: 90,  elapsed: 0.72, amount: '12.4K', label: '90D VAULT',  tier: 'gold' },
+    { xf: 0.38, yf: 0.20, lockDays: 30,  elapsed: 0.45, amount: '3.2K',  label: '30D VAULT',  tier: 'silver' },
+    { xf: 0.65, yf: 0.32, lockDays: 60,  elapsed: 0.88, amount: '8.7K',  label: '60D VAULT',  tier: 'gold' },
+    { xf: 0.88, yf: 0.22, lockDays: 180, elapsed: 0.31, amount: '45.1K', label: '180D VAULT', tier: 'diamond' },
+    { xf: 0.22, yf: 0.62, lockDays: 60,  elapsed: 0.95, amount: '5.6K',  label: '60D VAULT',  tier: 'silver' },
+    { xf: 0.52, yf: 0.70, lockDays: 30,  elapsed: 0.12, amount: '1.8K',  label: '30D VAULT',  tier: 'silver' },
+    { xf: 0.78, yf: 0.65, lockDays: 90,  elapsed: 0.56, amount: '22.0K', label: '90D VAULT',  tier: 'gold' },
+    { xf: 0.08, yf: 0.78, lockDays: 180, elapsed: 0.08, amount: '67.3K', label: '180D VAULT', tier: 'diamond' },
+    { xf: 0.92, yf: 0.80, lockDays: 30,  elapsed: 0.67, amount: '2.1K',  label: '30D VAULT',  tier: 'silver' },
+  ];
+
+  var tierAlpha = { silver: 0.035, gold: 0.045, diamond: 0.06 };
+  var barWidth = 48;
+  var barHeight = 4;
+
+  var frame = 0;
+
+  function drawLock(x, y, alpha) {
+    // Simple ASCII-style padlock shape
+    var s = 6;
+    // Shackle (arc)
+    ctx.beginPath();
+    ctx.arc(x, y - s * 0.6, s * 0.5, Math.PI, 0, false);
+    ctx.strokeStyle = 'rgba(255,255,255,' + alpha.toFixed(4) + ')';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // Body (rect)
+    ctx.strokeRect(x - s * 0.6, y - s * 0.1, s * 1.2, s * 0.9);
+    // Keyhole (dot)
+    ctx.beginPath();
+    ctx.arc(x, y + s * 0.2, 1, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.8).toFixed(4) + ')';
+    ctx.fill();
+  }
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    // Progress speed — very slow fill
+    var progressPerFrame = 0.000008;
+
+    // Central pool node position
+    var poolX = w * 0.50;
+    var poolY = h * 0.47;
+
+    // ══════════════════════════════════
+    // CONNECTING LINES — vaults to central pool
+    // ══════════════════════════════════
+    ctx.setLineDash([3, 5]);
+    for (var c = 0; c < vaults.length; c++) {
+      var cv = vaults[c];
+      var cx = cv.xf * w;
+      var cy = cv.yf * h;
+
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,255,255,0.018)';
+      ctx.lineWidth = 1;
+      ctx.moveTo(cx, cy + 10);
+      ctx.lineTo(poolX, poolY);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    // ── Central pool node ──
+    ctx.beginPath();
+    ctx.arc(poolX, poolY, 14, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.035)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.01)';
+    ctx.fill();
+
+    ctx.font = '6px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('POOL', poolX, poolY);
+
+    // ══════════════════════════════════
+    // VAULTS
+    // ══════════════════════════════════
+    for (var i = 0; i < vaults.length; i++) {
+      var v = vaults[i];
+      var x = v.xf * w;
+      var y = v.yf * h;
+      var alpha = tierAlpha[v.tier];
+
+      // Slowly advance elapsed
+      v.elapsed += progressPerFrame;
+      if (v.elapsed >= 1) v.elapsed = 0;
+
+      // Pulse on near-completion (>90%)
+      var pulse = 0;
+      if (v.elapsed > 0.9) {
+        pulse = Math.sin(frame * 0.08) * 0.02;
+      }
+      var activeAlpha = alpha + pulse;
+
+      // Remaining time
+      var remaining = v.lockDays * (1 - v.elapsed);
+      var days = Math.floor(remaining);
+      var hours = Math.floor((remaining - days) * 24);
+
+      // ── Border box ──
+      var boxW = 72;
+      var boxH = 58;
+      var boxX = x - boxW / 2;
+      var boxY = y - 22;
+
+      ctx.strokeStyle = 'rgba(255,255,255,' + (activeAlpha * 0.5).toFixed(4) + ')';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+      // Small corner ticks on box
+      var tk = 6;
+      ctx.strokeStyle = 'rgba(255,255,255,' + (activeAlpha * 0.7).toFixed(4) + ')';
+      // TL
+      ctx.beginPath(); ctx.moveTo(boxX, boxY + tk); ctx.lineTo(boxX, boxY); ctx.lineTo(boxX + tk, boxY); ctx.stroke();
+      // TR
+      ctx.beginPath(); ctx.moveTo(boxX + boxW - tk, boxY); ctx.lineTo(boxX + boxW, boxY); ctx.lineTo(boxX + boxW, boxY + tk); ctx.stroke();
+      // BL
+      ctx.beginPath(); ctx.moveTo(boxX, boxY + boxH - tk); ctx.lineTo(boxX, boxY + boxH); ctx.lineTo(boxX + tk, boxY + boxH); ctx.stroke();
+      // BR
+      ctx.beginPath(); ctx.moveTo(boxX + boxW - tk, boxY + boxH); ctx.lineTo(boxX + boxW, boxY + boxH); ctx.lineTo(boxX + boxW, boxY + boxH - tk); ctx.stroke();
+
+      // ── Lock icon (with pulse glow) ──
+      if (v.elapsed > 0.9) {
+        // Glow ring
+        var glowAlpha = (0.03 + pulse).toFixed(4);
+        ctx.beginPath();
+        ctx.arc(x, y - 16, 10, 0, Math.PI * 2);
+        var glow = ctx.createRadialGradient(x, y - 16, 0, x, y - 16, 10);
+        glow.addColorStop(0, 'rgba(255,255,255,' + glowAlpha + ')');
+        glow.addColorStop(1, 'rgba(255,255,255,0.0)');
+        ctx.fillStyle = glow;
+        ctx.fill();
+      }
+      drawLock(x, y - 16, activeAlpha * 1.2);
+
+      // ── Vault label ──
+      ctx.font = '7px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = 'rgba(255,255,255,' + activeAlpha.toFixed(4) + ')';
+      ctx.fillText(v.label, x, y + 2);
+
+      // ── Amount staked ──
+      ctx.font = '9px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'rgba(255,255,255,' + (activeAlpha * 1.3).toFixed(4) + ')';
+      ctx.fillText(v.amount + ' CNV', x, y + 14);
+
+      // ── Progress bar ──
+      var bx = x - barWidth / 2;
+      var by = y + 27;
+
+      // Background
+      ctx.strokeStyle = 'rgba(255,255,255,' + (activeAlpha * 0.6).toFixed(4) + ')';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(bx, by, barWidth, barHeight);
+
+      // Fill
+      var fillW = barWidth * v.elapsed;
+      ctx.fillStyle = 'rgba(255,255,255,' + (activeAlpha * 0.8).toFixed(4) + ')';
+      ctx.fillRect(bx, by, fillW, barHeight);
+    }
+
+    // ══════════════════════════════════
+    // TOP — Protocol stats
+    // ══════════════════════════════════
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.04, h * 0.07);
+    ctx.lineTo(w * 0.96, h * 0.07);
+    ctx.stroke();
+
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textBaseline = 'middle';
+    var topY = h * 0.038;
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fillText('STAKING VAULTS', w * 0.05, topY);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillText('│', w * 0.22, topY);
+
+    var tvl = (4.2 + Math.sin(frame * 0.005) * 0.15).toFixed(1);
+    ctx.fillText('TVL: $' + tvl + 'M', w * 0.24, topY);
+
+    ctx.fillText('│', w * 0.40, topY);
+
+    var apy = (142.8 + Math.sin(frame * 0.008) * 3.2).toFixed(1);
+    ctx.fillText('APY: ' + apy + '%', w * 0.42, topY);
+
+    var blink = Math.sin(frame * 0.04) > 0;
+    ctx.textAlign = 'right';
+    if (blink) {
+      ctx.beginPath();
+      ctx.arc(w * 0.95 + 6, topY, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.07)';
+      ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('● ACTIVE', w * 0.95, topY);
+
+    // ══════════════════════════════════
+    // BOTTOM — Epoch info
+    // ══════════════════════════════════
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.beginPath();
+    ctx.moveTo(w * 0.04, h * 0.935);
+    ctx.lineTo(w * 0.96, h * 0.935);
+    ctx.stroke();
+
+    var botY = h * 0.965;
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+
+    ctx.fillText('epoch: 847', w * 0.05, botY);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillText('│', w * 0.18, botY);
+
+    var secs = Math.floor((3600 - (frame * 0.1) % 3600));
+    var mm = Math.floor((secs % 3600) / 60);
+    var ss = secs % 60;
+    ctx.fillText('next rebase: ' + mm + 'm ' + (ss < 10 ? '0' : '') + ss + 's', w * 0.20, botY);
+
+    ctx.fillText('│', w * 0.42, botY);
+    ctx.fillText('active locks: 9', w * 0.44, botY);
+
+    ctx.fillText('│', w * 0.60, botY);
+    ctx.fillText('total staked: 168.2K CNV', w * 0.62, botY);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('CONCAVE  ·  DeFi', w * 0.95, botY);
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
+
+// ─── Katana DeFi Flywheel ───
+(function() {
+  try {
+  var canvas = document.getElementById('katanaFlow');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var dpr = window.devicePixelRatio || 1;
+  var w, h;
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width;
+    h = rect.height;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  // Flywheel nodes — circular arrangement
+  var flywheelLabels = ['BRIDGE', 'VAULT', 'YIELD', 'CoL', 'LIQUIDITY', 'EXECUTION'];
+  var flywheelSymbols = ['⇌', '◈', '▲', '◉', '≋', '⚡'];
+  var flywheelCount = flywheelLabels.length;
+
+  // Tracers — animate around the flywheel
+  var tracers = [
+    { angle: 0,           speed: 0.008 },
+    { angle: Math.PI,     speed: 0.006 },
+    { angle: Math.PI / 2, speed: 0.01  },
+  ];
+
+  var frame = 0;
+
+  // Katana SVG as data URI — loads synchronously
+  var katanaImg = new Image();
+  katanaImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii00NDUgLTE4MC41IDEwMCAxMDAiPjxnPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC40IiBkPSJNLTM1MS44NzMtMTc0LjUyOWMtMC4wNTMtMC4xOC0wLjIwMy0wLjMxNS0wLjM4Ny0wLjM1Yy0wLjE4NS0wLjAzNS0wLjM3MywwLjAzNy0wLjQ4OCwwLjE4NWMtMC4yOTMsMC4zNzctMzAuMDU0LDM4LjMwMy02MS40OCw2NC40NjhsLTAuMTE3LTAuMTQxYy0wLjA4NC0wLjEwMi0wLjIwNy0wLjE2Ny0wLjMzOC0wLjE3OWMtMC4xMzItMC4wMTMtMC4yNjQsMC4wMjgtMC4zNjYsMC4xMTNsLTEuMjc2LDEuMDU5bC0xLjU3OS0xLjkwNGMtMC4xNzYtMC4yMTItMC40OTEtMC4yNDItMC43MDQtMC4wNjZsLTAuOTY4LDAuODAxYy0wLjEwMywwLjA4NC0wLjE2NywwLjIwNi0wLjE3OSwwLjMzOGMtMC4wMDEsMC4wMTEtMC4wMDEsMC4wMjItMC4wMDIsMC4wMzNjLTAuMDAzLDAuMTIxLDAuMDM4LDAuMjM5LDAuMTE1LDAuMzMzbDEuNTAyLDEuODEyYy00LjYzNiw0LjU0OC0xNi40MjQsMTQuNDEyLTIwLjIyOCwxNy4xNzljLTAuMTI3LDAuMDkzLTAuMjAyLDAuMjM4LTAuMjA2LDAuMzkxYy0wLjAwMSwwLjA0OSwwLjAwNCwwLjA5OCwwLjAxOCwwLjE0NmMwLjAxNywwLjA2MiwwLjQyNSwxLjUxNywxLjM5NiwyLjU1N2MxLjMzNCwxLjQyOSwyLjExLDEuNjEzLDIuMjUyLDEuNjM1YzAuMTQxLDAuMDIyLDAuMjg0LTAuMDE2LDAuMzk0LTAuMTA1YzAuOTEzLTAuNzQyLDIuMDU2LTEuNjc2LDMuMzM2LTIuNzIzYzUuODExLTQuNzQ5LDE0LjQ1MS0xMS44MSwxNy4zOTktMTMuODE4bDEuNTA5LDEuODJjMC4xNzcsMC4yMTIsMC40OTEsMC4yNDIsMC43MDQsMC4wNjVsMC45NjYtMC44YzAuMTAzLTAuMDg0LDAuMTY3LTAuMjA2LDAuMTc5LTAuMzM4YzAuMDE0LTAuMTMzLTAuMDI4LTAuMjY0LTAuMTEzLTAuMzY2bC0xLjU3OS0xLjkwNGwxLjI3Ny0xLjA1OGMwLjEwMi0wLjA4NSwwLjE2Ny0wLjIwNiwwLjE3OS0wLjMzOGMwLjAxMS0wLjEwOC0wLjAyMS0wLjIwOC0wLjA3NS0wLjI5N2MyNy42MDEtMjIuOTYzLDQ5LjUwNS00OS44MjEsNTcuNjY1LTYwLjMzNmwwLjMxOS0wLjQxMWMwLjgyNC0xLjA1NCwxLjI2Ni0yLjQ1NywxLjMxMy00LjE2OUMtMzUxLjM3OC0xNzIuODMxLTM1MS44NTMtMTc0LjQ2LTM1MS44NzMtMTc0LjUyOXogTS00MzUuNjkzLTg5LjAwMmwtMC4xNy0xLjQyNGwxLjM2MSwwLjQ1NGwwLjE2OSwxLjQyNEwtNDM1LjY5My04OS4wMDJ6IE0tNDMzLjY2OC05MC42ODRsLTAuMTgxLTEuNTJsMS40NSwwLjQ4NGwwLjE4MiwxLjUxOUwtNDMzLjY2OC05MC42ODR6IE0tNDMxLjU3Ni05Mi40NTFsLTAuMTk5LTEuNjc1bDEuNiwwLjUzM2wwLjIsMS42NzVMLTQzMS41NzYtOTIuNDUxeiBNLTQyOS40MzEtOTQuMjkzTC00MjkuNjM1LTk2bDEuNjMxLDAuNTQzbDAuMjA0LDEuNzA3TC00MjkuNDMxLTk0LjI5M3ogTS00MjcuMjI2LTk2LjA2M2wtMC4xOTQtMS42MjhsMS41NTYsMC41MThsMC4xOTQsMS42MjlMLTQyNy4yMjYtOTYuMDYzeiBNLTQyNS4xNTUtOTcuNzM0bC0wLjIwOC0xLjc1MWwxLjY3MywwLjU1N2wwLjIwOSwxLjc1MUwtNDI1LjE1NS05Ny43MzR6IE0tNDIyLjkwMi05OS41OWwtMC4yMTctMS44MTVsMS43MzQsMC41NzhsMC4yMTcsMS44MTVMLTQyMi45MDItOTkuNTl6IE0tNDIwLjYzLTEwMS4zNjlsLTAuMjI1LTEuODc4bDEuNzk1LDAuNTk3bDAuMjI1LDEuODgxTC00MjAuNjMtMTAxLjM2OXogTS00MTguNDA5LTEwMy40MjVsLTAuMjI2LTEuOTA1bDEuODIsMC42MDVsMC4yMjgsMS45MDdMLTQxOC40MDktMTAzLjQyNXogTS00MTEuODE2LTEwMS45NjhsLTEuNDIzLTEuNzE1YzAtMC4wMDEsMC0wLjAwMy0wLjAwMS0wLjAwNGwtMy43NzktNC41NTdjLTAuMDA4LTAuMDA5LTAuMDIxLTAuMDA3LTAuMDI5LTAuMDE2Yy0wLjAxMS0wLjAxNy0wLjAxNS0wLjAzNS0wLjAyNy0wLjA1MWwtMS40NzctMS43ODJsMC4xOTctMC4xNjRsMS41MjksMS44NDRjMC4wMDgsMC4wMSwwLjAyMSwwLjAxNSwwLjAyOSwwLjAyNGMwLDAsMCwwLDAsMC4wMDFsMC4wMDIsMC4wMDNjMC4wMDcsMC4wMTEsMC4wMSwwLjAyMywwLjAxOSwwLjAzM2MwLjAwOCwwLjAwOSwwLjAxOSwwLjAxMywwLjAyNywwLjAyMmwzLjUzNCw0LjI2M2MwLjAwNywwLjAxLDAuMDA5LDAuMDIxLDAuMDE3LDAuMDMxYzAsMC4wMDEsMC4wMDEsMC4wMDEsMC4wMDIsMC4wMDJjMCwwLDAsMC4wMDEsMC4wMDEsMC4wMDJsMS41NzUsMS44OTlMLTQxMS44MTYtMTAxLjk2OHogTS00MTMuMDUtMTA0LjgwN2wtMi45NC0zLjU0NmwxLjE5NC0wLjk5MWwwLjExNSwwLjEzOWMwLjAwMSwwLjAwMiwwLjAwMiwwLjAwNCwwLjAwMywwLjAwNmwyLjQ2MSwyLjk2N2wwLjM2MSwwLjQzNkwtNDEzLjA1LTEwNC44MDd6IE0tMzUzLjUzMi0xNjcuMzQ0bC0wLjMyMSwwLjQxNGMtOC4xMzksMTAuNDg3LTI5Ljk4MSwzNy4yNzQtNTcuNSw2MC4xNzJsLTAuMDA5LTAuMDExbC0yLjIyNi0yLjY4NWMyOC45Mi0yNC4wNzcsNTYuNDIyLTU4LjA3OSw2MC45NzUtNjMuNzk4YzAuMTA2LDAuNjA4LDAuMjA3LDEuNDM4LDAuMTgzLDIuMzI3Qy0zNTIuNDcxLTE2OS40MzEtMzUyLjg0Mi0xNjguMjI3LTM1My41MzItMTY3LjM0NHoiLz48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuMyIgZD0iTS0zNTUuNDA0LTE2OC43MjVjLTEwLjI5NywxMy4xOTEtMzMuOTM0LDM5LjgwNy01Ni44NDgsNTkuMDY1Yy0wLjA2OCwwLjA1OC0wLjEwNCwwLjEzOS0wLjEwNywwLjIyMmMtMC4wMDIsMC4wNzEsMC4wMjEsMC4xNDMsMC4wNywwLjIwMWMwLjEwNiwwLjEyNywwLjI5NiwwLjE0NCwwLjQyMywwLjAzN2MyMi45NDktMTkuMjg4LDQ2LjYyMi00NS45NDQsNTYuOTM1LTU5LjE1NWMwLjEwMi0wLjEyOSwwLjA3OS0wLjMxOC0wLjA1Mi0wLjQyMUMtMzU1LjExMy0xNjguODc4LTM1NS4zMDItMTY4Ljg1NS0zNTUuNDA0LTE2OC43MjV6Ii8+PC9nPjwvc3ZnPg==';
+
+  // ── KATANA CONFIG ──
+  var katCfg = { alpha: 0.06, scale: 0.85, rotate: 1.60, x: 0.35, y: 0.75 };
+
+  function draw() {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+
+    var cx = w * 0.50;
+    var cy = h * 0.50;
+    var radius = Math.min(w, h) * 0.22;
+
+    // ══════════════════════════════════
+    // TWO KATANAS — one defined, auto mirror
+    // ══════════════════════════════════
+    var pulse = Math.sin(frame * 0.015) * 0.003;
+    var katSize = Math.max(w, h) * katCfg.scale;
+
+    // Primary katana
+    ctx.save();
+    ctx.globalAlpha = katCfg.alpha + pulse;
+    ctx.translate(w * katCfg.x, h * katCfg.y);
+    ctx.rotate(katCfg.rotate);
+    ctx.drawImage(katanaImg, -katSize / 2, -katSize / 2, katSize, katSize);
+    ctx.restore();
+
+    // Mirror — flipped position and rotation
+    ctx.save();
+    ctx.globalAlpha = katCfg.alpha + pulse;
+    ctx.translate(w * (1 - katCfg.x), h * (1 - katCfg.y));
+    ctx.rotate(katCfg.rotate + Math.PI);
+    ctx.drawImage(katanaImg, -katSize / 2, -katSize / 2, katSize, katSize);
+    ctx.restore();
+
+    ctx.globalAlpha = 1;
+
+    // ══════════════════════════════════
+    // FLYWHEEL RING — outer track
+    // ══════════════════════════════════
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Inner ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * 0.55, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.015)';
+    ctx.stroke();
+
+    // Dashed middle ring
+    ctx.setLineDash([4, 6]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius * 0.78, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.012)';
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ══════════════════════════════════
+    // CENTER — Katana K logo (from SVG)
+    // ══════════════════════════════════
+    var kLogoSize = 128;
+    var kScale = kLogoSize / 256; // SVG viewBox is 256x256
+    ctx.save();
+    ctx.translate(cx - kLogoSize / 2, cy - kLogoSize / 2);
+    ctx.scale(kScale, kScale);
+    var kPath = new Path2D('M172.124 127.683L209.661 1H159.616L109.576 89.5122V1H59.531L22 127.683H52.0248L22 229.027H109.576V165.911L184.644 255L235 178.358L134.91 127.683H172.124Z');
+    ctx.fillStyle = 'rgba(255,255,255,0.025)';
+    ctx.fill(kPath);
+    ctx.strokeStyle = 'rgba(255,255,255,0.055)';
+    ctx.lineWidth = 3 / kScale;
+    ctx.stroke(kPath);
+    ctx.restore();
+
+    // ══════════════════════════════════
+    // FLYWHEEL NODES
+    // ══════════════════════════════════
+    for (var i = 0; i < flywheelCount; i++) {
+      var angle = (Math.PI * 2 / flywheelCount) * i - Math.PI / 2;
+      var nx = cx + Math.cos(angle) * radius;
+      var ny = cy + Math.sin(angle) * radius;
+
+      // Arc segment to next node
+      var nextAngle = (Math.PI * 2 / flywheelCount) * ((i + 1) % flywheelCount) - Math.PI / 2;
+      ctx.beginPath();
+      var startA = angle + 0.15;
+      var endA = nextAngle - 0.15;
+      if (endA < startA) endA += Math.PI * 2;
+      ctx.arc(cx, cy, radius, startA, endA);
+      ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Arrow head
+      var arrowX = cx + Math.cos(endA) * radius;
+      var arrowY = cy + Math.sin(endA) * radius;
+      var tangentA = endA + Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(arrowX, arrowY);
+      ctx.lineTo(arrowX - Math.cos(tangentA - 0.4) * 6, arrowY - Math.sin(tangentA - 0.4) * 6);
+      ctx.moveTo(arrowX, arrowY);
+      ctx.lineTo(arrowX - Math.cos(tangentA + 0.4) * 6, arrowY - Math.sin(tangentA + 0.4) * 6);
+      ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Node circle
+      ctx.beginPath();
+      ctx.arc(nx, ny, 14, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.012)';
+      ctx.fill();
+
+      // Symbol
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = 'rgba(255,255,255,0.06)';
+      ctx.fillText(flywheelSymbols[i], nx, ny);
+
+      // Label
+      var lx = nx + Math.cos(angle) * 28;
+      var ly = ny + Math.sin(angle) * 28;
+      ctx.font = '7px "JetBrains Mono", monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.045)';
+      ctx.fillText(flywheelLabels[i], lx, ly);
+    }
+
+    // ══════════════════════════════════
+    // TRACERS — orbiting the flywheel
+    // ══════════════════════════════════
+    for (var t = 0; t < tracers.length; t++) {
+      var tr = tracers[t];
+      tr.angle += tr.speed;
+      var trX = cx + Math.cos(tr.angle) * radius;
+      var trY = cy + Math.sin(tr.angle) * radius;
+
+      // Glow
+      var grd = ctx.createRadialGradient(trX, trY, 0, trX, trY, 14);
+      grd.addColorStop(0, 'rgba(255,255,255,0.06)');
+      grd.addColorStop(1, 'rgba(255,255,255,0.0)');
+      ctx.beginPath();
+      ctx.arc(trX, trY, 14, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      // Trail
+      for (var tt = 1; tt <= 5; tt++) {
+        var trailA = tr.angle - tr.speed * tt * 3;
+        var ttx = cx + Math.cos(trailA) * radius;
+        var tty = cy + Math.sin(trailA) * radius;
+        ctx.beginPath();
+        ctx.arc(ttx, tty, 1.5 - tt * 0.2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,' + (0.04 - tt * 0.007).toFixed(4) + ')';
+        ctx.fill();
+      }
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(trX, trY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      ctx.fill();
+    }
+
+    // ══════════════════════════════════
+    // TOP — Protocol stats
+    // ══════════════════════════════════
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.04, h * 0.07);
+    ctx.lineTo(w * 0.96, h * 0.07);
+    ctx.stroke();
+
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textBaseline = 'middle';
+    var topY = h * 0.038;
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fillText('FLYWHEEL', w * 0.05, topY);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillText('│', w * 0.18, topY);
+
+    var tvl = (240 + Math.sin(frame * 0.004) * 3.5).toFixed(1);
+    ctx.fillText('TVL: $' + tvl + 'M', w * 0.20, topY);
+
+    ctx.fillText('│', w * 0.36, topY);
+
+    var vkat = (82.4 + Math.sin(frame * 0.006) * 1.2).toFixed(1);
+    ctx.fillText('vKAT staked: ' + vkat + '%', w * 0.38, topY);
+
+    ctx.fillText('│', w * 0.58, topY);
+
+    var yld = (12.8 + Math.sin(frame * 0.007) * 0.8).toFixed(1);
+    ctx.fillText('yield: ' + yld + '%', w * 0.60, topY);
+
+    var blink = Math.sin(frame * 0.04) > 0;
+    ctx.textAlign = 'right';
+    if (blink) {
+      ctx.beginPath();
+      ctx.arc(w * 0.95 + 6, topY, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.07)';
+      ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('● LIVE', w * 0.95, topY);
+
+    // ══════════════════════════════════
+    // BOTTOM — Chain stats
+    // ══════════════════════════════════
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.beginPath();
+    ctx.moveTo(w * 0.04, h * 0.935);
+    ctx.lineTo(w * 0.96, h * 0.935);
+    ctx.stroke();
+
+    var botY = h * 0.965;
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+
+    var fees = (18.4 + Math.sin(frame * 0.003) * 0.6).toFixed(1);
+    ctx.fillText('seq fees: $' + fees + 'K', w * 0.05, botY);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.fillText('│', w * 0.22, botY);
+    ctx.fillText('CoL → 100%', w * 0.24, botY);
+
+    ctx.fillText('│', w * 0.38, botY);
+
+    var vaults = Math.floor(6 + Math.sin(frame * 0.005) * 0.5);
+    ctx.fillText('active vaults: ' + vaults, w * 0.40, botY);
+
+    ctx.fillText('│', w * 0.56, botY);
+
+    var rev = (3.0 + frame * 0.0000015).toFixed(2);
+    ctx.fillText('bridge rev: $' + rev + 'M', w * 0.58, botY);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.035)';
+    ctx.fillText('KATANA  ·  DeFi', w * 0.95, botY);
+
+    if (katanaVisible) requestAnimationFrame(draw);
+  }
+
+  resize();
+  var katanaVisible = false;
+  var katanaObs = new IntersectionObserver(function(entries) {
+    katanaVisible = entries[0].isIntersecting;
+    if (katanaVisible) draw();
+  }, { threshold: 0 });
+  katanaObs.observe(canvas.parentElement.parentElement);
+  window.addEventListener('resize', resize);
+  } catch(e) {}
+})();
+
+// ─── Row reveal on scroll ───
+(function() {
+  var rows = document.querySelectorAll('.st-row');
+  var animated = false;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !animated) {
+        animated = true;
+        rows.forEach(function(row, i) {
+          setTimeout(function() { row.classList.add('visible'); }, i * 35);
+        });
+      }
+    });
+  }, { threshold: 0.15 });
+  var s = document.getElementById('stacks');
+  if (s) observer.observe(s);
+})();
+
+// ─── Colorize proficiency blocks ───
+(function() {
+  document.querySelectorAll('.st-prof').forEach(function(el) {
+    var text = el.textContent;
+    var html = '';
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] === '■') html += '<span class="f">■</span>';
+      else if (text[i] === '□') html += '<span class="e">□</span>';
+      else html += text[i];
+    }
+    el.innerHTML = html;
+  });
+})();
+
+// ─── 3D Card tilt ───
+(function() {
+  var card = document.getElementById('card3d');
+  var wrapper = card ? card.closest('.card-wrapper') : null;
+  var coords = document.getElementById('hudCoords');
+  if (!card || !wrapper) return;
+  wrapper.addEventListener('mousemove', function(e) {
+    var rect = wrapper.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width;
+    var y = (e.clientY - rect.top) / rect.height;
+    card.style.transform = 'rotateY(' + ((x - 0.5) * 18) + 'deg) rotateX(' + ((0.5 - y) * 12) + 'deg)';
+    if (coords) coords.textContent = (x - 0.5).toFixed(2) + ' / ' + (0.5 - y).toFixed(2);
+  });
+  wrapper.addEventListener('mouseleave', function() {
+    card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    card.style.transition = 'transform 0.5s ease';
+    if (coords) coords.textContent = '0.00 / 0.00';
+  });
+  wrapper.addEventListener('mouseenter', function() {
+    card.style.transition = 'transform 0.08s ease-out';
+  });
+})();
+</script>
+</body>
+</html>
