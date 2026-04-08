@@ -31,6 +31,7 @@ import { TechTags } from "./modules/ui/components/tech-tags"
 import { TerminalCard } from "./modules/ui/components/terminal-card"
 import { TerminalEntry } from "./modules/ui/components/terminal-entry"
 import { STACK_DATA } from "./modules/ui/lib/stack-data"
+import { getYearsOfExperience } from "./modules/global/lib/career"
 
 const planeGeometry = new THREE.PlaneGeometry(2, 2, 50, 50)
 
@@ -89,14 +90,14 @@ function App() {
           <div className="text-xs text-terminal-text-dim tracking-[6px] mb-8 font-light">SR. FULL-STACK ENGINEER</div>
           <p className="text-terminal-text-dim text-[12.5px] mb-9">
             Hey, I'm Diogo — most people call me <Em>Chani</Em>. Full-stack dev from Brazil, been building for the web
-            for 5+ years. Lately I've been all in on <Em>web3</Em> — DeFi protocols, DEX aggregators, token launches,
+            for {getYearsOfExperience()}+ years. Lately I've been all in on <Em>web3</Em> — DeFi protocols, DEX aggregators, token launches,
             that kind of thing.
           </p>
 
           <TerminalCard title="~/about">
             <TerminalEntry label="alias" value="Chani" />
             <TerminalEntry label="location" value="Brazil" />
-            <TerminalEntry label="exp" value="5+ years" />
+            <TerminalEntry label="exp" value={`${getYearsOfExperience()}+ years`} />
             <TerminalEntry label="focus" value="Web3 · Frontend" />
           </TerminalCard>
         </div>
