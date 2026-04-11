@@ -15,7 +15,6 @@ import { MatrixRain } from "./modules/global/components/matrix-rain"
 import { Navbar } from "./modules/global/components/navbar"
 import { SectionLabel } from "./modules/global/components/section-label"
 import { SectionShell } from "./modules/global/components/section-shell"
-import { useTheme } from "./modules/global/hooks/use-theme"
 import { getYearsOfExperience } from "./modules/global/lib/career"
 import { AsciiImage } from "./modules/threejs/components/ascii-image"
 import { CommandLine } from "./modules/ui/components/command-line"
@@ -36,8 +35,6 @@ import { STACK_DATA } from "./modules/ui/lib/stack-data"
 const planeGeometry = new THREE.PlaneGeometry(2, 2, 50, 50)
 
 function App() {
-  const isLightTheme = useTheme().theme === "light"
-
   const [matRef, setMatRef] = useState<AsciiMaterialType | null>()
 
   useEffect(() => {
