@@ -11,7 +11,7 @@ import { AsciiRenderer } from "./modules/global/components/ascii-renderer"
 import { Em } from "./modules/global/components/em"
 import { GlitchText } from "./modules/global/components/glitch-text"
 import { HudCard } from "./modules/global/components/hud-card"
-import { MatrixRain } from "./modules/global/components/matrix-rain"
+import { AsciiGalaxy } from "./modules/global/components/ascii-galaxy"
 import { Navbar } from "./modules/global/components/navbar"
 import { SectionLabel } from "./modules/global/components/section-label"
 import { SectionShell } from "./modules/global/components/section-shell"
@@ -59,7 +59,7 @@ function App() {
       <SectionShell
         id="about"
         innerClassName="grid grid-cols-[420px_1fr] gap-18 items-center max-[860px]:grid-cols-1 max-[860px]:gap-12"
-        background={<MatrixRain />}
+        background={<AsciiGalaxy />}
       >
         <HudCard title="CHANI.IMG" footerLabel="ASCII RENDER">
           <Canvas className="absolute inset-0 ">
@@ -164,13 +164,7 @@ function App() {
           prompt={<CommandLine command="wget" args={["-X", "https://katana.network"]} />}
           title="Ghostty"
         >
-          <AsciiRenderer
-            className="w-fit px-3"
-            fontSize={8}
-            cols={100}
-            colorMode="mono"
-            src="/assets/katana.png"
-          />
+          <AsciiRenderer className="w-fit px-3" fontSize={8} cols={100} colorMode="mono" src="/assets/katana.png" />
         </TerminalCard>
       </SectionShell>
 
