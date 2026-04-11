@@ -16,6 +16,7 @@ import { Navbar } from "./modules/global/components/navbar"
 import { SectionLabel } from "./modules/global/components/section-label"
 import { SectionShell } from "./modules/global/components/section-shell"
 import { useTheme } from "./modules/global/hooks/use-theme"
+import { getYearsOfExperience } from "./modules/global/lib/career"
 import { AsciiImage } from "./modules/threejs/components/ascii-image"
 import { CommandLine } from "./modules/ui/components/command-line"
 import { ConcaveStake } from "./modules/ui/components/concave-stake"
@@ -31,7 +32,6 @@ import { TechTags } from "./modules/ui/components/tech-tags"
 import { TerminalCard } from "./modules/ui/components/terminal-card"
 import { TerminalEntry } from "./modules/ui/components/terminal-entry"
 import { STACK_DATA } from "./modules/ui/lib/stack-data"
-import { getYearsOfExperience } from "./modules/global/lib/career"
 
 const planeGeometry = new THREE.PlaneGeometry(2, 2, 50, 50)
 
@@ -90,8 +90,8 @@ function App() {
           <div className="text-xs text-terminal-text-dim tracking-[6px] mb-8 font-light">SR. FULL-STACK ENGINEER</div>
           <p className="text-terminal-text-dim text-[12.5px] mb-9">
             Hey, I'm Diogo — most people call me <Em>Chani</Em>. Full-stack dev from Brazil, been building for the web
-            for {getYearsOfExperience()}+ years. Lately I've been all in on <Em>web3</Em> — DeFi protocols, DEX aggregators, token launches,
-            that kind of thing.
+            for {getYearsOfExperience()}+ years. Lately I've been all in on <Em>web3</Em> — DeFi protocols, DEX
+            aggregators, token launches, that kind of thing.
           </p>
 
           <TerminalCard title="~/about">
@@ -172,7 +172,6 @@ function App() {
             fontSize={8}
             cols={100}
             colorMode="mono"
-            inverse={isLightTheme}
             src="/assets/katana.png"
           />
         </TerminalCard>
@@ -216,7 +215,6 @@ function App() {
             fontSize={8}
             cols={100}
             colorMode="mono"
-            inverse={isLightTheme}
             contrast={1.3}
             src="/assets/fjord.webp"
           />
@@ -262,7 +260,6 @@ function App() {
             cols={100}
             colorMode="mono"
             contrast={1.2}
-            inverse={isLightTheme}
             src="/assets/kayen.png"
           />
         </TerminalCard>
@@ -306,7 +303,6 @@ function App() {
             cols={100}
             colorMode="mono"
             charset="standard"
-            inverse={isLightTheme}
             src="/assets/sanctuary_cleaned.webp"
           />
         </TerminalCard>
@@ -350,7 +346,6 @@ function App() {
             cols={100}
             colorMode="mono"
             contrast={1.8}
-            inverse={isLightTheme}
             src="/assets/concave.png"
           />
         </TerminalCard>
