@@ -367,11 +367,12 @@ export function AsciiGalaxy() {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const gl = canvas.getContext("webgl", { alpha: false, antialias: false })
-    if (!gl) {
+    const glOrNull = canvas.getContext("webgl", { alpha: false, antialias: false })
+    if (!glOrNull) {
       console.warn("WebGL not available for AsciiGalaxy")
       return
     }
+    const gl = glOrNull
 
     // Compile & link
     const vs = compileShader(gl, gl.VERTEX_SHADER, VERT_SRC)
