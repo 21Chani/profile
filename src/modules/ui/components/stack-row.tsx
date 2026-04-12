@@ -1,10 +1,12 @@
+import type { StackIcon } from "../lib/stack-data"
+
 export function StackRow({
-  icon,
+  icon: Icon,
   name,
   ext,
   proficiency,
 }: {
-  icon: string
+  icon: StackIcon
   name: string
   ext: string
   proficiency: number
@@ -17,8 +19,8 @@ export function StackRow({
       {/* hover bg */}
       <div className="absolute inset-0 bg-terminal-white/[0.02] opacity-0 group-hover/row:opacity-100 transition-opacity duration-150 pointer-events-none" />
 
-      <span className="w-[22px] shrink-0 text-xs text-terminal-text-muted text-center relative z-1 transition-colors duration-150 group-hover/row:text-terminal-text-dim">
-        {icon}
+      <span className="w-[22px] shrink-0 text-terminal-text-muted inline-flex items-center justify-center relative z-1 transition-colors duration-150 group-hover/row:text-terminal-text-dim">
+        <Icon className="w-3 h-3" />
       </span>
       <span className="text-terminal-text relative z-1 whitespace-nowrap transition-colors duration-150 group-hover/row:text-terminal-text-bright">
         {name}
